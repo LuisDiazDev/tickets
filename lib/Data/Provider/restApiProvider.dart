@@ -14,7 +14,6 @@ class MyHttpOverrides extends HttpOverrides{
 
 class RestApiProvider {
   static RestApiProvider? _instance;
-  bool dev = false;
 
   factory RestApiProvider() {
     _instance ??= RestApiProvider._();
@@ -37,13 +36,8 @@ class RestApiProvider {
     String basicAuth =
         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
 
-    if (dev) {
-      await Future.delayed(const Duration(seconds: 2));
-      return http.Response("", 200);
-    }
-
     try {
-      return await http.get(Uri.parse('https://${sessionCubit?.state.cfg?.host}/rest$url'), //todo
+      return await http.get(Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'), //todo
           headers: {'authorization': basicAuth});
     } catch (e) {
       return http.Response(e.toString(), 500);
@@ -58,31 +52,34 @@ class RestApiProvider {
     String basicAuth =
         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
 
-    if (dev) {
-      await Future.delayed(const Duration(seconds: 2));
-      return http.Response("", 200);
-    }
-
     try {
-      return await http.post(Uri.parse('https://192.168.10.2/rest/$url'), //todo
-          body: body,
-          headers: {'authorization': basicAuth});
+      final msg = jsonEncode(body);
+      return await http.post(Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'),
+          body: msg,
+          headers: {'authorization': basicAuth,
+            'Content-Type': 'application/json'
+          });
     } catch (e) {
-      return http.Response("error", 500);
+      return http.Response(e.toString(), 500);
     }
   }
 
   Future<http.Response> put(
       {String url = "default", Map body = const {}}) async {
-    if (dev) {
-      await Future.delayed(const Duration(seconds: 2));
-      return http.Response("", 200);
-    }
+
+    String username = sessionCubit?.state.cfg?.user ?? "";
+    String password = sessionCubit?.state.cfg?.password ?? "";
+    String basicAuth =
+        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
 
     try {
-      return await http.put(Uri.parse('https://api-servidor/v1/$url'), //todo
-          body: body,
-          headers: {});
+      final msg = jsonEncode(body);
+      return await http.put(Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'), //todo
+          body: msg,
+          headers: {'authorization': basicAuth,
+            'Content-Type': 'application/json'
+          }
+      );
     } catch (e) {
       return http.Response("error", 500);
     }
@@ -90,15 +87,23 @@ class RestApiProvider {
 
   Future<http.Response> delete(
       {String url = "default", Map body = const {}}) async {
-    if (dev) {
-      await Future.delayed(const Duration(seconds: 2));
-      return http.Response("", 200);
-    }
+
+    String username = sessionCubit?.state.cfg?.user ?? "";
+    String password = sessionCubit?.state.cfg?.password ?? "";
+    String basicAuth =
+        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+
+
+
+    final msg = jsonEncode(body);
 
     try {
-      return await http.delete(Uri.parse('https://api-servidor/v1/$url'), //todo
-          body: body,
-          headers: {});
+      return await http.delete(Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'),
+          body: msg,
+          headers: {'authorization': basicAuth,
+            'Content-Type': 'application/json'
+          }
+      );
     } catch (e) {
       return http.Response("error", 500);
     }

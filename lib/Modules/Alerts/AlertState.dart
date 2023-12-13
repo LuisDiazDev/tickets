@@ -20,9 +20,9 @@ class AlertInfo extends AlertState {
 }
 
 
-class AlertDialog extends AlertState {
+class AlertDialogEvent extends AlertState {
   final String title;
   final String message;
 
-  AlertDialog(this.title, this.message);
+  AlertDialogEvent(this.title, this.message);
 }

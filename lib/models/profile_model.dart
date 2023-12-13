@@ -19,10 +19,12 @@ class ProfileModel {
   String? transparentProxy;
   String? addressPool;
   String? onLogin;
+  String? rateLimit;
 
   ProfileModel({
     this.id,
     this.addMacCookie,
+    this.rateLimit,
     this.addressList,
     this.profileModelDefault,
     this.idleTimeout,
@@ -52,6 +54,7 @@ class ProfileModel {
     transparentProxy: json["transparent-proxy"],
     addressPool: json["address-pool"],
     onLogin: json["on-login"],
+    rateLimit: json["rate-limit"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +72,6 @@ class ProfileModel {
     "transparent-proxy": transparentProxy,
     "address-pool": addressPool,
     "on-login": onLogin,
+    "rate-limit":rateLimit
   };
 }

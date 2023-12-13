@@ -14,7 +14,7 @@ class AlertCubit extends Cubit<AlertState> {
   }
 
   void showDialog(String title, String message) {
-    emit(AlertDialog(
+    emit(AlertDialogEvent(
       title,
       message,
     ));

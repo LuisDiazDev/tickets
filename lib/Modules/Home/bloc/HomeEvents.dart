@@ -8,9 +8,10 @@ class ShareQRImage extends HomeEvent {
   ShareQRImage(this.user,this.password);
 }
 
-class GeneratedTickets extends HomeEvent{
+class GeneratedTicket extends HomeEvent{
   final String profile;
-  final String cant;
-  GeneratedTickets(this.profile,this.cant);
+  final String name;
+  final String duration;
+  GeneratedTicket(this.profile,this.name,this.duration);
 }
 

@@ -3,60 +3,51 @@ part of 'SessionCubit.dart';
 class SessionState extends Equatable {
   final bool? isAuthenticated;
   final String? state;
+  final bool? wifi;
   final SessionStatus? sessionStatus;
-  final bool fistUse;
   final ConfigModel? cfg;
 
   const SessionState({
-    this.fistUse = false,
     this.state = '',
+    this.wifi = false,
     this.isAuthenticated = false,
     this.sessionStatus = SessionStatus.none,
     this.cfg,
   });
 
   SessionState copyWith({
-    String? accessToken,
     bool? isAuthenticated,
-    String? refreshToken,
     String? state,
-    int? expiresIn,
-    String? tokenType,
-    bool? fistUse,
     SessionStatus? sessionStatus,
     ConfigModel? configModel,
+    bool? wifi,
   }) =>
       SessionState(
-        fistUse: fistUse ?? this.fistUse,
-        isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-        state: state ?? this.state,
-        sessionStatus: sessionStatus ?? this.sessionStatus,
-        cfg: configModel ?? ConfigModel.defaultConfig
-      );
+          isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+          state: state ?? this.state,
+          wifi: wifi ?? this.wifi,
+          sessionStatus: sessionStatus ?? this.sessionStatus,
+          cfg: configModel ?? cfg);
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
-        isAuthenticated: json['isAuthenticated'] as bool?,
-        fistUse: json['fistUse'] as bool,
-        state: json['state'] as String?,
-        sessionStatus: SessionStatus.values.firstWhere(
-          (element) => element.toString() == json['sessionStatus'],
-        ),
-        cfg: ConfigModel.defaultConfig
-      );
+      isAuthenticated: json['isAuthenticated'] as bool?,
+      wifi: json['wifi'] as bool?,
+      state: json['state'] as String?,
+      sessionStatus: SessionStatus.values.firstWhere(
+        (element) => element.toString() == json['sessionStatus'],
+      ),
+      cfg: json['cfg'] != null
+          ? ConfigModel.fromJson(json['cfg'])
+          : json['cfg']);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'fistUse':fistUse,
         'isAuthenticated': isAuthenticated,
         'state': state,
         'sessionStatus': SessionStatus.none.toString(),
+        'cfg': cfg?.toJson(),
+        'wifi':wifi
       };
 
   @override
-  List<Object?> get props => [
-        isAuthenticated,
-        state,
-        sessionStatus,
-        fistUse,
-        cfg
-      ];
+  List<Object?> get props => [isAuthenticated, state, sessionStatus, cfg,wifi];
 }
