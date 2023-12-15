@@ -13,6 +13,8 @@ class CustomTicketWidget extends StatelessWidget {
 
   const CustomTicketWidget({super.key, required this.ticket});
 
+  bool valid() => ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
+
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<TicketsBloc>(context);
@@ -21,7 +23,7 @@ class CustomTicketWidget extends StatelessWidget {
       child: ClipPath(
         clipper: CustomTicketClipper(), // <-- CustomClipper
         child: Container(
-            color:  ColorsApp.secondary.withOpacity(.4), // <-- background color
+            color: valid() ? ColorsApp.secondary.withOpacity(.4) : Colors.grey, // <-- background color
             height: 115, // <-- height
             width: 190, // <-- width
             child: Column(
@@ -81,34 +83,40 @@ class CustomTicketWidget extends StatelessWidget {
                 ),
                Row(
                  children: [
-                   Padding(
-                     padding: const EdgeInsets.only(top: 8.0, left: 10),
-                     child: TextButton(
-                       onPressed: () {
-                         print("imprimir");
-                       },
-                       child: const Text(
-                         "Imprimir",
-                         style: TextStyle(
-                             fontSize: 16,
-                             color: ColorsApp.secondary,
-                             fontFamily: "poppins_semi_bold",
-                             fontWeight: FontWeight.w400),
+                   Visibility(
+                     visible: valid(),
+                     child: Padding(
+                       padding: const EdgeInsets.only(top: 8.0, left: 10),
+                       child: TextButton(
+                         onPressed: () {
+                           print("imprimir");
+                         },
+                         child: const Text(
+                           "Imprimir",
+                           style: TextStyle(
+                               fontSize: 16,
+                               color: ColorsApp.secondary,
+                               fontFamily: "poppins_semi_bold",
+                               fontWeight: FontWeight.w400),
+                         ),
                        ),
                      ),
                    ),
                    Spacer(),
-                   Padding(
-                     padding: const EdgeInsets.only(top: 10.0),
-                     child: IconButton(
-                         padding: EdgeInsets.zero,
-                         constraints: BoxConstraints(),
-                         onPressed: (){
-                          homeBloc.add(ShareQRImage(
-                              ticket.name??"",
-                              ticket.password??""
-                          ));
-                     }, icon: const Icon(EvaIcons.shareOutline,color: ColorsApp.secondary,)),
+                   Visibility(
+                     visible: valid(),
+                     child: Padding(
+                       padding: const EdgeInsets.only(top: 10.0),
+                       child: IconButton(
+                           padding: EdgeInsets.zero,
+                           constraints: BoxConstraints(),
+                           onPressed: (){
+                            homeBloc.add(ShareQRImage(
+                                ticket.name??"",
+                                ticket.password??""
+                            ));
+                       }, icon: const Icon(EvaIcons.shareOutline,color: ColorsApp.secondary,)),
+                     ),
                    ),
                    Padding(
                      padding: const EdgeInsets.only(left:5,top: 10.0,right: 10),

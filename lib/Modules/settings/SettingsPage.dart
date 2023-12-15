@@ -1,14 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:tickets/Core/Widgets/custom_appbar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tickets/Core/localization/app_localization.dart';
-import 'package:tickets/Core/utils/navigator_service.dart';
+import 'package:tickets/Data/Services/navigator_service.dart';
 import 'package:tickets/Modules/Alerts/AlertCubit.dart';
 import 'package:tickets/models/config_model.dart';
 import '../../Core/Values/Colors.dart';
-import '../../Core/Widgets/custom_text_field.dart';
+import '../../Core/utils/progress_dialog_utils.dart';
+import '../../Data/Provider/TicketProvider.dart';
+import '../../Data/Services/ftp_service.dart';
 import '../../Routes/Route.dart';
+import '../../Widgets/custom_appbar.dart';
+import '../../Widgets/custom_text_field.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
 import 'print_setting.dart';
@@ -41,6 +48,7 @@ class SettingsPage extends StatelessWidget {
               PrintSettings(
                 sessionBloc: sessionBloc,
               ),
+              //information
               const Gap(25),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -94,7 +102,7 @@ class SettingsPage extends StatelessWidget {
                             configModel: sessionBloc.state.cfg!
                                 .copyWith(contact: str ?? "")));
                       },
-                      title: "Inicio",
+                      title: "Pagina hotspot",
                     ),
                   ),
                   // Padding(
@@ -170,6 +178,7 @@ class SettingsPage extends StatelessWidget {
               //     ],
               //   ),
               // ),
+              //conection
               const Gap(10),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -219,7 +228,7 @@ class SettingsPage extends StatelessWidget {
               const Gap(8),
               Row(
                 children: [
-                  const Gap(12),
+                  const Spacer(),
                   MaterialButton(
                     color: ColorsApp.secondary,
                     onPressed: ()async {
@@ -231,21 +240,58 @@ class SettingsPage extends StatelessWidget {
                             fontFamily: 'poppins_normal',
                             fontSize: 18)),
                   ),
-                  const Spacer(),
+
+                  const Gap(12),
+                ],
+              ),
+
+              //BackUp
+              const Gap(8),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                child: Text(
+                  "Restablecer Mikrotik".tr,
+                  style: const TextStyle(
+                      fontFamily: 'poppins_bold',
+                      fontSize: 20,
+                      color: ColorsApp.secondary,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+              const Divider(
+                height: 2,
+                color: Colors.black,
+                endIndent: 18,
+                indent: 18,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
                   MaterialButton(
                     color: ColorsApp.secondary,
-                    onPressed: () {
-                      sessionBloc.changeState(sessionBloc.state
-                          .copyWith(configModel: ConfigModel.defaultConfig));
-                      NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                    onPressed: ()async {
+                      ProgressDialogUtils.showProgressDialog();
+                      if(!await FtpService.checkFile(remoteName: "backup.backup")){
+                        var fileContents = await rootBundle.load('assets/backup.backup');
+                        File file = await writeToFile(fileContents,"${(await getApplicationDocumentsDirectory()).path}/backup.backup");
+                        bool upload  = await FtpService.uploadFile(file: file,);
+                        if(!upload){
+                          alertBloc.showAlertInfo(title: "error", subtitle: "Ah ocurrido un problema inesperado");
+                          return;
+                        }
+                      }
+
+                      sessionBloc.backUp(alertBloc);
+
                     },
-                    child: Text("Reset".tr,
-                        style: const TextStyle(
+                    child: const Text("Restablecer",
+                        style: TextStyle(
                             color: ColorsApp.primary,
                             fontFamily: 'poppins_normal',
                             fontSize: 18)),
                   ),
-                  const Gap(12),
                 ],
               ),
               const Gap(16),
@@ -267,6 +313,12 @@ class SettingsPage extends StatelessWidget {
   String base64String(Uint8List data) {
     return base64Encode(data);
   }
+}
+
+Future<File> writeToFile(ByteData data, String path) {
+  final buffer = data.buffer;
+  return File(path).writeAsBytes(
+      buffer.asUint8ClampedList());
 }
 
 /*

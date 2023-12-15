@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'navigator_service.dart';
+import 'package:tickets/Core/Values/Colors.dart';
+import '../../Data/Services/navigator_service.dart';
 
 class ProgressDialogUtils {
   static bool isProgressVisible = false;
@@ -15,9 +16,9 @@ class ProgressDialogUtils {
           builder: (BuildContext context) {
             return const Center(
               child: CircularProgressIndicator.adaptive(
-                strokeWidth: 4,
+                strokeWidth: 8,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.white,
+                  ColorsApp.secondary,
                 ),
               ),
             );

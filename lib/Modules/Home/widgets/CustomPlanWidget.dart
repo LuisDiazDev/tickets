@@ -8,7 +8,7 @@ import 'package:tickets/models/profile_model.dart';
 import 'package:badges/badges.dart' as badges;
 
 import '../../../Core/Values/Colors.dart';
-import '../../../Core/utils/printer_service.dart';
+import '../../../Data/Services/printer_service.dart';
 import '../../Session/SessionCubit.dart';
 export '/core/utils/size_utils.dart';
 

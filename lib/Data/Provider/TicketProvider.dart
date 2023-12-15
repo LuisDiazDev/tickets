@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:tickets/models/dchcp_server_model.dart';
 import 'package:tickets/models/profile_model.dart';
 import 'package:tickets/models/ticket_model.dart';
 
@@ -40,6 +41,27 @@ class TicketProvider {
     return [];
   }
 
+  Future<Object> allDchcpServer({
+    String? user, String? pass, String? host
+  }) async {
+    var response = await restApi.get(url: "/ip/dhcp-server",
+      user: user,
+      pass: pass,
+      host: host
+    );
+
+    if (response.statusCode == 200) {
+      try {
+        var decode = dchcpServerModelFromJson(response.body);
+        return decode;
+      } catch (e) {
+        return [];
+      }
+    }else{
+      return false;
+    }
+  }
+
   Future<List<ProfileHotspotModel>> allProfilesHotspot() async {
     var response = await restApi.get(url: "/ip/hotspot/profile");
 
@@ -65,6 +87,14 @@ class TicketProvider {
       "limit-uptime": duration,
       "limit-bytes-total": "0",
       "comment": "usuario (ticket creado desde app)"
+    });
+  }
+
+  Future<Response> backup(String name, String pass) async {
+    return await restApi.post(url: "/system/backup/load", body: {
+      "name": name,
+      "password": pass,
+      "force-v6-to-v7-configuration-upgrade":true
     });
   }
 

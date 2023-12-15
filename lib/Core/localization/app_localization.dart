@@ -1,4 +1,4 @@
-import '../utils/navigator_service.dart';
+import '../../Data/Services/navigator_service.dart';
 import 'es_es/es_es_translations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,17 +1,15 @@
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:tickets/Modules/Profiles/widget/form_new_profile.dart';
 import 'package:tickets/models/profile_model.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
-import '../../Core/Widgets/custom_appbar.dart';
+import '../../Widgets/custom_appbar.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/ProfileBloc.dart';
 import 'bloc/ProfileState.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 import 'widget/custom_profile_widget.dart';
 

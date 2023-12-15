@@ -5,7 +5,7 @@ import 'package:tickets/Core/localization/app_localization.dart';
 import 'package:tickets/Modules/Session/SessionCubit.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
-import '../../Core/Widgets/custom_appbar.dart';
+import '../../Widgets/custom_appbar.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/HomeBloc.dart';

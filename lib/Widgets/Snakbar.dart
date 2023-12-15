@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../Values/Colors.dart';
+import '../Core/Values/Colors.dart';
 
 class SnackBarCustom {
   static snackBarCustom(

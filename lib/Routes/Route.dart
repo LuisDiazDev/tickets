@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tickets/Modules/Login/LoginPage.dart';
 import 'package:tickets/Modules/Profiles/ProfilesPage.dart';
 
 import '../../Modules/Home/HomePage.dart';
@@ -15,6 +16,12 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
     case Routes.home:
       route = MaterialPageRoute(
         builder: (_) => const HomePage(),
+        settings: RouteSettings(name: settings.name),
+      );
+      break;
+    case Routes.login:
+      route = MaterialPageRoute(
+        builder: (_) => const LoginPage(),
         settings: RouteSettings(name: settings.name),
       );
       break;

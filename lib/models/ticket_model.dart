@@ -11,6 +11,7 @@ class TicketModel {
   String? comment;
   String? ticketModelDefault;
   String? disabled;
+  String? limitUptime;
   String? ticketModelDynamic;
   String? name;
   String? packetsIn;
@@ -24,6 +25,7 @@ class TicketModel {
     this.bytesIn,
     this.bytesOut,
     this.comment,
+    this.limitUptime,
     this.ticketModelDefault,
     this.disabled,
     this.ticketModelDynamic,
@@ -37,6 +39,7 @@ class TicketModel {
 
   factory TicketModel.fromJson(Map<String, dynamic> json) => TicketModel(
     id: json[".id"],
+    limitUptime: json["limit-uptime"],
     bytesIn: json["bytes-in"],
     bytesOut: json["bytes-out"],
     comment: json["comment"],
@@ -55,6 +58,7 @@ class TicketModel {
     ".id": id,
     "bytes-in": bytesIn,
     "bytes-out": bytesOut,
+    "limit-uptime":limitUptime,
     "comment": comment,
     "default": ticketModelDefault,
     "disabled": disabled,

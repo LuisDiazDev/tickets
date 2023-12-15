@@ -5,15 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'Core/Theme/Theme.dart';
-import 'Core/Widgets/DialogApp.dart';
-import 'Core/Widgets/Snakbar.dart';
+import 'Core/Values/Enums.dart';
 import 'Core/localization/app_localization.dart';
-import 'Core/utils/navigator_service.dart';
-import 'Core/utils/printer_service.dart';
+import 'Data/Services/ftp_service.dart';
+import 'Data/Services/navigator_service.dart';
+import 'Data/Services/printer_service.dart';
 import 'Data/Provider/restApiProvider.dart';
 import 'Modules/Alerts/AlertCubit.dart';
 import 'Modules/Session/SessionCubit.dart';
 import 'Routes/Route.dart';
+import 'Widgets/DialogApp.dart';
+import 'Widgets/Snakbar.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -100,7 +102,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Envios',
       onGenerateRoute: routes,
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.home,
+      initialRoute: Routes.initial,
       navigatorKey: NavigatorService.navigatorKey,
       localizationsDelegates: const [
         AppLocalizationDelegate(),
@@ -115,7 +117,6 @@ class _MyAppState extends State<MyApp> {
       scaffoldMessengerKey: scaffoldMessengerKey,
       builder: (context, child) => MultiBlocListener(
         listeners: [
-
           BlocListener<AlertCubit, AlertState>(
             listener: (context, state) {
               if(state is AlertDialogEvent){
@@ -159,12 +160,12 @@ class _MyAppState extends State<MyApp> {
               // if(state.fistUse){
               //   _navigator?.pushNamedAndRemoveUntil(Routes.login, (Route<dynamic> route) => false);
               // }else
-              // if (state.sessionStatus == SessionStatus.started) {
-              //   NavigatorService.pushNamedAndRemoveUntil(Routes.home);
-              // }
-              // if (state.sessionStatus == SessionStatus.finish) {
-              //   NavigatorService.pushNamedAndRemoveUntil(Routes.home);
-              // }
+              if (state.sessionStatus == SessionStatus.started) {
+                NavigatorService.pushNamedAndRemoveUntil(Routes.home);
+              }
+              if (state.sessionStatus == SessionStatus.finish) {
+                NavigatorService.pushNamedAndRemoveUntil(Routes.login);
+              }
             },
           ),
         ],

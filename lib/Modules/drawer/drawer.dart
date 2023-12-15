@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tickets/Core/Values/Enums.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tickets/Core/localization/app_localization.dart';
-import 'package:tickets/Core/utils/navigator_service.dart';
+import 'package:tickets/Data/Services/navigator_service.dart';
 
 import '../../Routes/Route.dart';
 import '../Session/SessionCubit.dart';
@@ -60,6 +61,18 @@ class DrawerCustom extends StatelessWidget {
               ))) {
                 throw Exception('Could not launch $url');
               }
+            },
+          ),
+          TileDrawer(
+            icon: EvaIcons.logOutOutline,
+            title: "Cerrar Session",
+            onTap: () async {
+              final sessionCubit = BlocProvider.of<SessionCubit>(context);
+              sessionCubit.changeState(
+                sessionCubit.state.copyWith(
+                  sessionStatus: SessionStatus.finish
+                )
+              );
             },
           ),
         ],

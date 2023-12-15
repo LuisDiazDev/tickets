@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../Values/Colors.dart';
+import '../Core/Values/Colors.dart';
 import 'custom_text_field.dart';
 
 class CustomDropDown extends StatefulWidget {

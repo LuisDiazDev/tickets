@@ -3,9 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:tickets/Modules/Profiles/bloc/ProfileBloc.dart';
 
 import '../../../Core/Values/Colors.dart';
-import '../../../Core/Widgets/check_box.dart';
-import '../../../Core/Widgets/custom_dropdown.dart';
-import '../../../Core/Widgets/custom_text_field.dart';
+import '../../../Widgets/check_box.dart';
+import '../../../Widgets/custom_dropdown.dart';
+import '../../../Widgets/custom_text_field.dart';
 import '../../../models/config_model.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileEvents.dart';
@@ -33,14 +33,13 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     profile = widget.current ?? ProfileModel(name: "Nuevo Plan");
     if(widget.current != null){
       String currentPrice = profile.onLogin?.split(",")[4] ?? "";
       String currentDuration = profile.onLogin?.split(",")[3] ?? "";
-      initialPrice = currentPrice.split(RegExp(r"[0-9]")).last ?? "1d";
-      initialDuration = currentDuration.split(RegExp(r"[0-9]")).last ?? "1";
+      initialPrice = currentPrice.split(RegExp(r"[0-9]")).last;
+      initialDuration = currentDuration.split(RegExp(r"[0-9]")).last;
       price = currentPrice.replaceAll(initialPrice,"");
       durationT = currentDuration.replaceAll(initialDuration,"");
       limitSpeed = widget.current?.rateLimit != null && widget.current!.rateLimit != "";

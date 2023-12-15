@@ -1,7 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../Values/Colors.dart';
+import '../Core/Values/Colors.dart';
 
 AppBar customAppBar({String title=""}){
   return AppBar(
