@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../Modules/Home/HomePage.dart';
 import '../../Modules/MyTickets/MyTickesPage.dart';
 import '../../Modules/settings/SettingsPage.dart';
+import '../Modules/Initial/Initial.dart';
 import '../Modules/Login/LoginPage.dart';
 import '../Modules/Profiles/ProfilesPage.dart';
 
@@ -43,9 +44,15 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
         settings: RouteSettings(name: settings.name)
       );
       break;
+    case Routes.initial:
+      route = MaterialPageRoute(
+          builder: (_) => const InitialPage(),
+          settings: RouteSettings(name: settings.name)
+      );
+      break;
     default:
       route = MaterialPageRoute(
-        builder: (_) => const HomePage(),//Home page
+        builder: (_) => const InitialPage(),//Home page
         settings: RouteSettings(name: settings.name),
       );
       break;
