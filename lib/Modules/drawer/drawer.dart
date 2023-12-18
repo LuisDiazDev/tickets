@@ -54,7 +54,7 @@ class DrawerCustom extends StatelessWidget {
             title: "Activar Internet",
             onTap: () async {
               final sessionCubit = BlocProvider.of<SessionCubit>(context);
-              var url = Uri.parse('http://${sessionCubit.state.cfg?.dnsNamed}/login?user=admin&password=admin2023');
+              var url = Uri.parse('http://${sessionCubit.state.cfg?.dnsNamed}/login?user=admin&password=a');
               if (!await launchUrl(url,webViewConfiguration: const WebViewConfiguration(
                 enableJavaScript: true,
                 enableDomStorage: true

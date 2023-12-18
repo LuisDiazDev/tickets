@@ -57,7 +57,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                        height: MediaQuery.of(context).size.height*.2,
                      ),
                      const Text(
-                        'TicketsOs',
+                        'TicketOs',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF123258),
