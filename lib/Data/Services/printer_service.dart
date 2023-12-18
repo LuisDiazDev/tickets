@@ -1,5 +1,6 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:tickets/models/config_model.dart';
+
+import '../../models/config_model.dart';
 
 class PrinterService {
   static PrinterService? _instance;

@@ -1,15 +1,9 @@
-import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Core/utils/rand.dart';
-import 'package:tickets/Data/Provider/TicketProvider.dart';
-import 'package:tickets/models/profile_model.dart';
 import 'package:badges/badges.dart' as badges;
-
 import '../../../Core/Values/Colors.dart';
-import '../../../Data/Services/printer_service.dart';
-import '../../Session/SessionCubit.dart';
+import '../../../Core/utils/rand.dart';
+import '../../../models/profile_model.dart';
 export '/core/utils/size_utils.dart';
 
 class CustomPlanWidget extends StatelessWidget {

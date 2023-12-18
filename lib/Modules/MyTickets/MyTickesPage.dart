@@ -1,12 +1,12 @@
+import 'package:TicketOs/Core/localization/app_localization.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Core/localization/app_localization.dart';
-import 'package:tickets/models/profile_model.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
+import '../../models/profile_model.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/TicketsBloc.dart';

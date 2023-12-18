@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tickets/Modules/Login/LoginPage.dart';
-import 'package:tickets/Modules/Profiles/ProfilesPage.dart';
 
 import '../../Modules/Home/HomePage.dart';
 import '../../Modules/MyTickets/MyTickesPage.dart';
 import '../../Modules/settings/SettingsPage.dart';
+import '../Modules/Login/LoginPage.dart';
+import '../Modules/Profiles/ProfilesPage.dart';
 
 
 

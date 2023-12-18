@@ -1,10 +1,9 @@
-import 'package:tickets/models/dchcp_server_model.dart';
-
 import '../../../../Core/Values/Enums.dart';
 import '../../../../Core/utils/TextsInputs.dart';
 import '../../../Core/utils/progress_dialog_utils.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../../Data/Services/ftp_service.dart';
+import '../../../models/dchcp_server_model.dart';
 import '../../Alerts/AlertCubit.dart';
 import '../../Session/SessionCubit.dart';
 import 'LoginState.dart';

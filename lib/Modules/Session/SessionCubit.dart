@@ -1,14 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/services.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:tickets/Data/Services/printer_service.dart';
-import 'package:tickets/Data/Provider/TicketProvider.dart';
-import 'package:tickets/models/config_model.dart';
-
 import '../../Core/Values/Enums.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
+import '../../Data/Provider/TicketProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
 import '../../Data/Services/ftp_service.dart';
+import '../../Data/Services/printer_service.dart';
+import '../../models/config_model.dart';
 import '../Alerts/AlertCubit.dart';
 
 part 'SessionState.dart';

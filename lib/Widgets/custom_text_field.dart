@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:tickets/Core/Values/Colors.dart';
+
+import '../Core/Values/Colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final String initialValue, title, leathig;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tickets/Core/Values/Colors.dart';
 import '../../Data/Services/navigator_service.dart';
+import '../Values/Colors.dart';
 
 class ProgressDialogUtils {
   static bool isProgressVisible = false;

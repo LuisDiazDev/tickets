@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Modules/Profiles/bloc/ProfileBloc.dart';
-import 'package:tickets/models/profile_model.dart';
 import 'package:badges/badges.dart' as badges;
 
 import '../../../Core/Values/Colors.dart';
+import '../../../models/profile_model.dart';
+import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
 export '/core/utils/size_utils.dart';
 

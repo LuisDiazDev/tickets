@@ -1,10 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Core/Values/Colors.dart';
-import 'package:tickets/models/ticket_model.dart';
 import 'package:badges/badges.dart' as badges;
 
+import '../../../Core/Values/Colors.dart';
+import '../../../models/ticket_model.dart';
 import '../bloc/TicketsBloc.dart';
 import '../bloc/TicketsEvents.dart';
 

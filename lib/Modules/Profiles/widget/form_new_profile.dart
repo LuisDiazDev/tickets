@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:tickets/Modules/Profiles/bloc/ProfileBloc.dart';
 
 import '../../../Core/Values/Colors.dart';
 import '../../../Widgets/check_box.dart';
@@ -8,6 +7,7 @@ import '../../../Widgets/custom_dropdown.dart';
 import '../../../Widgets/custom_text_field.dart';
 import '../../../models/config_model.dart';
 import '../../../models/profile_model.dart';
+import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
 
 class FormNewProfileWidget extends StatefulWidget {

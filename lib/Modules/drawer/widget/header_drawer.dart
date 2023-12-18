@@ -1,5 +1,5 @@
+import 'package:TicketOs/Core/localization/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:tickets/Core/localization/app_localization.dart';
 
 import '../../../Core/Values/Colors.dart';
 import 'package:gap/gap.dart';

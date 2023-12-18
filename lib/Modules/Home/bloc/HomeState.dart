@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:tickets/models/profile_model.dart';
-import 'package:tickets/models/ticket_model.dart';
+
+import '../../../models/profile_model.dart';
+import '../../../models/ticket_model.dart';
 
 
 class HomeState extends Equatable {

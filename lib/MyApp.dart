@@ -7,7 +7,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'Core/Theme/Theme.dart';
 import 'Core/Values/Enums.dart';
 import 'Core/localization/app_localization.dart';
-import 'Data/Services/ftp_service.dart';
 import 'Data/Services/navigator_service.dart';
 import 'Data/Services/printer_service.dart';
 import 'Data/Provider/restApiProvider.dart';

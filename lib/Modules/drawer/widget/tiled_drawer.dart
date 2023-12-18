@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:tickets/Core/Values/Colors.dart';
+
+import '../../../Core/Values/Colors.dart';
 
 class TileDrawer extends StatelessWidget {
 

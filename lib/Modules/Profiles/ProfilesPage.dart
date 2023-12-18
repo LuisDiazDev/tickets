@@ -1,11 +1,11 @@
+import 'package:TicketOs/Modules/Profiles/widget/form_new_profile.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Modules/Profiles/widget/form_new_profile.dart';
-import 'package:tickets/models/profile_model.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../Widgets/custom_appbar.dart';
+import '../../models/profile_model.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/ProfileBloc.dart';

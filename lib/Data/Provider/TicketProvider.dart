@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:tickets/models/dchcp_server_model.dart';
-import 'package:tickets/models/profile_model.dart';
-import 'package:tickets/models/ticket_model.dart';
 
+import '../../models/dchcp_server_model.dart';
 import '../../models/profile_hotspot_model.dart';
+import '../../models/profile_model.dart';
+import '../../models/ticket_model.dart';
 import 'restApiProvider.dart';
 
 class TicketProvider {

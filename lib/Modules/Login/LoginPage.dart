@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tickets/Core/Values/Colors.dart';
 
+import '../../Core/Values/Colors.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import 'bloc/LoginBloc.dart';

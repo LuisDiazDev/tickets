@@ -1,21 +1,17 @@
 import 'dart:io';
 
+import 'package:TicketOs/Core/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tickets/Core/localization/app_localization.dart';
-import 'package:tickets/Data/Services/navigator_service.dart';
-import 'package:tickets/Modules/Alerts/AlertCubit.dart';
-import 'package:tickets/models/config_model.dart';
 import '../../Core/Values/Colors.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
-import '../../Data/Provider/TicketProvider.dart';
 import '../../Data/Services/ftp_service.dart';
-import '../../Routes/Route.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
+import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
 import 'print_setting.dart';
