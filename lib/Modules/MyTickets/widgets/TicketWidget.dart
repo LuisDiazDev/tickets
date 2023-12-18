@@ -1,8 +1,8 @@
+import 'package:TicketOs/Modules/Session/SessionCubit.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:badges/badges.dart' as badges;
-
 import '../../../Core/Values/Colors.dart';
 import '../../../models/ticket_model.dart';
 import '../bloc/TicketsBloc.dart';
@@ -18,6 +18,7 @@ class CustomTicketWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<TicketsBloc>(context);
+    final session = BlocProvider.of<SessionCubit>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipPath(
@@ -60,7 +61,7 @@ class CustomTicketWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     const badges.Badge(
                       badgeContent: Text(
                         '01',
@@ -76,7 +77,7 @@ class CustomTicketWidget extends StatelessWidget {
                         size: 32,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     )
                   ],
@@ -89,7 +90,7 @@ class CustomTicketWidget extends StatelessWidget {
                        padding: const EdgeInsets.only(top: 8.0, left: 10),
                        child: TextButton(
                          onPressed: () {
-                           print("imprimir");
+                           // PrinterService().printerB(user: ticket.name??"",configModel: session.state.cfg);
                          },
                          child: const Text(
                            "Imprimir",
@@ -102,14 +103,14 @@ class CustomTicketWidget extends StatelessWidget {
                        ),
                      ),
                    ),
-                   Spacer(),
+                   const Spacer(),
                    Visibility(
                      visible: valid(),
                      child: Padding(
                        padding: const EdgeInsets.only(top: 10.0),
                        child: IconButton(
                            padding: EdgeInsets.zero,
-                           constraints: BoxConstraints(),
+                           constraints:const BoxConstraints(),
                            onPressed: (){
                             homeBloc.add(ShareQRImage(
                                 ticket.name??"",
@@ -122,7 +123,7 @@ class CustomTicketWidget extends StatelessWidget {
                      padding: const EdgeInsets.only(left:5,top: 10.0,right: 10),
                      child:  IconButton(
                          padding: EdgeInsets.zero,
-                         constraints: BoxConstraints(),
+                         constraints: const BoxConstraints(),
                          onPressed: (){
                            homeBloc.add(DeletedTicket(ticket.id!));
                          }, icon: const Icon(EvaIcons.trashOutline,color: Colors.red,)),
