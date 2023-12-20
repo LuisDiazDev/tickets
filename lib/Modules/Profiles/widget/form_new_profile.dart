@@ -13,7 +13,8 @@ import '../bloc/ProfileEvents.dart';
 class FormNewProfileWidget extends StatefulWidget {
   final ProfileModel? current;
   final ProfileBloc bloc;
-  const FormNewProfileWidget({super.key, this.current,required this.bloc});
+
+  const FormNewProfileWidget({super.key, this.current, required this.bloc});
 
   @override
   State<FormNewProfileWidget> createState() => _FormNewProfileWidgetState();
@@ -35,16 +36,24 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   void initState() {
     super.initState();
     profile = widget.current ?? ProfileModel(name: "Nuevo Plan");
-    if(widget.current != null){
+    if (widget.current != null) {
       String currentPrice = profile.onLogin?.split(",")[4] ?? "";
       String currentDuration = profile.onLogin?.split(",")[3] ?? "";
-      initialPrice = currentPrice.split(RegExp(r"[0-9]")).last;
-      initialDuration = currentDuration.split(RegExp(r"[0-9]")).last;
-      price = currentPrice.replaceAll(initialPrice,"");
-      durationT = currentDuration.replaceAll(initialDuration,"");
-      limitSpeed = widget.current?.rateLimit != null && widget.current!.rateLimit != "";
-      if(limitSpeed){
-        var str = widget.current!.rateLimit!.toLowerCase().replaceAll("m","").split("/");
+      initialPrice = currentPrice
+          .split(RegExp(r"[0-9]"))
+          .last;
+      initialDuration = currentDuration
+          .split(RegExp(r"[0-9]"))
+          .last;
+      price = currentPrice.replaceAll(initialPrice, "");
+      durationT = currentDuration.replaceAll(initialDuration, "");
+      limitSpeed =
+          widget.current?.rateLimit != null && widget.current!.rateLimit != "";
+      if (limitSpeed) {
+        var str = widget.current!
+            .rateLimit!.toLowerCase()
+            .replaceAll("m", "")
+            .split("/");
         limitDownload = str.first;
         limitUpload = str.last;
       }
@@ -97,7 +106,8 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                     onChange: (str) {
                       price = str ?? "1";
                     },
-                    keyboard: const TextInputType.numberWithOptions(decimal: true),
+                    keyboard: const TextInputType.numberWithOptions(
+                        decimal: true),
                     title: "Precio",
                     initialDropdown: initialPrice,
                     initialString: price,
@@ -166,24 +176,32 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                       }
-                      if(durationT == "1"){
-                        durationT="1d";
+                      if (durationT == "1") {
+                        durationT = "1d";
                       }
-                      profile.onLogin = "\",rem,0.5,$durationT,$price";
+                      var validity = "1d";
+
+                      // var slock = '; [:local mac \$"mac-address"; :local srv [/ip hotspot host get [find where mac-address="\$mac"] server]; /ip hotspot user set server=\$srv [find where name=\$user]]';
+                      // var record = '; :local mac \$"mac-address"; :local time [/system clock get time ]; /system script add name="\$date-|-\$time-|-\$user-|-$price-|-\$address-|-\$mac-|-$validity-|-${profile.name}.-|-\$comment" owner="\$month\$year" source=\$date comment=RouterOs';
+                      //
+                      // var onlogin = ':put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local mode "'.$mode.'"; {:local date [ /system clock get date ];:local year [ :pick $date 7 11 ];:local month [ :pick $date 0 3 ];:local comment [ /ip hotspot user get [/ip hotspot user find where name="$user"] comment]; :local ucode [:pic $comment 0 2]; :if ($ucode = "vc" or $ucode = "up" or $comment = "") do={ /sys sch add name="$user" disable=no start-date=$date interval="' . $validity . '"; :delay 2s; :local exp [ /sys sch get [ /sys sch find where name="$user" ] next-run]; :local getxp [len $exp]; :if ($getxp = 15) do={ :local d [:pic $exp 0 6]; :local t [:pic $exp 7 16]; :local s ("/"); :local exp ("$d$s$year $t"); /ip hotspot user set comment="$exp $mode" [find where name="$user"];}; :if ($getxp = 8) do={ /ip hotspot user set comment="$date $exp $mode" [find where name="$user"];}; :if ($getxp > 15) do={ /ip hotspot user set comment="$exp $mode" [find where name="$user"];}; /sys sch remove [find where name="$user"]';
+
+                      profile.onLogin = "\",rem,0.5,$durationT,$price" + "";
                       profile.sharedUsers = cant;
                       profile.rateLimit =
-                          limitSpeed ?  "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M":"";
+                      limitSpeed ? "${limitDownload
+                          .toUpperCase()}M/${limitUpload.toUpperCase()}M" : "";
 
-                      if(widget.current != null){
+                      if (widget.current != null) {
                         widget.bloc.add(UpdateProfile(profile));
-                      }else{
-                        widget.bloc.add(NewProfile(profile,durationT));
+                      } else {
+                        widget.bloc.add(NewProfile(profile, durationT));
                       }
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                     widget.current != null ? "Modificar" : 'Crear',
-                      style:const TextStyle(
+                      widget.current != null ? "Modificar" : 'Crear',
+                      style: const TextStyle(
                           color: ColorsApp.primary,
                           fontFamily: "poppins_bold",
                           fontWeight: FontWeight.w600,

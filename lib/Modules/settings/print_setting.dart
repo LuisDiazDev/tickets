@@ -3,7 +3,7 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import '../../Core/Values/Colors.dart';
 import '../../Data/Services/printer_service.dart';
 import '../Session/SessionCubit.dart';
@@ -111,85 +111,93 @@ class PrintSettings extends StatelessWidget {
     );
   }
 
-  Future openAlertBox(BuildContext context,PrinterService printer)async{
-    sessionBloc.state.cfg!.bluetoothPrintService.startScan(timeout: Duration(seconds: 4));
+  openAlertBox(BuildContext context,PrinterService printer)async{
 
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(32.0))),
-            contentPadding: const EdgeInsets.only(top: 10.0),
-            content: SizedBox(
-              width: 300.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        "Dispositivos",
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                      Icon(
-                        EvaIcons.bluetooth,
-                        color: ColorsApp.green,
-                        size: 30.0,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
-                  const Divider(
-                    color: Colors.grey,
-                    height: 4.0,
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                    child: // get devices
-                    SingleChildScrollView(
-                      child: StreamBuilder<List<BluetoothDevice>>(
-                        stream: sessionBloc.state.cfg!.bluetoothPrintService.scanResults,
-                        initialData: const [],
-                        builder: (c, snapshot){
-                          if(!snapshot.hasData){
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return Column(
-                            children: snapshot.data!.map((bluetooth) => ListTile(
-                              title: Text(bluetooth.name??''),
-                              subtitle: Text(bluetooth.address??""),
-                              onTap: () async {
-                                sessionBloc.changeState(
-                                    sessionBloc.state.copyWith(
-                                        configModel: sessionBloc.state.cfg!.copyWith(connected: true,bluetoothDevice: bluetooth..connected=false)
-                                    )
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+    ].request();
+
+    if (true) {
+      sessionBloc.state.cfg!.bluetoothPrintService.startScan(timeout:const Duration(seconds: 4));
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
+              contentPadding: const EdgeInsets.only(top: 10.0),
+              content: SizedBox(
+                width: 300.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          "Dispositivos",
+                          style: TextStyle(fontSize: 24.0),
+                        ),
+                        Icon(
+                          EvaIcons.bluetooth,
+                          color: ColorsApp.green,
+                          size: 30.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    const Divider(
+                      color: Colors.grey,
+                      height: 4.0,
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                        child: // get devices
+                        SingleChildScrollView(
+                          child: StreamBuilder<List<BluetoothDevice>>(
+                            stream: sessionBloc.state.cfg!.bluetoothPrintService.scanResults,
+                            initialData: const [],
+                            builder: (c, snapshot){
+                              if(!snapshot.hasData){
+                                return const Center(
+                                  child: CircularProgressIndicator(),
                                 );
-                                sessionBloc.state.cfg!.bluetoothPrintService.connect(bluetooth);
-                                Navigator.pop(context);
-                              },
-                              trailing: const Icon(
-                                Icons.bluetooth,
-                                color: Colors.blue,
-                              )
-                            )).toList(),
-                          );
-                        },
-                      ),
-                    )
-                  ),
-                ],
+                              }
+                              return Column(
+                                children: snapshot.data!.map((bluetooth) => ListTile(
+                                    title: Text(bluetooth.name??''),
+                                    subtitle: Text(bluetooth.address??""),
+                                    onTap: () async {
+                                      sessionBloc.changeState(
+                                          sessionBloc.state.copyWith(
+                                              configModel: sessionBloc.state.cfg!.copyWith(connected: true,bluetoothDevice: bluetooth..connected=false)
+                                          )
+                                      );
+                                      sessionBloc.state.cfg!.bluetoothPrintService.connect(bluetooth);
+                                      Navigator.pop(context);
+                                    },
+                                    trailing: const Icon(
+                                      Icons.bluetooth,
+                                      color: Colors.blue,
+                                    )
+                                )).toList(),
+                              );
+                            },
+                          ),
+                        )
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          });
+    }
   }
 }
