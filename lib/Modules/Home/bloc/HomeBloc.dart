@@ -7,6 +7,7 @@ import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../../Routes/Route.dart';
+import '../../../Widgets/qr_dialog.dart';
 import '../../Alerts/AlertCubit.dart';
 import '../../Session/SessionCubit.dart';
 import 'HomeEvents.dart';
@@ -24,6 +25,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(load: true));
         var profiles = await provider.allProfiles();
         emit(state.copyWith(load: false, profiles: profiles));
+
+        if(profiles.isEmpty){
+          NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
+        }
       },
     );
 
@@ -32,13 +37,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if(sessionCubit.state.cfg?.connected ?? false){
           var r = await provider.newTicket(event.name, event.profile,event.duration);
           if(r.statusCode == 200 || r.statusCode == 201){
-            alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
+            // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
+            TicketDialogUtils.showDialogT(
+                configModel: sessionCubit.state.cfg!,
+                user: event.name,
+                price: event.price,
+                duration: event.duration
+            );
+            alertCubit.showAlertInfo(
+              title: "Imprimiendo",
+              subtitle: "Espere un momento",
+            );
           }else{
             alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
           }
           emit(state.copyWith(load: false,));
 
-          PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg);
+          PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
         }else{
           alertCubit.showDialog("Error", "No se ha detectado ninguna impresora conectada");
           NavigatorService.pushNamedAndRemoveUntil(Routes.settings);

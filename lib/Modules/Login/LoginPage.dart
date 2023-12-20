@@ -82,6 +82,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                       const SizedBox(width: double.infinity,height: 15),
                       CustomsTextFields(
                         hintText: 'Ip mikrotik',
+                        initial: "192.168.20.5",
                         suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
                         onChange: (host){
                           loginBloc.add(ChangeHost(host));

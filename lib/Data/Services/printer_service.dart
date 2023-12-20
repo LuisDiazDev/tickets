@@ -1,10 +1,11 @@
+import 'package:TicketOs/models/profile_model.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 
 import '../../models/config_model.dart';
 
 class PrinterService {
   static PrinterService? _instance;
-
+  static bool isProgress = false;
   factory PrinterService() {
     _instance ??= PrinterService._();
     return _instance!;
@@ -12,51 +13,104 @@ class PrinterService {
 
   PrinterService._();
 
-  void printerB({String user = "", ConfigModel? configModel}) async {
-    Map<String, dynamic> config = {};
+  void printerB({String user = "", ConfigModel? configModel,String price="",String duration=""}) async {
+    Map<String, dynamic> config = {
+      'width':0,
+      'height':70,
+      "font size":12,
+      'gap':2
+    };
 
-    List<LineText> list = [];
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: configModel?.nameBusiness ?? "",
-        weight: 1,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1));
-    list.add(LineText(linefeed: 1));
-    list.add(LineText(
+    if(!isProgress){
+      isProgress = true;
+      List<LineText> list = [];
+      if(configModel?.nameBusiness != null && configModel?.nameBusiness != ""){
+        list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: configModel?.nameBusiness ?? "",
+            weight: 2,
+            width: 2,
+            height: 2,
+            align: LineText.ALIGN_CENTER,
+            linefeed: 1
+        ));
+      }
+      list.add(LineText(
         type: LineText.TYPE_QRCODE,
         content:
-            'http://${configModel?.dnsNamed}/login?user=$user&password=$user',
-        size: 10,
+        'http://${configModel?.dnsNamed}/login?user=$user&password=$user',
+        size: 5,
         align: LineText.ALIGN_CENTER,
-        linefeed: 1));
-    list.add(LineText(linefeed: 1));
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: 'usuario=$user pass=$user',
-        weight: 0,
-        align: LineText.ALIGN_LEFT,
-        linefeed: 1));
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: 'Contacto ${configModel?.contact}',
-        weight: 0,
-        align: LineText.ALIGN_LEFT,
-        linefeed: 1));
-    // Getting Started
-    if(configModel?.pathLogo != ""){
-      // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
-    }
-    if (configModel?.connected ?? false) {
-      // List<LineText> list1 = [];
-      // ByteData data = await rootBundle.load("assets/guide3.png");
-      // List<int> imageBytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-      // String base64Image = base64Encode(imageBytes);
-      // list1.add(LineText(type: LineText.TYPE_IMAGE, x:10, y:10, content: base64Image,));
+        // linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: 'Para navegar entra en',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: configModel?.dnsNamed ??"wifi.com",
+          weight: 1,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: 'usuario           clave',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '$user             $user',
+          weight: 1,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: 'Precio           Duracion',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '$price             $duration',
+          weight: 1,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      if(configModel?.contact != null && configModel?.contact != ""){
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: 'Contacto ${configModel?.contact}',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          // linefeed: 1
+        ));
+      }
+
+      // Getting Started
+      if(configModel?.pathLogo != ""){
+        // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
+      }
+      if (configModel?.connected ?? false) {
+        // List<LineText> list1 = [];
+        // ByteData data = await rootBundle.load("assets/guide3.png");
+        // List<int> imageBytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+        // String base64Image = base64Encode(imageBytes);
+        // list1.add(LineText(type: LineText.TYPE_IMAGE, x:10, y:10, content: base64Image,));
 
 
-      await configModel?.bluetoothPrintService.printReceipt(config, list);
-      // await bluetoothPrintService.printReceipt(config, list1);
+        await configModel?.bluetoothPrintService.printReceipt(config, list);
+        // await bluetoothPrintService.printReceipt(config, list1);
+      }
+      isProgress = !isProgress;
     }
   }
 

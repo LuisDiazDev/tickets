@@ -12,6 +12,7 @@ class GeneratedTicket extends HomeEvent{
   final String profile;
   final String name;
   final String duration;
-  GeneratedTicket(this.profile,this.name,this.duration);
+  final String price;
+  GeneratedTicket(this.profile,this.name,this.duration,this.price);
 }
 

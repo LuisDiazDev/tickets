@@ -22,7 +22,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<NewProfile>(
           (event, emit) async {
         emit(state.copyWith(load: true));
-        var r = await provider.newProfile(event.newProfile);
+        var r = await provider.newProfile(event.newProfile,event.duration);
 
         if(r.statusCode == 200 || r.statusCode == 201){
           var data = await provider.allProfiles();

@@ -21,14 +21,15 @@ class ConfigModel {
   final BluetoothPrint bluetoothPrintService = BluetoothPrint.instance;
 
   ConfigModel(
-      {this.dnsNamed = "ticketwifi.net",
+      {
+        this.dnsNamed = "",
       this.contact = "",
       this.dchcp = "",
       this.port = "3000",
       this.connected = false,
       this.nameBusiness = "",
       this.password = "1234",
-      this.host = "192.168.10.2",
+      this.host = "192.168.20.5",
       this.user = "tickets",
       this.shareUser = "1",
       this.pathLogo = "",
@@ -78,12 +79,6 @@ class ConfigModel {
         maxUpload: maxUpload ?? this.maxUpload,
         bluetoothDevice: bluetoothDevice ?? this.bluetoothDevice);
   }
-
-  static ConfigModel get defaultConfig => ConfigModel(
-      user: "tickets",
-      host: "192.168.20.5",
-      password: "1234",
-      dnsNamed: "serviciotickets.com");
 
   factory ConfigModel.fromJson(Map<String, dynamic> json) => ConfigModel(
       connected: json["connected"],
