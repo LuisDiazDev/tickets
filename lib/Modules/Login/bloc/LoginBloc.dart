@@ -56,10 +56,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         try {
           ProgressDialogUtils.showProgressDialog();
           TicketProvider provider = TicketProvider();
+          var host = event.host == "" ? "192.168.20.5" : event.host;
           var r = await provider.allDchcpServer(
             user: event.email,
             pass: event.password,
-            host: event.host
+            host: host
           );
 
           emit(state.copyWith(
@@ -69,15 +70,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           if(r is !bool){
             r as List;
             DchcpServerModel dchcpServer = (r.first) ?? DchcpServerModel();
+            var r2 = await provider.allProfilesHotspot();
             sessionCubit.changeState(sessionCubit.state.copyWith(
               isAuthenticated: true,
               sessionStatus: SessionStatus.started,
               state: "logged",
               configModel: sessionCubit.state.cfg!.copyWith(
-                host: event.host,
+                host: host,
                 user: event.email,
                 password: event.password,
-                dchcp:dchcpServer.name
+                dchcp:dchcpServer.name,
+                dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
               )
               // sessionStatus: SessionStatus.started,
             ));
@@ -91,14 +94,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             emit(const LoginState());
           }else{
             alertCubit.showAlertInfo(
-              title: "Verification Failed",
-              subtitle: "Invalid credentials",
+              title: "Error",
+              subtitle: "Datos incorrectos",
             );
           }
         } catch (e) {
           alertCubit.showAlertInfo(
-            title: "Verification Failed",
-            subtitle: "Invalid credentials",
+            title: "Error",
+            subtitle: "Datos incorrectos",
           );
         }finally{
           emit(state.copyWith(

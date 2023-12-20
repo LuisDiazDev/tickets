@@ -177,7 +177,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       if(widget.current != null){
                         widget.bloc.add(UpdateProfile(profile));
                       }else{
-                        widget.bloc.add(NewProfile(profile));
+                        widget.bloc.add(NewProfile(profile,durationT));
                       }
                       Navigator.of(context).pop();
                     },

@@ -77,9 +77,10 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                 child: Wrap(
                   children: [
                     ...state.tickets
-                        .where((t) => t.profile != "" && t.profile != "default")
+                        .where((t) => t.profile != "" && t.profile != "default" && !t.name!.contains("-"))
                         .map((e) => CustomTicketWidget(
                       ticket: e,
+                      profile: state.profiles.firstWhere((p) => p.name == e.profile),
                     ))
                         .toList(),
                     const SizedBox(

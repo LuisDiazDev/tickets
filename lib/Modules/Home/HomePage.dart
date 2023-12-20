@@ -96,7 +96,12 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                   profile: e,
                                   generatedUser: (user) {
                                     home.add(
-                                        GeneratedTicket(e.name ?? "", user,e.onLogin?.split(",")[3]??""));
+                                        GeneratedTicket(
+                                            e.name ?? "",
+                                            user,
+                                            e.onLogin?.split(",")[3]??"",
+                                            e.onLogin?.split(",")[4]??"")
+                                    );
                                   },
                                 ))
                             .toList(),

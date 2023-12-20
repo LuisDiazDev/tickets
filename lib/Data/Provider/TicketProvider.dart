@@ -19,6 +19,7 @@ class TicketProvider {
         var decode = ticketModelFromJson(response.body);
         return decode;
       } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -34,6 +35,7 @@ class TicketProvider {
         var decode = profileModelFromJson(response.body);
         return decode;
       } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -55,9 +57,11 @@ class TicketProvider {
         var decode = dchcpServerModelFromJson(response.body);
         return decode;
       } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }else{
+      // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
       return false;
     }
   }
@@ -70,8 +74,11 @@ class TicketProvider {
         var decode = profileHotspotModelFromJson(response.body);
         return decode;
       } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
+    }else{
+      // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
     }
 
     return [];
@@ -106,15 +113,16 @@ class TicketProvider {
     return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
   }
 
-  Future<Response> newProfile(ProfileModel profile) async {
+  Future<Response> newProfile(ProfileModel profile,String duration) async {
     return await restApi.post(url: "/ip/hotspot/user/profile/add", body: {
       "name": profile.name,
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
       "shared-users": profile.sharedUsers,
       "status-autorefresh": "1m",
+      "mac-cookie-timeout":duration,
       "on-login": profile.onLogin,
-      "parent-queue": ""
+      "parent-queue": "",
     });
   }
 

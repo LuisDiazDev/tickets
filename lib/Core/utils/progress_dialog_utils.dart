@@ -8,8 +8,7 @@ class ProgressDialogUtils {
   ///common method for showing progress dialog
   static void showProgressDialog(
       {BuildContext? context, isCancellable = false}) async {
-    if (!isProgressVisible &&
-        NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
+    if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
       showDialog(
           barrierDismissible: isCancellable,
           context: NavigatorService.navigatorKey.currentState!.overlay!.context,

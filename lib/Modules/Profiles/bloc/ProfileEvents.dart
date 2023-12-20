@@ -8,7 +8,8 @@ class FetchData extends ProfileEvent {}
 
 class NewProfile extends ProfileEvent {
   final ProfileModel newProfile;
-  NewProfile(this.newProfile);
+  final String duration;
+  NewProfile(this.newProfile,this.duration);
 }
 
 class UpdateProfile extends ProfileEvent {

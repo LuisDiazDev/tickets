@@ -46,6 +46,7 @@ class RestApiProvider {
           //todo
           headers: {'authorization': basicAuth});
     } catch (e) {
+      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response(e.toString(), 500);
     }
   }
@@ -67,6 +68,7 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
+      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response(e.toString(), 500);
     }
   }
@@ -88,6 +90,7 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
+      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response("error", 500);
     }
   }
@@ -110,6 +113,7 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
+      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response("error", 500);
     }
   }
