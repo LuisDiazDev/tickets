@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head><title>FastNet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="expires" content="-1"/>
+    <meta name="description" content="Mikrotik Templates">
+    <meta name="keywords" content="MikroThemes, Mikrotik">
+    <meta name="author" content="Loogika S.A.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="libs/boostrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="libs/jquery/jquery-3.3.1.min.js"></script>
+    <script src="libs/boostrap/js/bootstrap.min.js"></script>
+    <script src="md5.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        // Intent para abrir la cámara en dispositivos Samsung
+        var samsungCameraIntent = "intent://scan/#Intent;scheme=zxing;package=com.sec.android.app.camera;S.browser_fallback_url=http%3A%2F%2Fwww.loogika.com;end";
+
+        $("#openScanApp").click(function () {
+            $("#content").attr("src", samsungCameraIntent);
+        });
+
+        // Mostrar/Ocultar botones dependiendo del dispositivo
+        if (navigator.appVersion.indexOf("Android") != -1) {
+            $("#submitButtonAndroid").show();
+            $("#submitButton").hide();
+        } else {
+            $("#submitButtonAndroid").hide();
+            $("#submitButton").show();
+        }
+
+        // Funcionalidad para copiar enlace
+        $("#copyLink").click(function (e) {
+            e.preventDefault();
+            var copyText = $("#linkApp").attr("href");
+
+            document.addEventListener("copy", function(e) {
+                e.clipboardData.setData("text/plain", copyText);
+                e.preventDefault();
+            }, true);
+
+            document.execCommand("copy");
+        });
+    });
+    </script>
+    <style type="text/css">
+html {
+  background: url('img/image_background_2.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100%; 
+        }
+ body {
+  background-color: rgba(255,255,255,0.0);
+  height: auto;
+  min-height: 100%;} .input-group-text {
+            background-color: #FFFFFF
+        }
+        .card-panel {
+            padding: 2px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 0px !important;
+            box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.1) !important;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>$(if chap-id)
+<form name="sendin" action="$(link-login-only)" method="post">
+    <input type="hidden" name="username"/>
+    <input type="hidden" name="password"/>
+    <input type="hidden" name="dst" value="$(link-orig)"/>
+    <input type="hidden" name="popup" value="false"/>
+</form>
+<script type="text/javascript">
+function doLogin() {
+document.sendin.username.value = document.login.password.value.toLowerCase();
+document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value.toLowerCase() + '$(chap-challenge)');
+document.sendin.submit();
+return false;
+}
+
+</script>
+$(endif)
+<main role="main">
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-12 col-md-6 mx-auto text-center pl-1 pr-1">
+                <svg style="width:86px;height:86px" viewBox="0 0 24 24">
+                    <path fill="#1976d2"
+                          d="M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z"/>
+                </svg>
+            </div>
+        </div>
+        $(if error)
+        <div class="row">
+            <div class="col-12 col-md-6 mx-auto pl-2 pr-2">
+                <div class="alert alert-danger" role="alert">$(error)</div>
+            </div>
+        </div>
+        $(endif)
+        <div class="row">
+            <div class="col-12 col-md-6 mx-auto pl-1 pr-1">
+                <style type="text/css">.form-signin {
+  padding: 0px 0px 0px 0px;
+  margin: 2px 10px 2px 10px;
+ background-color: rgba(0,0,0,0.0);
+ border-radius: 0px 0px 0px 0px !important;
+ border: 0px solid rgba(0,0,0,0.09803922);
+ height: auto;
+        } 
+.form-control {
+border: 1px solid rgba(117,117,117,1.0); 
+ border-radius: 5px; 
+ text-align: center; 
+ font-size: nullpx;
+ background-color: rgba(255,255,255,0.4862745); 
+ color: rgba(255,255,255,1.0) !important; 
+ } .form-control:focus {
+ color:rgba(255,255,255,1.0);
+ background-color: rgba(255,255,255,0.4862745); 
+ border-color: rgba(117,117,117,1.0); 
+ outline:0;
+ box-shadow: 0 0 10px #9ecaed;
+}
+
+::placeholder {
+    color: rgba(255,255,255,1.0) !important; 
+} .btn-login {
+ border-radius: 5px; 
+ flex: 1 1 auto;  font-size: nullpx;
+ color: rgba(255,255,255,1.0);
+ background-color: rgba(25,118,210,0.84705883);
+ border: 1px solid rgba(25,118,210,1.0); 
+        }
+
+ .btn-login-border-right {
+                            border-top-right-radius: 0 ;
+                            border-bottom-right-radius: 0 ;
+                        }  .btn-login:hover,
+ .btn-login:active {
+ color: rgba(255,255,255,1.0);
+ background-color: rgba(25,118,210,0.84705883);
+ border: 1px solid rgba(25,118,210,1.0); 
+ box-shadow: 0 0 10px #9ecaed;
+        }.btn-option {
+ border-radius: 5px; 
+                            flex: 1 1 auto;
+ font-size: nullpx;
+ color: rgba(255,255,255,1.0);
+ background-color: rgba(78,85,91,0.84705883);
+ border: 1px solid rgba(78,85,91,0.84705883); 
+                        }
+
+                        .btn-option:not(:disabled):not(.disabled).active,
+                        .btn-option:not(:disabled):not(.disabled):active,
+                        .show>.btn-option.dropdown-toggle {
+ color: rgba(255,255,255,1.0);
+ background-color: rgba(25,118,210,0.84705883);
+ border-color: rgba(25,118,210,1.0);
+                        }
+                </style>
+                <script type="text/javascript">
+        $(function () {
+  $("#panelPassword").hide();
+
+            $("#optionPassword").click(function () {
+                $("#panelPassword").show();
+            });        });
+
+                </script>
+                <form class="form-signin" name="login" method="post" action="$(link-login-only)"
+                      $(if chap-id) onSubmit="return doLogin()" $(endif)><input type="hidden"
+                                                                                name="dst"
+                                                                                value="$(link-orig)"/><input
+                        type="hidden" name="popup" value="false"/>
+                    <div class="form-group ">
+                        <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                            <label class="btn btn-option w-50 " id="optionPassword">
+                                <input type="radio" name="options">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                          d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"/>
+                                </svg>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="panelPassword">
+                        <div class="input-group"><input type="text" class="form-control "
+                                                        name="password" id="inputPassword"
+                                                        placeholder="Contraseña"></div>
+                    </div>
+                    <div id="submitButtonAndroid" class="input-group mb-3">
+                        <button class="btn btn-login btn-login-border-right " type="submit">
+                            Acceder
+                        </button>
+                        <div class="input-group-append">
+                            <button id="openScanApp" type="button" onclick="startScan()"
+                                    class="btn btn-login" data-toggle="modal"
+                                    data-target="#exampleModal3">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     version="1.1" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="rgba(255,255,255,1.0)"
+                                          d="M4,4H10V10H4V4M20,4V10H14V4H20M14,15H16V13H14V11H16V13H18V11H20V13H18V15H20V18H18V20H16V18H13V20H11V16H14V15M16,15V18H18V15H16M4,20V14H10V20H4M6,6V8H8V6H6M16,6V8H18V6H16M6,16V18H8V16H6M4,11H6V13H4V11M9,11H13V15H11V13H9V11M11,6H13V10H11V6M2,2V6H0V2A2,2 0 0,1 2,0H6V2H2M22,0A2,2 0 0,1 24,2V6H22V2H18V0H22M2,18V22H6V24H2A2,2 0 0,1 0,22V18H2M22,22V18H24V22A2,2 0 0,1 22,24H18V22H22Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Escanear código
+                                        QR</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p>
+                                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" idth="64" height="64" viewBox="0 0 91.9 97" enable-background="new 0 0 91.9 97" xml:space="preserve"> <path
+                                                fill="#010002" stroke="#000000"
+                                                stroke-miterlimit="10"
+                                                d="M79.4,96.5H12.5c-6.6,0-12-5.4-12-12v-72c0-6.6,5.4-12,12-12h66.9 c6.6,0,12,5.4,12,12v72C91.4,91.1,86,96.5,79.4,96.5z"/> <path
+                                                fill="#FFFFFF"
+                                                d="M30.4,30.9h12.1V43H30.4V30.9 M62.6,30.9V43H50.5V30.9H62.6 M50.5,53h4v-4h-4v-4h4v4h4v-4h4v4h-4v4h4v6h-4v4 h-4v-4h-6v4h-4V55h6V53 M54.6,53v6h4v-6H54.6 M30.4,63.1V51h12.1v12.1H30.4 M34.4,34.9v4h4v-4H34.4 M54.6,34.9v4h4v-4H54.6 M34.4,55 v4h4v-4H34.4 M30.4,45h4v4h-4V45 M40.5,45h8.1V53h-4v-4h-4V45 M44.5,34.9h4V43h-4V34.9 M26.4,26.8v8.1h-4v-8.1c0-2.2,1.8-4,4-4h8.1 v4H26.4 M66.7,22.8c2.2,0,4,1.8,4,4v8.1h-4v-8.1h-8.1v-4H66.7 M26.4,59.1v8.1h8.1v4h-8.1c-2.2,0-4-1.8-4-4v-8.1H26.4 M66.7,67.1 v-8.1h4v8.1c0,2.2-1.8,4-4,4h-8.1v-4H66.7z"/>
+                                        </svg>
+                                    </p>
+                                    <iframe class="embed-responsive-item" id="content" width="0"
+                                            height="0"></iframe>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Cerrar
+                                    </button>
+                                    <a id="linkApp"
+                                       href="http://34.238.198.216/loogika-repository/apps/scanner/scanner.apk"
+                                       type="button" class="btn btn-primary">Descargar Scanner</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script type="text/javascript">
+document.login.password.focus();
+</script>
+</body>
+</html>

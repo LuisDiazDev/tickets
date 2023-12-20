@@ -18,6 +18,9 @@ class CustomProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProfileBloc profileBloc = BlocProvider.of<ProfileBloc>(context);
+    var sp = profile.onLogin?.split(",") ?? [];
+    var duration = sp.length >= 4 ? sp[3] : "";
+    var price = sp.length >= 5 ? sp[4] : "";
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -45,12 +48,12 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: Visibility(
-                  visible: profile.onLogin?.split(",")[3] != null,
+                  visible: sp.length >= 4,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: badges.Badge(
                       badgeContent: Text(
-                        profile.onLogin?.split(",")[3] ?? "",
+                        duration,
                         style: const TextStyle(
                             color: ColorsApp.primary, fontSize: 14),
                       ),
@@ -58,7 +61,7 @@ class CustomProfile extends StatelessWidget {
                         badgeColor: ColorsApp.secondary,
                       ),
                       child: Icon(
-                        getIcon(profile.onLogin?.split(",")[3] ?? ""),
+                        getIcon(duration),
                         color: ColorsApp.primary,
                         size: 32,
                       ),
@@ -69,9 +72,7 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  profile.onLogin?.split(",")[4] != null
-                      ? "${profile.onLogin?.split(",")[4]}"
-                      : "",
+                  price,
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,

@@ -230,7 +230,7 @@ class SettingsPage extends StatelessWidget {
                     onPressed: ()async {
                       await sessionBloc.checkConnection(alertBloc);
                     },
-                    child: const Text("Comprobar Conexion",
+                    child: const Text("Comprobar Conexión",
                         style: TextStyle(
                             color: ColorsApp.primary,
                             fontFamily: 'poppins_normal',

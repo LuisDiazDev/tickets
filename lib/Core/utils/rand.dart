@@ -2,10 +2,10 @@
 import 'dart:math';
 
 String generateUser() {
-  String upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  String lower = 'abcdefghijklmnopqrstuvwxyz';
-  String numbers = '1234567890';
-  int passLength = 4;
+  String upper = '';
+  String lower = 'abcdefghkmnpqrstuvwxyz';
+  String numbers = '23456789';
+  int passLength = 5;
   String seed = upper + lower + numbers;
   String user = '';
   List<String> list = seed.split('').toList();

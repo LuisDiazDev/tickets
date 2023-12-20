@@ -114,6 +114,13 @@ class TicketProvider {
   }
 
   Future<Response> newProfile(ProfileModel profile,String duration) async {
+    var p = await allProfiles();
+    for (var i = 0; i < p.length; i++) {
+      if(p[i].name == profile.name){
+        profile.name = "${profile.name} (copy)";
+        return newProfile(profile,duration);
+      }
+    }
     return await restApi.post(url: "/ip/hotspot/user/profile/add", body: {
       "name": profile.name,
       "address-pool": "dhcp",
@@ -122,7 +129,7 @@ class TicketProvider {
       "status-autorefresh": "1m",
       "mac-cookie-timeout":duration,
       "on-login": profile.onLogin,
-      "parent-queue": "",
+      // "parent-queue": "",
     });
   }
 
@@ -134,7 +141,7 @@ class TicketProvider {
       "shared-users": profile.sharedUsers,
       "status-autorefresh": "1m",
       "on-login": profile.onLogin,
-      "parent-queue": ""
+      // "parent-queue": ""
     });
   }
 }

@@ -75,11 +75,11 @@ class SessionCubit extends HydratedCubit<SessionState> {
     var r =await provider.allProfilesHotspot();
     ProgressDialogUtils.hideProgressDialog();
     if(r.isNotEmpty){
-        alertCubit.showDialog("Conectado", "se extablecio la conexion");
+        alertCubit.showDialog("Conectado", "se estableció la conexión");
     }else{
       alertCubit.showAlertInfo(title: "Ah ocurrido un error",subtitle: ""
           "1. revise que el mikrotik este encendido"
-          "2. chequee la direccion del mikrotik y sus credemnciales sean correctas");
+          "2. chequee la direccion del mikrotik y que las credenciales sean correctas");
     }
 
   }

@@ -34,6 +34,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<GeneratedTicket>(
       (event, emit) async {
+        if(!(sessionCubit.state.cfg?.connected ?? false)){
+          if (sessionCubit.state.cfg?.bluetoothDevice != null) {
+            await sessionCubit.state.cfg?.bluetoothPrintService.connect(sessionCubit.state.cfg!.bluetoothDevice!);
+            sessionCubit.state.cfg?.connected = true;
+          }
+        }
         if(sessionCubit.state.cfg?.connected ?? false){
           var r = await provider.newTicket(event.name, event.profile,event.duration);
           if(r.statusCode == 200 || r.statusCode == 201){

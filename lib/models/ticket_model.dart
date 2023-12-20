@@ -54,6 +54,18 @@ class TicketModel {
     profile: json["profile"],
   );
 
+  String getDownloadedInMB(){
+    var bytes = int.parse(bytesIn?? "0");
+    var mb = bytes / 1024 / 1024;
+    return mb.toStringAsFixed(2);
+  }
+
+  String getUploadedInMB(){
+    var bytes = int.parse(bytesOut?? "0");
+    var mb = bytes / 1024 / 1024;
+    return mb.toStringAsFixed(2);
+  }
+
   Map<String, dynamic> toJson() => {
     ".id": id,
     "bytes-in": bytesIn,

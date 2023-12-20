@@ -13,6 +13,7 @@ class CustomPlanWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var sp = profile.onLogin!.split(",");
     return GestureDetector(
       onTap: () async {
         var user = generateUser();
@@ -43,30 +44,35 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: Visibility(
-                  visible: profile.onLogin?.split(",")[3] != null,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: badges.Badge(
-                      badgeContent: Text(
-                        profile.onLogin?.split(",")[3]??"",
-                        style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
-                      ),
-                      badgeStyle: const badges.BadgeStyle(
-                        badgeColor: ColorsApp.secondary,
-                      ),
-                      child: Icon(
-                        getIcon(profile.onLogin?.split(",")[3]??""),
-                        color: ColorsApp.primary,
-                        size: 32,
-                      ),
-                    ),
+                  visible: sp.length >= 4,
+                  child: Builder(
+                    builder: (context) {
+                      var text = sp[3]??"";
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 40),
+                        child: badges.Badge(
+                          badgeContent: Text(
+                            text,
+                            style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
+                          ),
+                          badgeStyle: const badges.BadgeStyle(
+                            badgeColor: ColorsApp.secondary,
+                          ),
+                          child: Icon(
+                            getIcon(text),
+                            color: ColorsApp.primary,
+                            size: 32,
+                          ),
+                        ),
+                      );
+                    }
                   ),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                    profile.onLogin?.split(",")[4] != null ? "${profile.onLogin?.split(",")[4]}":"",
+                    sp.length >4 ? sp[4]:"",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,
