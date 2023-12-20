@@ -72,7 +72,7 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                    sp.length >4 ? sp[4]:"",
+                    sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,

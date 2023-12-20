@@ -14,6 +14,7 @@ class PrinterService {
   PrinterService._();
 
   void printerB({String user = "", ConfigModel? configModel,String price="",String duration=""}) async {
+    price = price.replaceAll("S", "\$");
     Map<String, dynamic> config = {
       'width':0,
       'height':70,

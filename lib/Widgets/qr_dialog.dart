@@ -152,7 +152,7 @@ class TicketDialogUtils {
                                         ),
                                       ),
                                       Text(
-                                        price,
+                                        price.replaceAll("S", "\$"),
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
                                           fontFamily: 'poppins_bold',

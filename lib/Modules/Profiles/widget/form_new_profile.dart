@@ -24,7 +24,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   late ProfileModel profile;
   String cant = "1",
       initialDuration = "d",
-      initialPrice = "\$",
+      initialPrice = "S",
       durationT = "1",
       price = "1",
       limitUpload = "1",
@@ -179,14 +179,17 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       if (durationT == "1") {
                         durationT = "1d";
                       }
-                      var validity = "1d";
+                      if (price == "1") {
+                        price = "1S";
+                      }
+                      // var validity = "1d";
+                      // var lock = '; [:local mac \$"mac-address"; /ip hotspot user set mac-address=\$mac [find where name=\$user]]';
+                      // var sLock = '; [:local mac \$"mac-address"; :local srv [/ip hotspot host get [find where mac-address="\$mac"] server]; /ip hotspot user set server=\$srv [find where name=\$user]]';
+                      // var record = '; :local mac \$"mac-address"; :local time [/system clock get time ]; /system script add name="\$date-|-\$time-|-\$user-|-$price-|-\$address-|-\$mac-|-$durationT-|-${profile.name}.-|-\$comment" owner="\$month\$year" source=\$date comment=RouterOs';
+                      var remove = '; {put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
+                      // var onLogin = ':put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local mode "X"; {:local date [ /system clock get date ];:local year [ :pick \$date 7 11 ];:local month [ :pick \$date 0 3 ];:local comment [ /ip hotspot user get [/ip hotspot user find where name="\$user"] comment]; :local ucode [:pic \$comment 0 2]; :if (\$ucode = "vc" or \$ucode = "up" or \$comment = "") do={ /sys sch add name="\$user" disable=no start-date=\$date interval="$durationT"; :delay 2s; :local exp [ /sys sch get [ /sys sch find where name="\$user" ] next-run]; :local getxp [len \$exp]; :if (\$getxp = 15) do={ :local d [:pic \$exp 0 6]; :local t [:pic \$exp 7 16]; :local s ("/"); :local exp ("\$d\$s\$year \$t"); /ip hotspot user set comment="\$exp \$mode" [find where name="\$user"];}; :if (\$getxp = 8) do={ /ip hotspot user set comment="\$date \$exp \$mode" [find where name="\$user"];}; :if (\$getxp > 15) do={ /ip hotspot user set comment="\$exp \$mode" [find where name="\$user"];}; /sys sch remove [find where name="\$user"]';
 
-                      // var slock = '; [:local mac \$"mac-address"; :local srv [/ip hotspot host get [find where mac-address="\$mac"] server]; /ip hotspot user set server=\$srv [find where name=\$user]]';
-                      // var record = '; :local mac \$"mac-address"; :local time [/system clock get time ]; /system script add name="\$date-|-\$time-|-\$user-|-$price-|-\$address-|-\$mac-|-$validity-|-${profile.name}.-|-\$comment" owner="\$month\$year" source=\$date comment=RouterOs';
-                      //
-                      // var onlogin = ':put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local mode "'.$mode.'"; {:local date [ /system clock get date ];:local year [ :pick $date 7 11 ];:local month [ :pick $date 0 3 ];:local comment [ /ip hotspot user get [/ip hotspot user find where name="$user"] comment]; :local ucode [:pic $comment 0 2]; :if ($ucode = "vc" or $ucode = "up" or $comment = "") do={ /sys sch add name="$user" disable=no start-date=$date interval="' . $validity . '"; :delay 2s; :local exp [ /sys sch get [ /sys sch find where name="$user" ] next-run]; :local getxp [len $exp]; :if ($getxp = 15) do={ :local d [:pic $exp 0 6]; :local t [:pic $exp 7 16]; :local s ("/"); :local exp ("$d$s$year $t"); /ip hotspot user set comment="$exp $mode" [find where name="$user"];}; :if ($getxp = 8) do={ /ip hotspot user set comment="$date $exp $mode" [find where name="$user"];}; :if ($getxp > 15) do={ /ip hotspot user set comment="$exp $mode" [find where name="$user"];}; /sys sch remove [find where name="$user"]';
-
-                      profile.onLogin = "\",rem,0.5,$durationT,$price" + "";
+                      profile.onLogin =remove;// "$onLogin$record$lock$sLock}}";
                       profile.sharedUsers = cant;
                       profile.rateLimit =
                       limitSpeed ? "${limitDownload

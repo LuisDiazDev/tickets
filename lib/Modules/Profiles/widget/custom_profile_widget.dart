@@ -20,7 +20,7 @@ class CustomProfile extends StatelessWidget {
     ProfileBloc profileBloc = BlocProvider.of<ProfileBloc>(context);
     var sp = profile.onLogin?.split(",") ?? [];
     var duration = sp.length >= 4 ? sp[3] : "";
-    var price = sp.length >= 5 ? sp[4] : "";
+    var price = sp.length >= 5 ? sp[4].replaceAll("S", "\$") : "";
     return GestureDetector(
       onTap: onTap,
       child: Card(

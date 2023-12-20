@@ -21,6 +21,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
     PrinterService().init(configModel: cfg);
     await Future.delayed(Duration(seconds: 3));
+
     if (state.isAuthenticated!) {
 
       TicketProvider provider = TicketProvider();

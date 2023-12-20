@@ -45,6 +45,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
       },
     );
+    on<ChangeInitialHost>(
+          (event, emit) {
+        final newHost = TextInput.dirty(value: event.host);
+        if(newHost.value == "..."){
+          alertCubit.showAlertInfo(
+            title: "Error",
+            subtitle: "No se ha reconocido el mikrotik",
+          );
+        }else{
+          emit(
+            state.copyWith(
+              initialHost: event.host,
+              host: newHost
+            ),
+          );
+        }
+
+      },
+    );
     on<LogIn>(
           (event, emit) async {
 

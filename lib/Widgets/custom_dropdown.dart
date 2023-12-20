@@ -93,7 +93,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                             value: p ?? "",
                             child: Row(
                               children: [
-                                Text(p ?? ""),
+                                Text(p == "S" ? p.replaceAll("S", "\$") : p ?? ""),
                               ],
                             ),
                           ))

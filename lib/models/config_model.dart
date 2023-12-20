@@ -4,6 +4,7 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 class ConfigModel {
   String host,
       user,
+      ip,
       password,
       maxUpload,
       maxDownload,
@@ -25,6 +26,7 @@ class ConfigModel {
         this.dnsNamed = "",
       this.contact = "",
       this.dchcp = "",
+      this.ip = "...",
       this.port = "3000",
       this.connected = false,
       this.nameBusiness = "",
@@ -42,7 +44,7 @@ class ConfigModel {
     "download": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
     "upload": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
     "range-datetime": ["m", "h", "d", "s"],
-    "currency": ["\$", "bs"]
+    "currency": ["S", "bs"]
   };
 
   ConfigModel copyWith({
@@ -54,6 +56,7 @@ class ConfigModel {
     String? password,
     String? host,
     String? user,
+    String? ip,
     String? dchcp,
     String? shareUser,
     String? pathLogo,
@@ -71,6 +74,7 @@ class ConfigModel {
         nameBusiness: nameBusiness ?? this.nameBusiness,
         password: password ?? this.password,
         host: host ?? this.host,
+        ip: ip ?? this.ip,
         port: port ?? this.port,
         user: user ?? this.user,
         shareUser: shareUser ?? this.shareUser,
@@ -88,6 +92,7 @@ class ConfigModel {
       password: json["password"],
       host: json["host"],
       user: json["user"],
+      ip: json["ip"],
       dchcp: json["dchcp"],
       shareUser: json["share-user"],
       pathLogo: json["path-logo"],
@@ -106,6 +111,7 @@ class ConfigModel {
         "name-business": nameBusiness,
         "password": password,
         "host": host,
+        "ip":ip,
         "port": port,
         "user": user,
         "dchcp":dchcp,

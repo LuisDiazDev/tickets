@@ -8,7 +8,7 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..connectionTimeout = const Duration(seconds: 3)
+      ..connectionTimeout = const Duration(milliseconds: 700)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
 
@@ -46,7 +46,7 @@ class RestApiProvider {
           //todo
           headers: {'authorization': basicAuth});
     } catch (e) {
-      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response(e.toString(), 500);
     }
   }
@@ -68,7 +68,7 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
-      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response(e.toString(), 500);
     }
   }
@@ -90,7 +90,7 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
-      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response("error", 500);
     }
   }

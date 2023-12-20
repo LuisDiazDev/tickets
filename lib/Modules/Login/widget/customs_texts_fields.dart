@@ -29,52 +29,46 @@ class _CustomsTextFieldsState extends State<CustomsTextFields> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 335,
       height: 50,
       margin: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          Flexible(
-            child: TextFormField(
-              textAlign: widget.textAlign,
-              keyboardType: widget.textInputType,
-              obscureText: !_passwordVisible,
-              initialValue: widget.initial,
-              onChanged: widget.onChange,
-              style: TextStyle(
-                fontSize: widget.textSized
-              ),
-              decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xFF123258), width: 2.0),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xFFD3E3F1), width: 2.0),
-                  ),
-                  hintText: widget.hintText,
-
-                  prefixIcon: widget.prefixIcon,
-                  suffixIcon: widget.obscureText ? IconButton(
-                    icon: Icon(
-                      // Based on passwordVisible state choose the icon
-                      _passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                    onPressed: () {
-                      // Update the state i.e. toogle the state of passwordVisible variable
-                      setState(() {
-                        _passwordVisible = !_passwordVisible;
-                      });
-                    },
-                  ):widget.suffixIcon
-              ),
+      child: TextFormField(
+        key: Key( widget.initial.toString()), // <- Magic!
+        textAlign: widget.textAlign,
+        keyboardType: widget.textInputType,
+        obscureText: !_passwordVisible,
+        initialValue: widget.initial,
+        onChanged: widget.onChange,
+        style: TextStyle(
+          fontSize: widget.textSized
+        ),
+        decoration: InputDecoration(
+            focusedBorder: const OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Color(0xFF123258), width: 2.0),
             ),
-          )
-        ],
+            enabledBorder: const OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Color(0xFFD3E3F1), width: 2.0),
+            ),
+            hintText: widget.hintText,
+
+            prefixIcon: widget.prefixIcon,
+            suffixIcon: widget.obscureText ? IconButton(
+              icon: Icon(
+                // Based on passwordVisible state choose the icon
+                _passwordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                color: Theme.of(context).primaryColorDark,
+              ),
+              onPressed: () {
+                // Update the state i.e. toogle the state of passwordVisible variable
+                setState(() {
+                  _passwordVisible = !_passwordVisible;
+                });
+              },
+            ):widget.suffixIcon
+        ),
       ),
     );
   }

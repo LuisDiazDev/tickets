@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'Core/Theme/Theme.dart';
 import 'Core/Values/Enums.dart';
 import 'Core/localization/app_localization.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
     PrinterService();
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
+
     restApiProvider.init(alertCubit, sessionCubit);
 
     subscription = Connectivity()
@@ -71,6 +73,12 @@ class _MyAppState extends State<MyApp> {
       }
     });
 
+    NetworkInfo().getWifiIP().then((w){
+      sessionCubit.changeState(sessionCubit.state.copyWith(
+          ip:w
+      ));
+    });
+
 
     Connectivity().checkConnectivity().then((result){
       if(result != ConnectivityResult.wifi){
@@ -80,9 +88,13 @@ class _MyAppState extends State<MyApp> {
             wifi: false
         ));
       }else{
-        sessionCubit.changeState(sessionCubit.state.copyWith(
-            wifi: true
-        ));
+        NetworkInfo().getWifiIP().then((w){
+          sessionCubit.changeState(sessionCubit.state.copyWith(
+              wifi: true,
+              ip:w
+          ));
+        });
+
       }
     });
     super.initState();

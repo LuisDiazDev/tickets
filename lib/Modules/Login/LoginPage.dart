@@ -1,5 +1,7 @@
+import 'package:TicketOs/Modules/Login/widget/find_ip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../Core/Values/Colors.dart';
 import '../Alerts/AlertCubit.dart';
@@ -51,7 +53,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                      SizedBox(
                        height: MediaQuery.of(context).size.height*.2,
@@ -80,27 +82,75 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                         ),
                       ),
                       const SizedBox(width: double.infinity,height: 15),
-                      CustomsTextFields(
-                        hintText: 'Ip mikrotik',
-                        initial: "192.168.20.5",
-                        suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
-                        onChange: (host){
-                          loginBloc.add(ChangeHost(host));
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 250,
+                            child: CustomsTextFields(
+                              hintText: 'Ip mikrotik',
+                              initial: state.initialHost,
+                              suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
+                              onChange: (host){
+                                loginBloc.add(ChangeHost(host));
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: ()async{
+                              var ip = await NetworkInfo().getWifiIP();
+                              var host = await IpSearch.showDialogSearch(ip:ip??"...");
+                              loginBloc.add(ChangeInitialHost(host));
+                              // setState(() {
+                              //
+                              // });
+                            },
+                            child: Container(
+                              width: 100,
+                              height: 50,
+                              padding: const EdgeInsets.symmetric(vertical: 13),
+                              decoration: const BoxDecoration(color: Color(0xFF123258)),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Buscar',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontFamily: 'Nunito Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.70,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                      CustomsTextFields(
-                        hintText: 'usuario',
-                        suffixIcon: state.email.value != "" ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,),
-                        onChange: (email){
-                          loginBloc.add(ChangeEmail(email));
-                        },
+                      SizedBox(
+                        width: 350,
+                        child: CustomsTextFields(
+                          hintText: 'usuario',
+                          suffixIcon: state.email.value != "" ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,),
+                          onChange: (email){
+                            loginBloc.add(ChangeEmail(email));
+                          },
+                        ),
                       ),
-                      CustomsTextFields(
-                        hintText: 'Contraseña',
-                        obscureText: true,
-                        onChange: (password){
-                          loginBloc.add(ChangePassword(password));
-                        },
+                      SizedBox(
+                        width: 350,
+                        child: CustomsTextFields(
+                          hintText: 'Contraseña',
+                          obscureText: true,
+                          onChange: (password){
+                            loginBloc.add(ChangePassword(password));
+                          },
+                        ),
                       ),
                       GestureDetector(
                         onTap: (){

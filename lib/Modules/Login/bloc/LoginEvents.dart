@@ -25,5 +25,9 @@ class ChangeHost extends LoginEvent {
   ChangeHost(this.host);
 }
 
+class ChangeInitialHost extends LoginEvent {
+  final String host;
+  ChangeInitialHost(this.host);
+}
 
 class ClearLogin extends LoginEvent {}
