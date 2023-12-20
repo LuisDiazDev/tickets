@@ -24,49 +24,59 @@ class PrinterService {
     if(!isProgress){
       isProgress = true;
       List<LineText> list = [];
-      if(configModel?.nameBusiness != null && configModel?.nameBusiness != ""){
-        list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: configModel?.nameBusiness ?? "",
-            weight: 2,
-            width: 2,
-            height: 2,
-            align: LineText.ALIGN_CENTER,
-            linefeed: 1
-        ));
-      }
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '1- Conectate al WIFI ${configModel?.nameBusiness}',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '2- Abre tu navegador y entra en',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '${configModel?.dnsNamed}',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: 'O escanea el codigo QR',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '.',
+          weight: 0,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1
+      ));
       list.add(LineText(
         type: LineText.TYPE_QRCODE,
         content:
         'http://${configModel?.dnsNamed}/login?user=$user&password=$user',
         size: 5,
         align: LineText.ALIGN_CENTER,
-        // linefeed: 1
+        linefeed: 1
       ));
       list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content: 'Para navegar entra en',
+          content: '.',
           weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
+          align: LineText.ALIGN_LEFT,
+          linefeed: 0
       ));
       list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content: configModel?.dnsNamed ??"wifi.com",
-          weight: 1,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: 'usuario           clave',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '$user             $user',
+          content: 'Clave: $user',
           weight: 1,
           align: LineText.ALIGN_CENTER,
           linefeed: 1
@@ -83,7 +93,7 @@ class PrinterService {
           content: '$price             $duration',
           weight: 1,
           align: LineText.ALIGN_CENTER,
-          linefeed: 1
+          linefeed: 1,
       ));
       if(configModel?.contact != null && configModel?.contact != ""){
         list.add(LineText(
@@ -91,9 +101,25 @@ class PrinterService {
           content: 'Contacto ${configModel?.contact}',
           weight: 0,
           align: LineText.ALIGN_CENTER,
-          // linefeed: 1
+          underline: 1
         ));
       }
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '--------------------------------',
+          weight: 1,
+          height: 10,
+          align: LineText.ALIGN_CENTER,
+          linefeed: 1,
+      ));
+      list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: '--------------------------------',
+        weight: 1,
+        height: 10,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1,
+      ));
 
       // Getting Started
       if(configModel?.pathLogo != ""){
@@ -116,14 +142,17 @@ class PrinterService {
 
   void init({Duration? timeOut, ConfigModel? configModel}) async {
     if (configModel?.connected ?? false) {
+      if (configModel?.bluetoothDevice != null && !(await configModel?.bluetoothPrintService.isConnected ?? false)) {
+        await configModel?.bluetoothPrintService.connect(configModel.bluetoothDevice!);
+      }
       configModel?.bluetoothPrintService.startScan(
           timeout: timeOut ?? const Duration(seconds: 4));
 
-      configModel?.bluetoothPrintService.scanResults.listen((event) async {
+      await configModel?.bluetoothPrintService.scanResults.listen((event) async {
         if (event.isNotEmpty &&
             !(await configModel.bluetoothPrintService.isConnected ?? false)) {
           var results = event.where(
-              (element) => element.name == configModel!.bluetoothDevice!.name);
+              (element) => element.name == configModel.bluetoothDevice!.name);
           if (results.isNotEmpty) {
             configModel.bluetoothPrintService.connect(results.first);
           }else{

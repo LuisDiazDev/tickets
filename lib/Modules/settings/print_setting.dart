@@ -112,7 +112,13 @@ class PrintSettings extends StatelessWidget {
   }
 
   Future openAlertBox(BuildContext context,PrinterService printer)async{
-    sessionBloc.state.cfg!.bluetoothPrintService.startScan(timeout: Duration(seconds: 4));
+    try{
+      sessionBloc.state.cfg!.bluetoothPrintService.startScan(timeout: Duration(seconds: 4));
+    }
+    catch(e){
+      sessionBloc.state.cfg!.bluetoothPrintService.startScan(timeout: Duration(seconds: 4));
+    }
+
 
     return showDialog(
         context: context,
@@ -163,9 +169,44 @@ class PrintSettings extends StatelessWidget {
                               child: CircularProgressIndicator(),
                             );
                           }
+
+                          // Filtrar los dispositivos que contienen "[TV]" en el nombre
+                          var filteredDevices = snapshot.data!
+                              .where((bluetooth) {
+                                if (bluetooth.name!.toLowerCase().contains("[tv]")){
+                                  return false;
+                                }
+                                return true;
+                              })
+                              .toList();
+
                           return Column(
-                            children: snapshot.data!.map((bluetooth) => ListTile(
-                              title: Text(bluetooth.name??''),
+                            children: filteredDevices.map((bluetooth) {
+                              late Icon icon;
+                              late Widget title;
+                              if (bluetooth.name!.toLowerCase().contains("printer")){
+                                icon = const Icon(
+                                  EvaIcons.printerOutline,
+                                  color: ColorsApp.green,
+                                );
+                                // bold title
+                                title = Text(
+                                  bluetooth.name??'',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                );
+                              }else{
+                                icon = const Icon(
+                                  EvaIcons.bluetooth,
+                                  color: ColorsApp.green,
+                                );
+                                title = Text(
+                                  bluetooth.name??'',
+                                );
+                              }
+                              return ListTile(
+                              title: title,
                               subtitle: Text(bluetooth.address??""),
                               onTap: () async {
                                 sessionBloc.changeState(
@@ -176,11 +217,9 @@ class PrintSettings extends StatelessWidget {
                                 sessionBloc.state.cfg!.bluetoothPrintService.connect(bluetooth);
                                 Navigator.pop(context);
                               },
-                              trailing: const Icon(
-                                Icons.bluetooth,
-                                color: Colors.blue,
-                              )
-                            )).toList(),
+                              trailing: icon,
+                            );
+                            }).toList(),
                           );
                         },
                       ),

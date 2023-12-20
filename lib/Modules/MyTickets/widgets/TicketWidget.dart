@@ -17,25 +17,28 @@ import '../bloc/TicketsEvents.dart';
 class CustomTicketWidget extends StatelessWidget {
   final TicketModel ticket;
   final ProfileModel? profile;
-  const CustomTicketWidget({super.key, required this.ticket,this.profile});
 
-  bool valid() => ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
+  const CustomTicketWidget({super.key, required this.ticket, this.profile});
 
-  Widget _badgeWidget(TicketsBloc ticketsBloc){
-    return  Visibility(
-      visible: profile?.onLogin?.split(",")[3] != null,
+  bool valid() =>
+      ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
+
+  Widget _badgeWidget(TicketsBloc ticketsBloc) {
+    var sp = profile?.onLogin?.split(",") ?? [];
+    return Visibility(
+      visible: sp.length >= 4,
       child: Padding(
         padding: const EdgeInsets.only(left: 40),
         child: badges.Badge(
           badgeContent: Text(
-            profile!.onLogin?.split(",")[3]??"",
+            sp.length > 3?sp[3]:"",
             style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
           ),
           badgeStyle: const badges.BadgeStyle(
             badgeColor: ColorsApp.secondary,
           ),
           child: Icon(
-            getIcon(profile!.onLogin?.split(",")[3]??""),
+            getIcon(sp.length > 3?sp[3]:""),
             color: ColorsApp.primary,
             size: 32,
           ),
@@ -44,12 +47,12 @@ class CustomTicketWidget extends StatelessWidget {
     );
   }
 
-  IconData getIcon(String type){
-    if(type.contains("m") || type.contains("h")){
-      return  EvaIcons.clockOutline;
+  IconData getIcon(String type) {
+    if (type.contains("m") || type.contains("h")) {
+      return EvaIcons.clockOutline;
     }
-    if(type.contains("d")){
-      return  EvaIcons.calendarOutline;
+    if (type.contains("d")) {
+      return EvaIcons.calendarOutline;
     }
 
     return EvaIcons.activity;
@@ -60,34 +63,37 @@ class CustomTicketWidget extends StatelessWidget {
     final homeBloc = BlocProvider.of<TicketsBloc>(context);
     final session = BlocProvider.of<SessionCubit>(context);
     final alertCubit = BlocProvider.of<AlertCubit>(context);
+    var sp = profile?.onLogin?.split(",") ?? [];
+    var duration = sp.length > 3 ? sp[3] : "";
+    var price = sp.length > 4 ? sp[4] : "";
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           TicketDialogUtils.showDialogT(
               configModel: session.state.cfg!,
               user: ticket.name!,
-              duration: profile!.onLogin?.split(",")[3]??"",
-              price: profile!.onLogin?.split(",")[4]??"",
-              shareF: (){
+              duration: duration,
+              price: price,
+              shareF: () {
                 homeBloc.add(ShareQRImage(
-                    ticket.name??"",
-                    ticket.password??""
+                    ticket.name ?? "",
+                    ticket.password ?? ""
                 ));
               },
-              printF: (){
-                if(session.state.cfg?.connected ?? false){
+              printF: () {
+                if (session.state.cfg?.connected ?? false) {
                   PrinterService().printerB(
-                      user: ticket.name??"",
+                      user: ticket.name ?? "",
                       configModel: session.state.cfg,
-                      duration: profile!.onLogin?.split(",")[3]??"",
-                      price: profile!.onLogin?.split(",")[4]??""
+                      duration: duration,
+                      price: price
                   );
                   alertCubit.showAlertInfo(
                     title: "Imprimiendo",
                     subtitle: "Espere un momento",
                   );
-                }else{
+                } else {
                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
                   alertCubit.showAlertInfo(
                     title: "Error",
@@ -100,9 +106,10 @@ class CustomTicketWidget extends StatelessWidget {
         child: ClipPath(
           clipper: CustomTicketClipper(), // <-- CustomClipper
           child: Container(
-              color: valid() ? ColorsApp.secondary.withOpacity(.4) : Colors.grey, // <-- background color
+              color: valid() ? ColorsApp.secondary.withOpacity(.4) : Colors
+                  .grey, // <-- background color
               height: 115, // <-- height
-              width: 190, // <-- width
+              width: 215, // <-- width
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -128,12 +135,25 @@ class CustomTicketWidget extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 1.0, left: 14),
-                            child: Text("${ticket.password?[0] ?? "*"}*****",
-                                style: const TextStyle(
-                                  color: ColorsApp.primary,
-                                    fontSize: 14,
-                                    fontFamily: "poppins_semi_bold",
-                                    fontWeight: FontWeight.w400)),
+                            child: Builder(
+                              builder: (context) {
+                                late String text;
+                                if (ticket.bytesIn != "0") {
+                                  text = "D: ${ticket.getDownloadedInMB()} S: ${ticket
+                                      .getUploadedInMB()}";
+                                }else{
+                                  text = "Sin consumo";
+                                }
+                                return Text(
+                                  text,
+                                  style: const TextStyle(
+                                      color: ColorsApp.primary,
+                                      fontSize: 14,
+                                      fontFamily: "poppins_semi_bold",
+                                      fontWeight: FontWeight.w400),
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -159,72 +179,83 @@ class CustomTicketWidget extends StatelessWidget {
                       )
                     ],
                   ),
-                 Row(
-                   children: [
-                     Visibility(
-                       visible: valid(),
-                       child: Padding(
-                         padding: const EdgeInsets.only(top: 8.0, left: 10),
-                         child: TextButton(
-                           onPressed: () {
-                              if(session.state.cfg?.connected ?? false){
+                  Row(
+                    children: [
+                      Visibility(
+                        visible: valid(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, left: 10),
+                          child: TextButton(
+                            onPressed: () async {
+                              if (!(session.state.cfg?.connected ?? false)) {
+                                  if (session.state.cfg?.bluetoothDevice != null) {
+                                   await session.state.cfg!.bluetoothPrintService.connect(
+                                        session.state.cfg!.bluetoothDevice!);
+                                   session.state.cfg?.connected = true;
+                                  }
+                              }
+                              if (session.state.cfg?.connected ?? false) {
                                 PrinterService().printerB(
-                                    user: ticket.name??"",
+                                    user: ticket.name ?? "",
                                     configModel: session.state.cfg,
-                                    duration: profile!.onLogin?.split(",")[3]??"",
-                                    price: profile!.onLogin?.split(",")[4]??""
+                                    duration: duration,
+                                    price: price
                                 );
                                 alertCubit.showAlertInfo(
                                   title: "Imprimiendo",
                                   subtitle: "Espere un momento",
                                 );
-                              }else{
-                                NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                              } else {
+                                NavigatorService.pushNamedAndRemoveUntil(
+                                    Routes.settings);
                                 alertCubit.showAlertInfo(
                                   title: "Error",
                                   subtitle: "No hay impresora conectada",
                                 );
                               }
-
-                           },
-                           child: const Text(
-                             "Imprimir",
-                             style: TextStyle(
-                                 fontSize: 16,
-                                 color: ColorsApp.secondary,
-                                 fontFamily: "poppins_semi_bold",
-                                 fontWeight: FontWeight.w400),
-                           ),
-                         ),
-                       ),
-                     ),
-                     const Spacer(),
-                     Visibility(
-                       visible: valid(),
-                       child: Padding(
-                         padding: const EdgeInsets.only(top: 10.0),
-                         child: IconButton(
-                             padding: EdgeInsets.zero,
-                             constraints:const BoxConstraints(),
-                             onPressed: (){
-                              homeBloc.add(ShareQRImage(
-                                  ticket.name??"",
-                                  ticket.password??""
-                              ));
-                         }, icon: const Icon(EvaIcons.shareOutline,color: ColorsApp.secondary,)),
-                       ),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.only(left:5,top: 10.0,right: 10),
-                       child:  IconButton(
-                           padding: EdgeInsets.zero,
-                           constraints: const BoxConstraints(),
-                           onPressed: (){
-                             homeBloc.add(DeletedTicket(ticket.id!));
-                           }, icon: const Icon(EvaIcons.trashOutline,color: Colors.red,)),
-                     )
-                   ],
-                 )
+                            },
+                            child: const Text(
+                              "Imprimir",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: ColorsApp.secondary,
+                                  fontFamily: "poppins_semi_bold",
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Visibility(
+                        visible: valid(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                homeBloc.add(ShareQRImage(
+                                    ticket.name ?? "",
+                                    ticket.password ?? ""
+                                ));
+                              }, icon: const Icon(EvaIcons.shareOutline,
+                            color: ColorsApp.secondary,)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 5, top: 10.0, right: 5),
+                        child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              homeBloc.add(DeletedTicket(ticket.id!));
+                            },
+                            icon: const Icon(
+                              EvaIcons.trashOutline, color: Colors.red,)),
+                      )
+                    ],
+                  )
                 ],
               )),
         ),

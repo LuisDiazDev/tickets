@@ -46,6 +46,9 @@ class _BuildHomePageState extends State<_BuildHomePage>
     final home = BlocProvider.of<HomeBloc>(context);
 
     return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+      var filteredProfiles = state.profiles
+          .where((t) => t.name != "" && t.name != "default");
+
       return Scaffold(
         backgroundColor: ColorsApp.grey.withOpacity(.9),
         drawer: const DrawerCustom(),
@@ -87,28 +90,35 @@ class _BuildHomePageState extends State<_BuildHomePage>
                       )),
                 ),
                 Visibility(
-                    visible: state.profiles.isNotEmpty && !state.load,
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        children: state.profiles
-                            .where((t) => t.name != "" && t.name != "default")
-                            .map((e) => CustomPlanWidget(
-                                  profile: e,
-                                  generatedUser: (user) {
-                                    home.add(
-                                        GeneratedTicket(
-                                            e.name ?? "",
-                                            user,
-                                            e.onLogin?.split(",")[3]??"",
-                                            e.onLogin?.split(",")[4]??"")
-                                    );
-                                  },
-                                ))
-                            .toList(),
-                      ),
+                    visible: filteredProfiles.isNotEmpty && !state.load,
+                    child: Builder(
+                      builder: (context) {
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            children: filteredProfiles
+                                .map((e) => CustomPlanWidget(
+                                      profile: e,
+                                      generatedUser: (user) {
+                                        var sp = e.onLogin?.split(",") ?? [];
+                                        var duration = sp.length > 3? sp[3]: "";
+                                        var price = sp.length > 4? sp[4]: "";
+                                        home.add(
+                                            GeneratedTicket(
+                                                e.name ?? "",
+                                                user,
+                                                duration,
+                                                price
+                                            )
+                                        );
+                                      },
+                                    ))
+                                .toList(),
+                          ),
+                        );
+                      }
                     )),
                 Visibility(
-                    visible: state.profiles.isEmpty && !state.load,
+                    visible: filteredProfiles.isEmpty && !state.load,
                     child: const Center(
                       child: Text(
                         "Sin Planes disponibles",

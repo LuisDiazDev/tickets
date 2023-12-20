@@ -111,43 +111,26 @@ class TicketDialogUtils {
                                 mainAxisAlignment: MainAxisAlignment
                                     .spaceBetween,
                                 children: [
-                                  Column(
-                                    children: [
-                                      const Text(
-                                        "Usuario",
-                                        style: TextStyle(
-                                          fontFamily: 'poppins_regular',
-                                          fontSize: 12,
+                                  Center(
+                                    child: Column(
+                                      children: [
+                                        const Text(
+                                          "Clave",
+                                          style: TextStyle(
+                                            fontFamily: 'poppins_regular',
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        user,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontFamily: 'poppins_bold',
-                                          fontSize: 14,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Text(
-                                        "Clave",
-                                        style: TextStyle(
-                                          fontFamily: 'poppins_regular',
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      Text(
-                                        user,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontFamily: 'poppins_bold',
-                                          fontSize: 14,
-                                        ),
-                                      )
-                                    ],
+                                        Text(
+                                          user,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontFamily: 'poppins_bold',
+                                            fontSize: 14,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),

@@ -50,9 +50,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
       return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerCustom(),
-        appBar: customAppBar(
-          title: "title_list_tickets".tr
-        ),
+        appBar: customAppBar(title: "title_list_tickets".tr),
         body: Stack(
           children: [
             Visibility(
@@ -60,7 +58,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
               child: Container(
                   color: Colors.white,
                   width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height*.85,
+                  height: MediaQuery.sizeOf(context).height * .85,
                   child: const Center(
                     child: CircularProgressIndicator(
                       color: ColorsApp.green,
@@ -68,38 +66,62 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                   )),
             ),
             Visibility(
-              visible:state.tickets.isNotEmpty && !state.load,
+              visible: state.tickets.isNotEmpty && !state.load,
               child: Container(
-              color: Colors.transparent,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: SingleChildScrollView(
-                child: Wrap(
-                  children: [
-                    ...state.tickets
-                        .where((t) => t.profile != "" && t.profile != "default" && !t.name!.contains("-"))
-                        .map((e) => CustomTicketWidget(
-                      ticket: e,
-                      profile: state.profiles.firstWhere((p) => p.name == e.profile),
-                    ))
-                        .toList(),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                  ],
+                color: Colors.transparent,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                  child: Builder(builder: (context) {
+                    var tickets = state.tickets.where((t) =>
+                        t.profile != "" &&
+                        t.profile != "default" &&
+                        !t.name!.contains("-"));
+                    if (tickets.isEmpty) {
+                      return Center(
+                        child: MaterialButton(
+                          onPressed: () {
+                            showGlobalDrawer(
+                                context: context,
+                                builder:
+                                    horizontalDrawerBuilder(state, homeBloc),
+                                direction: AxisDirection.right);
+                          },
+                          child: Text("Crear Nuevo Ticket"),
+                        ),
+                      );
+                    }
+                    return Wrap(
+                      children: [
+                        ...tickets
+                            .map((e) => Builder(
+                              builder: (context) {
+                                var profile = state.profiles
+                                    .firstWhere((p) => p.name == e.profile, orElse: () => ProfileModel(name: "", onLogin: ""));
+                                return CustomTicketWidget(
+                                      ticket: e,
+                                      profile: profile,
+                                    );
+                              }
+                            ))
+                            .toList(),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                      ],
+                    );
+                  }),
                 ),
               ),
-            ),),
+            ),
             Visibility(
-              visible: state.tickets.isEmpty && !state.load,
+                visible: state.tickets.isEmpty && !state.load,
                 child: Center(
-              child: MaterialButton(
-                onPressed: (){
-
-                },
-                child: Text("Crear Nuevo Ticket"),
-              ),
-            ))
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child: Text("Crear Nuevo Ticket"),
+                  ),
+                ))
           ],
         ),
         bottomSheet: Visibility(
@@ -108,7 +130,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
             onTap: () {
               showGlobalDrawer(
                   context: context,
-                  builder: horizontalDrawerBuilder(state,homeBloc),
+                  builder: horizontalDrawerBuilder(state, homeBloc),
                   direction: AxisDirection.right);
             },
             child: Container(
@@ -143,8 +165,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
     });
   }
 
-  WidgetBuilder horizontalDrawerBuilder(TicketsState state,TicketsBloc homeBloc) {
-    String cant="1";
+  WidgetBuilder horizontalDrawerBuilder(
+      TicketsState state, TicketsBloc homeBloc) {
+    String cant = "1";
     ProfileModel? current;
 
     final _formKey = GlobalKey<FormState>();
@@ -271,7 +294,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                           ),
                         ),
                         CustomTextField(
-                          onChanged: (str) {cant = str ?? "1";},
+                          onChanged: (str) {
+                            cant = str ?? "1";
+                          },
                           title: "Cantidad",
                           initialValue: cant,
                         ),
@@ -283,7 +308,8 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              homeBloc.add(GeneratedTickets(current?.name??"", cant,current?.onLogin?.split(",")[3]??""));
+                              homeBloc.add(GeneratedTickets(current?.name ?? "",
+                                  cant, current?.onLogin?.split(",")[3] ?? ""));
                             }
                             Navigator.of(context).pop();
                           },
