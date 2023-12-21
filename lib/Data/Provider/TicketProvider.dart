@@ -43,7 +43,7 @@ class TicketProvider {
     return [];
   }
 
-  Future<Object> allDchcpServer({
+  Future<Object> allDhcpServer({
     String? user, String? pass, String? host
   }) async {
     var response = await restApi.get(url: "/ip/dhcp-server",

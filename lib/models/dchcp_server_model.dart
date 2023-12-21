@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-List<DchcpServerModel> dchcpServerModelFromJson(String str) => List<DchcpServerModel>.from(json.decode(str).map((x) => DchcpServerModel.fromJson(x)));
+List<DhcpServerModel> dchcpServerModelFromJson(String str) => List<DhcpServerModel>.from(json.decode(str).map((x) => DhcpServerModel.fromJson(x)));
 
-String dchcpServerModelToJson(List<DchcpServerModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String dchcpServerModelToJson(List<DhcpServerModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class DchcpServerModel {
+class DhcpServerModel {
   String? id;
   String? addressPool;
   String? authoritative;
@@ -17,7 +17,7 @@ class DchcpServerModel {
   String? name;
   String? useRadius;
 
-  DchcpServerModel({
+  DhcpServerModel({
     this.id,
     this.addressPool,
     this.authoritative,
@@ -31,7 +31,7 @@ class DchcpServerModel {
     this.useRadius,
   });
 
-  factory DchcpServerModel.fromJson(Map<String, dynamic> json) => DchcpServerModel(
+  factory DhcpServerModel.fromJson(Map<String, dynamic> json) => DhcpServerModel(
     id: json[".id"],
     addressPool: json["address-pool"],
     authoritative: json["authoritative"],
