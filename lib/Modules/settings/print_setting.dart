@@ -215,6 +215,7 @@ class PrintSettings extends StatelessWidget {
                                     )
                                 );
                                 sessionBloc.state.cfg!.bluetoothPrintService.connect(bluetooth);
+
                                 Navigator.pop(context);
                               },
                               trailing: icon,

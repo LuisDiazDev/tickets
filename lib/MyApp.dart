@@ -79,7 +79,6 @@ class _MyAppState extends State<MyApp> {
       ));
     });
 
-
     Connectivity().checkConnectivity().then((result){
       if(result != ConnectivityResult.wifi){
         alertCubit.showDialog(

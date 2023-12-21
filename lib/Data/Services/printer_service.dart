@@ -141,27 +141,26 @@ class PrinterService {
     }
   }
 
-  void init({Duration? timeOut, ConfigModel? configModel}) async {
-    if (configModel?.connected ?? false) {
-      if (configModel?.bluetoothDevice != null && !(await configModel?.bluetoothPrintService.isConnected ?? false)) {
-        await configModel?.bluetoothPrintService.connect(configModel.bluetoothDevice!);
-      }
-      configModel?.bluetoothPrintService.startScan(
-          timeout: timeOut ?? const Duration(seconds: 4));
-
-      await configModel?.bluetoothPrintService.scanResults.listen((event) async {
-        if (event.isNotEmpty &&
-            !(await configModel.bluetoothPrintService.isConnected ?? false)) {
-          var results = event.where(
-              (element) => element.name == configModel.bluetoothDevice!.name);
-          if (results.isNotEmpty) {
-            configModel.bluetoothPrintService.connect(results.first);
-          }else{
-            configModel.connected = false;
-          }
-        }
-      });
+  void checkConnectionPrinter({Duration? timeOut, ConfigModel? configModel}) async {
+    if (configModel?.bluetoothDevice != null && !(await configModel?.bluetoothPrintService.isConnected ?? false)) {
+      await configModel?.bluetoothPrintService.connect(configModel.bluetoothDevice!);
     }
+    await configModel?.bluetoothPrintService.stopScan();
+    configModel?.bluetoothPrintService.startScan(
+        timeout: timeOut ?? const Duration(seconds: 3));
+
+    configModel?.bluetoothPrintService.scanResults.listen((event) async {
+      if (event.isNotEmpty &&
+          !(await configModel.bluetoothPrintService.isConnected ?? false)) {
+        var results = event.where(
+                (element) => element.name == configModel.bluetoothDevice!.name);
+        if (results.isNotEmpty) {
+          configModel.bluetoothPrintService.connect(results.first);
+        }else{
+          configModel.connected = false;
+        }
+      }
+    });
   }
 
   // Stream<int> get state {

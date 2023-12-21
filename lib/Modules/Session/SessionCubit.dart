@@ -1,3 +1,4 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../Core/Values/Enums.dart';
@@ -19,11 +20,10 @@ class SessionCubit extends HydratedCubit<SessionState> {
   Future<void> verify() async {
     ConfigModel? cfg = state.cfg;
 
-    PrinterService().init(configModel: cfg);
     await Future.delayed(Duration(seconds: 3));
 
     if (state.isAuthenticated!) {
-
+      connect(cfg);
       TicketProvider provider = TicketProvider();
       var profilesH =await provider.allProfilesHotspot();
       if(profilesH.isNotEmpty){
@@ -49,6 +49,39 @@ class SessionCubit extends HydratedCubit<SessionState> {
           configModel: ConfigModel()));
     }
 
+  }
+
+  void connect( ConfigModel? cfg ){
+    PrinterService().checkConnectionPrinter(configModel: cfg);
+  }
+
+  void checkConnectionPrinter(ConfigModel? cfg){
+    cfg?.bluetoothPrintService.state.listen((event) {
+      switch(event){
+        case BluetoothPrint.DISCONNECTED:{
+          print("impresora desconectada... reconectando");
+          cfg.bluetoothPrintService.isScanning.listen((scan) {
+            if(!scan){
+              connect(cfg);
+            }
+          });
+
+          break;
+        }
+        case BluetoothPrint.CONNECTED:{
+          print("impresora conectada");
+          break;
+        }
+        default:{
+          cfg.bluetoothPrintService.isScanning.listen((scan) {
+            if(!scan){
+              connect(cfg);
+            }
+          });
+          break;
+        }
+      }
+    });
   }
 
   void exitSession() {

@@ -53,7 +53,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           alertCubit.showDialog("error", r.body);
         }
 
-          },
+        },
     );
 
     on<DeletedProfile>(
