@@ -135,6 +135,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                       SizedBox(
                         width: 350,
                         child: CustomsTextFields(
+                          prefixIcon: const Icon(Icons.person),
                           hintText: 'usuario',
                           suffixIcon: state.email.value != "" ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,),
                           onChange: (email){
@@ -145,8 +146,9 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                       SizedBox(
                         width: 350,
                         child: CustomsTextFields(
+                          prefixIcon: const Icon(Icons.lock),
                           hintText: 'Contraseña',
-                          obscureText: true,
+                          obscureText: false,
                           onChange: (password){
                             loginBloc.add(ChangePassword(password));
                           },

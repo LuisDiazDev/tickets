@@ -76,7 +76,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           ProgressDialogUtils.showProgressDialog();
           TicketProvider provider = TicketProvider();
           var host = event.host == "" ? "192.168.20.5" : event.host;
-          var r = await provider.allDchcpServer(
+          var r = await provider.allDhcpServer(
             user: event.email,
             pass: event.password,
             host: host
@@ -88,7 +88,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           ProgressDialogUtils.hideProgressDialog();
           if(r is !bool){
             r as List;
-            DchcpServerModel dchcpServer = (r.first) ?? DchcpServerModel();
+            DhcpServerModel dhcpServer = (r.first) ?? DhcpServerModel();
             var r2 = await provider.allProfilesHotspot();
             sessionCubit.changeState(sessionCubit.state.copyWith(
               isAuthenticated: true,
@@ -98,7 +98,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 host: host,
                 user: event.email,
                 password: event.password,
-                dchcp:dchcpServer.name,
+                dchcp:dhcpServer.name,
                 dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
               )
               // sessionStatus: SessionStatus.started,
