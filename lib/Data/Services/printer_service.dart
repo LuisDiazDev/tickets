@@ -21,6 +21,7 @@ class PrinterService {
       "font size":12,
       'gap':2
     };
+    var spacedPassword = user.split('').join(' ');
 
     if(!isProgress){
       isProgress = true;
@@ -77,7 +78,7 @@ class PrinterService {
       ));
       list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content: 'Clave: $user',
+          content: 'Clave: $spacedPassword',
           weight: 1,
           align: LineText.ALIGN_CENTER,
           linefeed: 1

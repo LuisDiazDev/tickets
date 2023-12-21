@@ -13,7 +13,7 @@ class ConfigModel {
       dnsNamed,
       nameBusiness,
       port,
-      dchcp,
+      dhcp,
       contact;
 
   bool limitSpeedInternet, connected;
@@ -25,7 +25,7 @@ class ConfigModel {
       {
         this.dnsNamed = "",
       this.contact = "",
-      this.dchcp = "",
+      this.dhcp = "",
       this.ip = "...",
       this.port = "3000",
       this.connected = false,
@@ -57,7 +57,7 @@ class ConfigModel {
     String? host,
     String? user,
     String? ip,
-    String? dchcp,
+    String? dhcp,
     String? shareUser,
     String? pathLogo,
     String? maxDownload,
@@ -66,7 +66,7 @@ class ConfigModel {
     BluetoothDevice? bluetoothDevice,
   }) {
     return ConfigModel(
-        dchcp: dchcp ?? this.dchcp,
+        dhcp: dhcp ?? this.dhcp,
         dnsNamed: dnsNamed ?? this.dnsNamed,
         connected: connected ?? this.connected,
         contact: contact ?? this.contact,
@@ -93,7 +93,7 @@ class ConfigModel {
       host: json["host"],
       user: json["user"],
       ip: json["ip"],
-      dchcp: json["dchcp"],
+      dhcp: json["dhcp"],
       shareUser: json["share-user"],
       pathLogo: json["path-logo"],
       maxDownload: json["max-download"],
@@ -114,7 +114,7 @@ class ConfigModel {
         "ip":ip,
         "port": port,
         "user": user,
-        "dchcp":dchcp,
+        "dhcp":dhcp,
         "share-user": shareUser,
         "path-logo": pathLogo,
         "max-download": maxDownload,

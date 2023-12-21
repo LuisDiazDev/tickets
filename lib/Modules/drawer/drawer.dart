@@ -64,7 +64,7 @@ class DrawerCustom extends StatelessWidget {
           ),
           TileDrawer(
             icon: EvaIcons.logOutOutline,
-            title: "Cerrar Session",
+            title: "Cerrar Sesión",
             onTap: () async {
               final sessionCubit = BlocProvider.of<SessionCubit>(context);
               sessionCubit.changeState(

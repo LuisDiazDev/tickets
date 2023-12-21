@@ -40,11 +40,11 @@
                     Escanear QR
                 </button>
                 <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()" $(endif)>
-                    <input type="hidden" name="dst" value="$(link-orig)" />
+                    <input type="hidden" name="dst" value="google.com" />
                     <input type="hidden" name="popup" value="true" />
                     <label>
                         <img class="ico" src="img/password.svg" alt="#" />
-                        <input name="password" type="password" placeholder="Contraseña" />
+                        <input name="password" type="text" placeholder="Contraseña"  />
                     </label>
                     <input type="submit" value="Conectar" />
                 </form>
