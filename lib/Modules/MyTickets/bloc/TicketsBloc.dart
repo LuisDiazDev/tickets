@@ -25,23 +25,19 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       },
     );
 
-    on<GeneratedTickets>(
+    on<GenerateTicket>(
       (event, emit) async {
 
         var cant = double.tryParse(event.cant) ?? 1;
 
         for (int i = 0; i < cant; i++){
-          var name =  generateUser();
-          // var flag = state.tickets.where((t) => t.name == name).first.name;
-          // while(flag != null && flag != "" && flag == name){
-          //   name =  generateUser();
-          // }
-          var r = await provider.newTicket(name, event.profile,event.duration);
+          var name =  generatePassword();
+          await provider.newTicket(name, event.profile,event.duration);
 
           //generated
           add(FetchData());
         }
-
+        // TODO: evaluar si esto es necesario
         var data = await provider.allTickets();
         emit(state.copyWith(load: false, tickets: data));
       },

@@ -1,5 +1,6 @@
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class ConfigModel {
   String host,
@@ -20,6 +21,8 @@ class ConfigModel {
   BluetoothDevice? bluetoothDevice;
 
   final BluetoothPrint bluetoothPrintService = BluetoothPrint.instance;
+  final FlutterReactiveBle bluetoothScanService = FlutterReactiveBle();
+  late Map<String, BluetoothDevice> bluetoothDevices = {};
 
   ConfigModel(
       {

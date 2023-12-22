@@ -38,6 +38,8 @@ dependencies:
   ftpconnect: ^2.0.5
   permission_handler: ^11.0.1
   network_info_plus: ^3.0.5
+  device_info: ^2.0.3
+  flutter_reactive_ble: ^5.2.0
 
 dev_dependencies:
   flutter_test:
