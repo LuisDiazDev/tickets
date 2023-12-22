@@ -1,7 +1,7 @@
 
 import 'dart:math';
 
-String generateUser() {
+String generatePassword() {
   String upper = '';
   String lower = 'abcdefghkmnpqrstuvwxyz';
   String numbers = '23456789';

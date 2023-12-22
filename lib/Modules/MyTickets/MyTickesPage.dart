@@ -94,16 +94,16 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                     return Wrap(
                       children: [
                         ...tickets
-                            .map((e) => Builder(
-                              builder: (context) {
-                                var profile = state.profiles
-                                    .firstWhere((p) => p.name == e.profile, orElse: () => ProfileModel(name: "", onLogin: ""));
-                                return CustomTicketWidget(
-                                      ticket: e,
-                                      profile: profile,
-                                    );
-                              }
-                            ))
+                            .map((e) => Builder(builder: (context) {
+                                  var profile = state.profiles.firstWhere(
+                                      (p) => p.name == e.profile,
+                                      orElse: () =>
+                                          ProfileModel(name: "", onLogin: ""));
+                                  return CustomTicketWidget(
+                                    ticket: e,
+                                    profile: profile,
+                                  );
+                                }))
                             .toList(),
                         const SizedBox(
                           height: 50,
@@ -168,7 +168,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
   WidgetBuilder horizontalDrawerBuilder(
       TicketsState state, TicketsBloc homeBloc) {
     String cant = "1";
-    ProfileModel? current;
+    ProfileModel? currentProfile;
 
     final _formKey = GlobalKey<FormState>();
 
@@ -220,7 +220,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Planes disponibles",
                                 style: TextStyle(
                                     fontSize: 18, color: ColorsApp.secondary),
@@ -248,10 +248,10 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                           child: Row(
                                             children: [
                                               Text(p.name ?? ""),
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
                                                   "${p.onLogin?.split(",")[4]}\$-${p.onLogin?.split(",")[3]}"),
-                                              Icon(
+                                              const Icon(
                                                 EvaIcons.calendarOutline,
                                                 color: ColorsApp.textColor,
                                               )
@@ -269,7 +269,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                   //Do something when selected item is changed.
                                 },
                                 onSaved: (value) {
-                                  current = value;
+                                  currentProfile = value;
                                 },
                                 buttonStyleData: const ButtonStyleData(
                                   padding: EdgeInsets.only(right: 8),
@@ -300,16 +300,17 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                           title: "Cantidad",
                           initialValue: cant,
                         ),
-                        Spacer(),
+                        const Spacer(),
                         MaterialButton(
                           height: 80,
-                          shape: StadiumBorder(),
+                          shape: const StadiumBorder(),
                           color: ColorsApp.secondary,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              homeBloc.add(GeneratedTickets(current?.name ?? "",
-                                  cant, current?.onLogin?.split(",")[3] ?? ""));
+                              String duration = currentProfile?.onLogin?.split(",")[3] ?? "";
+                              homeBloc.add(GenerateTicket(currentProfile?.name ?? "",
+                                  cant,  duration));
                             }
                             Navigator.of(context).pop();
                           },
@@ -322,7 +323,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                 fontSize: 18),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                       ],

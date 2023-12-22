@@ -11,11 +11,11 @@ class ShareQRImage extends TicketsEvent {
   ShareQRImage(this.user,this.password);
 }
 
-class GeneratedTickets extends TicketsEvent{
+class GenerateTicket extends TicketsEvent{
   final String profile;
   final String cant;
   final String duration;
-  GeneratedTickets(this.profile,this.cant,this.duration);
+  GenerateTicket(this.profile,this.cant,this.duration);
 }
 
 class DeletedTicket extends TicketsEvent{

@@ -16,7 +16,7 @@ class CustomPlanWidget extends StatelessWidget {
     var sp = profile.onLogin!.split(",");
     return GestureDetector(
       onTap: () async {
-        var user = generateUser();
+        var user = generatePassword();
         generatedUser(user);
       },
       child: Card(

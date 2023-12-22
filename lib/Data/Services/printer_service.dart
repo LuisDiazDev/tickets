@@ -149,7 +149,7 @@ class PrinterService {
     }
     await configModel?.bluetoothPrintService.stopScan();
     configModel?.bluetoothPrintService.startScan(
-        timeout: timeOut ?? const Duration(seconds: 3));
+        timeout: timeOut ?? const Duration(seconds: 10));
 
     configModel?.bluetoothPrintService.scanResults.listen((event) async {
       if (event.isNotEmpty &&

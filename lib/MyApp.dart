@@ -153,7 +153,9 @@ class _MyAppState extends State<MyApp> {
               if (state is AlertInfo) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBarCustom.snackBarStatusCustom(
-                  onTap: () {},
+                  onTap: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
                   title: state.title,
                   subtitle: state.subtitle,
                   hideSnackBar: () {
