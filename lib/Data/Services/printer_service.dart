@@ -137,6 +137,7 @@ class PrinterService {
         await configModel?.bluetoothPrintService.printReceipt(config, list);
         // await bluetoothPrintService.printReceipt(config, list1);
       }
+      await Future.delayed(Duration(seconds: 3));
       isProgress = !isProgress;
     }
   }

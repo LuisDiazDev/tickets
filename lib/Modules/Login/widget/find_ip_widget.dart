@@ -106,21 +106,26 @@ class _FindIpState extends State<FindIp> {
 
   void check(int ip) async {
     const int requestCount = 128;
-    for (int i = 1; i < 255; i += requestCount) {
+    for (int i = 2; i < 255; i += requestCount) {
+
       List<Future<Response>> promises = [];
       for (int j = i; j < requestCount+i; j ++) {
         var ip = "192.168.$locate.$j";
         log("$ip ->");
         promises.add(ticketProvider.restApi.get(
           host: ip,
-          url: "/system/health",
+          url: "/ip/hotspot/user",
           user: "",
           pass: "",
         ));
       }
+
       var responses = await Future.wait(promises);
       for (int i = 0; i < responses.length; i++) {
         if (responses[i].statusCode < 500) {
+          if(i == current){
+            continue;
+          }
           var body = responses[i].body;
           Navigator.pop(context, responses[i].request?.url.host);
           return;

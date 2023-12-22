@@ -2,6 +2,7 @@ import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../Core/Values/Enums.dart';
+import '../../Core/utils/get_ip_mk.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/TicketProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
@@ -20,29 +21,42 @@ class SessionCubit extends HydratedCubit<SessionState> {
   Future<void> verify() async {
     ConfigModel? cfg = state.cfg;
 
-    await Future.delayed(Duration(seconds: 3));
+    var ip = await getIp();
 
-    if (state.isAuthenticated!) {
-      connect(cfg);
-      TicketProvider provider = TicketProvider();
-      var profilesH =await provider.allProfilesHotspot();
-      if(profilesH.isNotEmpty){
-        emit(state.copyWith(
-            configModel: state.cfg!.copyWith(
-                dnsNamed: profilesH.last.dnsName
-            )
-        ));
+    if (ip["connect"] || state.isAuthenticated!) {
+      if(cfg != null && cfg.connected){
+        connect(cfg);
       }
+      cfg ??= ConfigModel();
 
-      FtpService.initService(
-          address: state.cfg?.host ?? "",
-          user: state.cfg?.user ?? "",
-          pass: state.cfg?.password ?? ""
+
+      cfg = cfg.copyWith(
+          host: ip["ip"],
+          user: ip["connect"] ? "admin":null,
+          password: ip["connect"] ? "1234":null
       );
 
       emit(state.copyWith(
           sessionStatus: SessionStatus.started,
-          configModel: cfg ?? ConfigModel()));
+          configModel: cfg));
+
+      TicketProvider provider = TicketProvider();
+      var profilesH =await provider.allProfilesHotspot();
+      if(profilesH.isNotEmpty){
+        emit(state.copyWith(
+            sessionStatus: SessionStatus.started,
+            configModel: cfg.copyWith(
+              dnsNamed: profilesH.last.dnsName,)));
+      }
+
+      FtpService.initService(
+          address: state.cfg?.host ?? "",
+          user: ip["connect"] ? "admin":state.cfg?.user ?? "",
+          pass: ip["connect"] ? "1234":state.cfg?.password ?? ""
+      );
+
+      emit(state.copyWith(
+          sessionStatus: SessionStatus.started));
     } else {
       emit(state.copyWith(
           sessionStatus: SessionStatus.finish,
@@ -56,32 +70,32 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   void checkConnectionPrinter(ConfigModel? cfg){
-    cfg?.bluetoothPrintService.state.listen((event) {
-      switch(event){
-        case BluetoothPrint.DISCONNECTED:{
-          print("impresora desconectada... reconectando");
-          cfg.bluetoothPrintService.isScanning.listen((scan) {
-            if(!scan){
-              connect(cfg);
-            }
-          });
-
-          break;
-        }
-        case BluetoothPrint.CONNECTED:{
-          print("impresora conectada");
-          break;
-        }
-        default:{
-          cfg.bluetoothPrintService.isScanning.listen((scan) {
-            if(!scan){
-              connect(cfg);
-            }
-          });
-          break;
-        }
-      }
-    });
+    // cfg?.bluetoothPrintService.state.listen((event) {
+    //   switch(event){
+    //     case BluetoothPrint.DISCONNECTED:{
+    //       print("impresora desconectada... reconectando");
+    //       // cfg.bluetoothPrintService.isScanning.listen((scan) {
+    //       //   if(!scan && cfg.connected){
+    //       //     connect(cfg);
+    //       //   }
+    //       // });
+    //
+    //       break;
+    //     }
+    //     case BluetoothPrint.CONNECTED:{
+    //       print("impresora conectada");
+    //       break;
+    //     }
+    //     default:{
+    //       // cfg.bluetoothPrintService.isScanning.listen((scan) {
+    //       //   if(!scan && cfg.connected){
+    //       //     connect(cfg);
+    //       //   }
+    //       // });
+    //       break;
+    //     }
+    //   }
+    // });
   }
 
   void exitSession() {

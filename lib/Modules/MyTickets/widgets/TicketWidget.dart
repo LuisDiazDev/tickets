@@ -83,12 +83,15 @@ class CustomTicketWidget extends StatelessWidget {
               },
               printF: () {
                 if (session.state.cfg?.connected ?? false) {
-                  PrinterService().printerB(
-                      user: ticket.name ?? "",
-                      configModel: session.state.cfg,
-                      duration: duration,
-                      price: price
-                  );
+                  if(!PrinterService.isProgress){
+                    PrinterService().printerB(
+                        user: ticket.name ?? "",
+                        configModel: session.state.cfg,
+                        duration: duration,
+                        price: price
+                    );
+                  }
+
                   alertCubit.showAlertInfo(
                     title: "Imprimiendo",
                     subtitle: "Espere un momento",
@@ -195,12 +198,15 @@ class CustomTicketWidget extends StatelessWidget {
                                   }
                               }
                               if (session.state.cfg?.connected ?? false) {
-                                PrinterService().printerB(
-                                    user: ticket.name ?? "",
-                                    configModel: session.state.cfg,
-                                    duration: duration,
-                                    price: price
-                                );
+                                if(!PrinterService.isProgress){
+                                  PrinterService().printerB(
+                                      user: ticket.name ?? "",
+                                      configModel: session.state.cfg,
+                                      duration: duration,
+                                      price: price
+                                  );
+                                }
+
                                 alertCubit.showAlertInfo(
                                   title: "Imprimiendo",
                                   subtitle: "Espere un momento",

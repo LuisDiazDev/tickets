@@ -26,6 +26,11 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final sessionBloc = BlocProvider.of<SessionCubit>(context);
     final alertBloc = BlocProvider.of<AlertCubit>(context);
+    final args = ModalRoute.of(context)!.settings.arguments as String?;
+
+    if(sessionBloc.state.cfg!.contact=="" && sessionBloc.state.cfg!.nameBusiness==""){
+      alertBloc.showAlertInfo(title: "Aviso", subtitle: "Recuerde rellenar la informacion de contacto para continuar usando la app");
+    }
 
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
       return Scaffold(
@@ -43,6 +48,7 @@ class SettingsPage extends StatelessWidget {
               const Gap(20),
               PrintSettings(
                 sessionBloc: sessionBloc,
+                alertCubit: alertBloc,
               ),
               //information
               const Gap(25),

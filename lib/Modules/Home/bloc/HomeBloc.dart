@@ -26,8 +26,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         var profiles = await provider.allProfiles();
         emit(state.copyWith(load: false, profiles: profiles));
 
-        if(profiles.isEmpty){
-          NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
+        if(sessionCubit.state.cfg?.contact == "" || sessionCubit.state.cfg?.nameBusiness == ""){
+          NavigatorService.pushNamedAndRemoveUntil(Routes.settings,arguments: "Por favor escriba los datos del negocio");
         }
       },
     );
@@ -58,8 +58,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
           }
           emit(state.copyWith(load: false,));
+          if(!PrinterService.isProgress){
+            PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          }
 
-          PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
         }else{
           alertCubit.showDialog("Error", "No se ha detectado ninguna impresora conectada");
           NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
