@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-List<DhcpServerModel> dchcpServerModelFromJson(String str) => List<DhcpServerModel>.from(json.decode(str).map((x) => DhcpServerModel.fromJson(x)));
+List<DhcpServerModel> dhcpServerModelFromJson(String str) => List<DhcpServerModel>.from(json.decode(str).map((x) => DhcpServerModel.fromJson(x)));
 
-String dchcpServerModelToJson(List<DhcpServerModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String dhcpServerModelToJson(List<DhcpServerModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class DhcpServerModel {
   String? id;
   String? addressPool;
   String? authoritative;
   String? disabled;
-  String? dchcpServerModelDynamic;
-  String? dchcpServerModelInterface;
+  String? dhcpServerModelDynamic;
+  String? dhcpServerModelInterface;
   String? invalid;
   String? leaseScript;
   String? leaseTime;
@@ -22,8 +22,8 @@ class DhcpServerModel {
     this.addressPool,
     this.authoritative,
     this.disabled,
-    this.dchcpServerModelDynamic,
-    this.dchcpServerModelInterface,
+    this.dhcpServerModelDynamic,
+    this.dhcpServerModelInterface,
     this.invalid,
     this.leaseScript,
     this.leaseTime,
@@ -36,8 +36,8 @@ class DhcpServerModel {
     addressPool: json["address-pool"],
     authoritative: json["authoritative"],
     disabled: json["disabled"],
-    dchcpServerModelDynamic: json["dynamic"],
-    dchcpServerModelInterface: json["interface"],
+    dhcpServerModelDynamic: json["dynamic"],
+    dhcpServerModelInterface: json["interface"],
     invalid: json["invalid"],
     leaseScript: json["lease-script"],
     leaseTime: json["lease-time"],
@@ -50,8 +50,8 @@ class DhcpServerModel {
     "address-pool": addressPool,
     "authoritative": authoritative,
     "disabled": disabled,
-    "dynamic": dchcpServerModelDynamic,
-    "interface": dchcpServerModelInterface,
+    "dynamic": dhcpServerModelDynamic,
+    "interface": dhcpServerModelInterface,
     "invalid": invalid,
     "lease-script": leaseScript,
     "lease-time": leaseTime,

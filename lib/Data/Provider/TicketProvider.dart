@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import '../../models/dchcp_server_model.dart';
+import '../../models/dhcp_server_model.dart';
 import '../../models/profile_hotspot_model.dart';
 import '../../models/profile_model.dart';
 import '../../models/ticket_model.dart';
@@ -54,7 +54,7 @@ class TicketProvider {
 
     if (response.statusCode == 200) {
       try {
-        var decode = dchcpServerModelFromJson(response.body);
+        var decode = dhcpServerModelFromJson(response.body);
         return decode;
       } catch (e) {
         // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());

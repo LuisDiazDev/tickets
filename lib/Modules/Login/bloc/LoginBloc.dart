@@ -3,7 +3,7 @@ import '../../../../Core/utils/TextsInputs.dart';
 import '../../../Core/utils/progress_dialog_utils.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../../Data/Services/ftp_service.dart';
-import '../../../models/dchcp_server_model.dart';
+import '../../../models/dhcp_server_model.dart';
 import '../../Alerts/AlertCubit.dart';
 import '../../Session/SessionCubit.dart';
 import 'LoginState.dart';
@@ -98,7 +98,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 host: host,
                 user: event.email,
                 password: event.password,
-                dchcp:dhcpServer.name,
+                dhcp:dhcpServer.name,
                 dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
               )
               // sessionStatus: SessionStatus.started,
