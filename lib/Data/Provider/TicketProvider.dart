@@ -129,6 +129,7 @@ class TicketProvider {
       "status-autorefresh": "1m",
       "mac-cookie-timeout":duration,
       "on-login": profile.onLogin,
+      "transparent-proxy":"yes"
       // "parent-queue": "",
     });
   }

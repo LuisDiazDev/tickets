@@ -90,9 +90,9 @@ class _FindIpState extends State<FindIp> {
       var lst = widget.ip.split(".");
       current = int.parse(lst.last);
       locate = lst[2];
-      if (locate == "20") {
-        current = 5;
-      }
+      // if (locate == "20") {
+      //   current = 5;
+      // }
     }
     search();
   }

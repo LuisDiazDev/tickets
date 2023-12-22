@@ -14,9 +14,9 @@ Future<Map> getIp()async{
   var lst = localIp?.split(".") ?? [];
   current = int.parse(lst.last);
   var locate = lst[2];
-  if (locate == "20") {
-    current = 5;
-  }
+  // if (locate == "20") {
+  //   current = 5;
+  // }
   return _check(current,locate);
 }
 
