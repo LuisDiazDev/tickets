@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -197,9 +198,10 @@ class PrintSettings extends StatelessWidget {
   }
 
   Future showBluetoothDeviceListPopUp(BuildContext context) async {
-    // var srv = "e7810a71-73ae-499d-8c15-faa9aef0c3f2";
-    // FlutterBluePlus.startScan(withServices: [Guid.fromString(srv)]);
-    FlutterBluePlus.startScan();
+    FlutterBluePlus.startScan(withServices: [
+      Guid.fromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2")
+    ]);
+    // FlutterBluePlus.startScan();
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -241,14 +243,13 @@ class PrintSettings extends StatelessWidget {
                       child: // get devices
                           SingleChildScrollView(
                         child: StreamBuilder<List<ScanResult>>(
-                          stream: FlutterBluePlus.onScanResults,
+                          stream: FlutterBluePlus.scanResults,
                           builder: (c, snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             }
-
                             var filtered = snapshot.data!.where((element) {
                               return element.device.advName.isNotEmpty;
                             }).toList();
@@ -256,29 +257,19 @@ class PrintSettings extends StatelessWidget {
                               children: filtered.map((ScanResult bluetooth) {
                                 late Icon icon;
                                 late Widget title;
-                                if (bluetooth.device.advName
-                                    .toLowerCase()
-                                    .contains("printer")) {
-                                  icon = const Icon(
-                                    EvaIcons.printerOutline,
-                                    color: ColorsApp.green,
-                                  );
-                                  // bold title
-                                  title = Text(
-                                    bluetooth.device.advName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  );
-                                } else {
-                                  icon = const Icon(
-                                    EvaIcons.bluetooth,
-                                    color: ColorsApp.green,
-                                  );
-                                  title = Text(
-                                    bluetooth.device.advName,
-                                  );
-                                }
+                                String deviceName =
+                                    bluetooth.device.advName.toString();
 
+                                icon = const Icon(
+                                  EvaIcons.printerOutline,
+                                  color: ColorsApp.green,
+                                );
+                                // bold title
+                                title = Text(
+                                  deviceName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                );
                                 return ListTile(
                                   title: title,
                                   subtitle: Text(
@@ -313,6 +304,7 @@ class PrintSettings extends StatelessWidget {
         configModel: sessionBloc.state.cfg!
             .copyWith(bluetoothDevice: bluetooth.device)));
     sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
+
     await bluetooth.device.connect(
         timeout: const Duration(seconds: 20), mtu: null, autoConnect: true);
     log("MTU: ${bluetooth.device.mtuNow}");
@@ -330,16 +322,18 @@ class PrintSettings extends StatelessWidget {
       if (!service.isPrimary) {
         continue;
       }
+
       for (String characteristic in validBluetoothCharacteristics) {
         for (BluetoothCharacteristic c in service.characteristics) {
           if (c.characteristicUuid.toString() == characteristic) {
             sessionBloc.state.cfg!.bluetoothCharacteristic = c;
+            log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
             sessionBloc.changeState(sessionBloc.state.copyWith(
-                configModel:
-                sessionBloc.state.cfg!.copyWith(bluetoothCharacteristic: c)));
+                configModel: sessionBloc.state.cfg!
+                    .copyWith(bluetoothCharacteristic: c)));
             alertCubit.showAlertInfo(
                 title: "Conectado",
-                subtitle: "Conectado la impresora ${bluetooth.device.advName}");
+                subtitle: "Conectado a la impresora ${bluetooth.device.advName}");
             Navigator.pop(context);
             return;
           }
@@ -352,6 +346,24 @@ class PrintSettings extends StatelessWidget {
         subtitle:
             "No se ha encontrado el servicio de impresion en este dispositivo");
     Navigator.pop(context);
+  }
+
+  Future<BluetoothCharacteristic> findPrintBTCharacteristic(
+      BluetoothDevice device) async {
+    List<BluetoothService> services = await device.discoverServices();
+    for (BluetoothService service in services) {
+      if (!service.isPrimary) {
+        continue;
+      }
+      for (String characteristic in validBluetoothCharacteristics) {
+        for (BluetoothCharacteristic c in service.characteristics) {
+          if (c.characteristicUuid.toString() == characteristic) {
+            return c;
+          }
+        }
+      }
+    }
+    throw Exception("No se ha encontrado el servicio de impresion");
   }
 
   Future<List<int>> writeTestPrinter(String test) async {

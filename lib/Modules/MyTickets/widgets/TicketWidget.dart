@@ -81,7 +81,7 @@ class CustomTicketWidget extends StatelessWidget {
               printF: () {
                 if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
                   if (!PrinterService.isProgress) {
-                    PrinterService().printerB(
+                    PrinterService().printTicket(
                         user: ticket.name ?? "",
                         configModel: session.state.cfg,
                         duration: duration,
@@ -202,7 +202,7 @@ class CustomTicketWidget extends StatelessWidget {
                                       ?.isConnected ??
                                   false) {
                                 if (!PrinterService.isProgress) {
-                                  PrinterService().printerB(
+                                  PrinterService().printTicket(
                                       user: ticket.name ?? "",
                                       configModel: session.state.cfg,
                                       duration: duration,

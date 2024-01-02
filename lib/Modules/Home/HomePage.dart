@@ -94,7 +94,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                         var price = e.metadata?.price ?? "";
                                         home.add(
                                             GeneratedTicket(
-                                                e.name ?? "",
+                                                e.metadata!.toMikrotiketNameString(e.name??""),
                                                 user,
                                                 duration,
                                                 price.toString()

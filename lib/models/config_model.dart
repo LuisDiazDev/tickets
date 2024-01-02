@@ -114,10 +114,9 @@ class ConfigModel {
   static BluetoothCharacteristic bluetoothCharacteristicFromJson(String bluetoothCharacteristic) {
     var m = json.decode(bluetoothCharacteristic);
     return BluetoothCharacteristic(
-      remoteId: m["remoteId"],
-      serviceUuid: m["serviceUuid"],
-      secondaryServiceUuid: m["secondaryServiceUuid"],
-      characteristicUuid: m["characteristicUuid"],
+      remoteId: DeviceIdentifier(m["remoteId"]),
+      serviceUuid: Guid.fromString(m["serviceUuid"]),
+      characteristicUuid: Guid.fromString(m["characteristicUuid"]),
     );
   }
 

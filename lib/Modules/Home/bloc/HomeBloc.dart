@@ -30,6 +30,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<GeneratedTicket>(
       (event, emit) async {
+        if (sessionCubit.state.cfg?.bluetoothDevice != null && !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
+          await sessionCubit.state.cfg?.bluetoothDevice?.connect();
+        }
         if(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false){
           var r = await provider.newTicket(event.name, event.profile,event.duration);
           if(r.statusCode == 200 || r.statusCode == 201){
@@ -48,11 +51,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
           }
           emit(state.copyWith(load: false,));
-          if(!PrinterService.isProgress){
-            PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
-          }
+          PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          // if(!PrinterService.isProgress){
+          //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          // }
 
         }else{
+
           alertCubit.showDialog("Error", "No se ha detectado ninguna impresora conectada");
           NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
         }

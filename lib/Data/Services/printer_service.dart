@@ -19,7 +19,7 @@ class PrinterService {
 
   PrinterService._();
 
-  void printerB(
+  void printTicket(
       {String user = "",
       ConfigModel? configModel,
       String price = "",
@@ -29,37 +29,45 @@ class PrinterService {
     if (configModel!.bluetoothCharacteristic == null) {
       throw PrinterNotSelectedException();
     }
-    if (!isProgress) {
+
       isProgress = true;
       if (configModel.pathLogo != "") {
         // TODO: Add path logo
         // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
       }
-      var ticketBytes = await printBV2(
+      var ticketBytes = await buildTicketBody(
           user: user,
           configModel: configModel,
           price: price,
           duration: duration);
-      await splitWrite(configModel, ticketBytes);
+      await printTicketInBTPrinter(configModel, ticketBytes);
       // await configModel.bluetoothCharacteristic!
       //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
 
       isProgress = !isProgress;
-    }
+
   }
 
-  Future<void> splitWrite(ConfigModel? configModel, List<int> value,
+  Future<void> printTicketInBTPrinter(ConfigModel? configModel, List<int> value,
       {int timeout = 15}) async {
     int chunk =
         configModel!.bluetoothDevice!.mtuNow - 3; // 3 bytes ble overhead
     for (int i = 0; i < value.length; i += chunk) {
       List<int> subvalue = value.sublist(i, min(i + chunk, value.length));
-      await configModel.bluetoothCharacteristic!
-          .write(subvalue, withoutResponse: false, timeout: timeout);
+      try{
+        await configModel.bluetoothCharacteristic!
+            .write(subvalue, withoutResponse: false, timeout: timeout);
+      }catch(e){
+        await configModel.bluetoothDevice!.discoverServices();
+        await configModel.bluetoothCharacteristic!
+            .write(subvalue, withoutResponse: false, timeout: timeout);
+        print(e);
+      }
+
     }
   }
 
-  Future<List<int>> printBV2(
+  Future<List<int>> buildTicketBody(
       {String user = "",
       ConfigModel? configModel,
       String price = "",
@@ -70,21 +78,17 @@ class PrinterService {
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
     var styles = const PosStyles(align: PosAlign.left, bold: false);
-    bytes += generator.text('1- Conectate al wifi', styles: styles);
-    bytes += generator.text('2- Abre tu navegador y entra en', styles: styles);
-    bytes += generator.text(configModel!.dnsNamed, styles: styles);
-    bytes += generator.text('O escanea el codigo QR', styles: styles);
-    bytes += generator.feed(1);
-    bytes += generator.qrcode(
-        'http://${configModel.dnsNamed}/login?user=$user&password=$user',
-        size: const QRSize(8));
-    bytes += generator.feed(1);
+    // bytes += generator.qrcode(
+    //     'http://${configModel.dnsNamed}/login?user=$user&password=$user',
+    //     size: const QRSize(8));
+    // bytes += generator.feed(1);
     bytes += generator.text('Clave: $spacedPassword',
         styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
             bold: true));
+    bytes += generator.feed(1);
     String priceAndDurationLine = "";
     if (price != "") {
       priceAndDurationLine += "Precio: $price";
@@ -103,8 +107,13 @@ class PrinterService {
     String second = now.second.toString().padLeft(2, '0');
     String currentDateTime = "$day/$month/${now.year} - $hour:$minute:$second";
     bytes += generator.text('Fecha: $currentDateTime', styles: styles);
+
+    bytes += generator.text('1- Conectate al wifi', styles: styles);
+    bytes += generator.text('2- Abre tu navegador y entra en', styles: styles);
+    bytes += generator.text(configModel!.dnsNamed, styles: styles);
     bytes += generator.text('--------------------------------');
     bytes += generator.feed(1);
+
     return bytes;
   }
 
