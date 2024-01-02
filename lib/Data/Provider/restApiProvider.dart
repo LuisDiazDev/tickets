@@ -8,7 +8,7 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..connectionTimeout = const Duration(milliseconds: 700)
+      ..connectionTimeout = const Duration(milliseconds: 1500)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
 
@@ -34,7 +34,7 @@ class RestApiProvider {
   }
 
   Future<http.Response> get(
-      {String url = "", String? user, String? pass, String? host}) async {
+      {String url = "", String? user, String? pass, String? host,double? timeoutSecs}) async {
     String username = user ?? sessionCubit?.state.cfg?.user ?? "";
     String password = pass ?? sessionCubit?.state.cfg?.password ?? "";
     String basicAuth =

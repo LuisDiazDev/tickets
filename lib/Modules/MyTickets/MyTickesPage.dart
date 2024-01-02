@@ -87,24 +87,22 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                     horizontalDrawerBuilder(state, homeBloc),
                                 direction: AxisDirection.right);
                           },
-                          child: Text("Crear Nuevo Ticket"),
+                          child: const Text("Crear Nuevo Ticket"),
                         ),
                       );
                     }
                     return Wrap(
                       children: [
-                        ...tickets
-                            .map((e) => Builder(builder: (context) {
-                                  var profile = state.profiles.firstWhere(
-                                      (p) => p.name == e.profile,
-                                      orElse: () =>
-                                          ProfileModel(name: "", onLogin: ""));
-                                  return CustomTicketWidget(
-                                    ticket: e,
-                                    profile: profile,
-                                  );
-                                }))
-                            .toList(),
+                        ...tickets.map((e) => Builder(builder: (context) {
+                              var profile = state.profiles.firstWhere(
+                                  (p) => p.name == e.profile,
+                                  orElse: () =>
+                                      ProfileModel(name: "", onLogin: ""));
+                              return CustomTicketWidget(
+                                ticket: e,
+                                profile: profile,
+                              );
+                            })),
                         const SizedBox(
                           height: 50,
                         ),
@@ -119,7 +117,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                 child: Center(
                   child: MaterialButton(
                     onPressed: () {},
-                    child: Text("Crear Nuevo Ticket"),
+                    child: const Text("Crear Nuevo Ticket"),
                   ),
                 ))
           ],
@@ -184,7 +182,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
               color: Colors.white.withOpacity(.8),
             ),
             child: DefaultTextStyle(
-              style: TextStyle(fontSize: 18, color: Colors.black87),
+              style: const TextStyle(fontSize: 18, color: Colors.black87),
               child: IntrinsicWidth(
                 child: Form(
                     key: _formKey,
@@ -215,7 +213,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -250,7 +248,8 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                               Text(p.name ?? ""),
                                               const Spacer(),
                                               Text(
-                                                  "${p.onLogin?.split(",")[4]}\$-${p.onLogin?.split(",")[3]}"),
+                                                  // "${p.onLogin?.split(",")[4]}\$-${p.onLogin?.split(",")[3]}"),
+                                                  "${p.metadata?.price.toString()}\$-${p.metadata?.usageTime}"),
                                               const Icon(
                                                 EvaIcons.calendarOutline,
                                                 color: ColorsApp.textColor,
@@ -308,9 +307,11 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              String duration = currentProfile?.onLogin?.split(",")[3] ?? "";
-                              homeBloc.add(GenerateTicket(currentProfile?.name ?? "",
-                                  cant,  duration));
+                              // String duration = currentProfile?.onLogin?.split(",")[3] ?? "";
+                              String duration =
+                                  currentProfile?.metadata?.usageTime ?? "";
+                              homeBloc.add(GenerateTicket(
+                                  currentProfile?.name ?? "", cant, duration));
                             }
                             Navigator.of(context).pop();
                           },

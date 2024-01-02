@@ -10,6 +10,7 @@ class DialogWidget {
     String titleAction = "Ok",
   }) {
     return AlertDialog(
+
       title: Text(
         title,
         style: const TextStyle(

@@ -4,6 +4,7 @@ import 'package:TicketOs/Core/Values/Colors.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../../Data/Services/navigator_service.dart';
@@ -11,7 +12,7 @@ import '../../../Data/Services/navigator_service.dart';
 class IpSearch {
   ///common method for showing progress dialog
   static Future showDialogSearch(
-      {BuildContext? context, isCancellable = true, String ip = ""}) async {
+      {BuildContext? context, isCancellable = true}) async {
     if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
       return await showDialog(
           barrierDismissible: false,
@@ -53,9 +54,7 @@ class IpSearch {
                     Container(
                         padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                         width: 50,
-                        child: FindIp(
-                          ip: ip,
-                        )),
+                        child: FindIp()),
                   ],
                 ),
               ),
@@ -66,9 +65,7 @@ class IpSearch {
 }
 
 class FindIp extends StatefulWidget {
-  const FindIp({super.key, this.ip = ""});
-
-  final String ip;
+  const FindIp({super.key});
 
   @override
   State<FindIp> createState() => _FindIpState();
@@ -79,21 +76,12 @@ class _FindIpState extends State<FindIp> {
   String findIp = "", locate = "";
   int current = 0;
   bool limitUp = false, limitDown = false;
+  String ip = "...";
 
   @override
   void initState() {
     super.initState();
     ticketProvider = TicketProvider();
-    if (widget.ip == "..." || widget.ip == "") {
-      findIp = "...";
-    } else {
-      var lst = widget.ip.split(".");
-      current = int.parse(lst.last);
-      locate = lst[2];
-      if (locate == "20") {
-        current = 5;
-      }
-    }
     search();
   }
 
@@ -101,15 +89,26 @@ class _FindIpState extends State<FindIp> {
     if (findIp == "...") {
       Navigator.pop(context, "...");
     }
-    check(current);
+    findMikrotikIPByNetworkScan(current);
   }
 
-  void check(int ip) async {
+  void findMikrotikIPByNetworkScan(int ip) async {
+    var ip = await NetworkInfo().getWifiGatewayIP();
+    if (ip == null) {
+      Navigator.pop(context, "no");
+      return;
+    }
+    this.ip = ip;
+    var lst = ip.split(".");
+    current = int.parse(lst.last);
+    locate = lst[2];
+    if (locate == "20") {
+      current = 5;
+    }
     const int requestCount = 128;
     for (int i = 2; i < 255; i += requestCount) {
-
       List<Future<Response>> promises = [];
-      for (int j = i; j < requestCount+i; j ++) {
+      for (int j = i; j < requestCount + i; j++) {
         var ip = "192.168.$locate.$j";
         log("$ip ->");
         promises.add(ticketProvider.restApi.get(
@@ -123,7 +122,7 @@ class _FindIpState extends State<FindIp> {
       var responses = await Future.wait(promises);
       for (int i = 0; i < responses.length; i++) {
         if (responses[i].statusCode < 500) {
-          if(i == current){
+          if (i == current) {
             continue;
           }
           var body = responses[i].body;

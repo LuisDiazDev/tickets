@@ -26,11 +26,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final sessionBloc = BlocProvider.of<SessionCubit>(context);
     final alertBloc = BlocProvider.of<AlertCubit>(context);
-    final args = ModalRoute.of(context)!.settings.arguments as String?;
 
-    if(sessionBloc.state.cfg!.contact=="" && sessionBloc.state.cfg!.nameBusiness==""){
-      alertBloc.showAlertInfo(title: "Aviso", subtitle: "Recuerde rellenar la informacion de contacto para continuar usando la app");
-    }
 
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
       return Scaffold(
@@ -71,24 +67,6 @@ class SettingsPage extends StatelessWidget {
                 endIndent: 18,
                 indent: 18,
               ),
-              CustomTextField(
-                initialValue: sessionBloc.state.cfg?.nameBusiness ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel:
-                          sessionBloc.state.cfg!.copyWith(nameBusiness: str)));
-                },
-                title: "name_bussines".tr,
-              ),
-              CustomTextField(
-                initialValue: sessionBloc.state.cfg?.contact ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel:
-                          sessionBloc.state.cfg!.copyWith(contact: str ?? "")));
-                },
-                title: "telephone".tr,
-              ),
               const Gap(5),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,92 +80,20 @@ class SettingsPage extends StatelessWidget {
                       onChanged: (str) {
                         sessionBloc.changeState(sessionBloc.state.copyWith(
                             configModel: sessionBloc.state.cfg!
-                                .copyWith(contact: str ?? "")));
+                                .copyWith(dnsNamed: str ?? "")));
                       },
-                      title: "Pagina hotspot",
+                      title: "Página hotspot",
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 42),
-                  //   child: MaterialButton(
-                  //     onPressed: () async {
-                  //       // sessionBloc
-                  //     },
-                  //     color: ColorsApp.secondary,
-                  //     child: const Text(
-                  //       "Actualizar",
-                  //       style: TextStyle(
-                  //           fontFamily: 'poppins_semi_bold',
-                  //           fontSize: 12,
-                  //           color: ColorsApp.primary,
-                  //           fontWeight: FontWeight.w400),
-                  //     ),
-                  //   ),
-                  // )
                 ],
               ),
-              const Gap(12),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(
-              //     horizontal: 16,
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       Text(
-              //         "businnes_logo".tr,
-              //         style: const TextStyle(
-              //             fontFamily: 'poppins_semi_bold',
-              //             fontSize: 18,
-              //             color: ColorsApp.secondary,
-              //             fontWeight: FontWeight.w400),
-              //       ),
-              //       const Spacer(),
-              //       MaterialButton(
-              //         onPressed: () async {
-              //           final ImagePicker picker = ImagePicker();
-              //           final XFile? pickedFile = await picker.pickImage(
-              //               source: ImageSource.gallery,
-              //               maxHeight: 80,
-              //               maxWidth: 80);
-              //           var data = await pickedFile?.readAsBytes();
-              //           if (data != null) {
-              //             var str = base64String(data);
-              //             sessionBloc.changeState(sessionBloc.state.copyWith(
-              //                 configModel: sessionBloc.state.cfg!
-              //                     .copyWith(pathLogo: str)));
-              //           }
-              //         },
-              //         color: ColorsApp.secondary,
-              //         child: const Text(
-              //           "seleccionar",
-              //           style: TextStyle(
-              //               fontFamily: 'poppins_semi_bold',
-              //               fontSize: 18,
-              //               color: ColorsApp.primary,
-              //               fontWeight: FontWeight.w400),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Visibility(
-              //   visible: sessionBloc.state.cfg!.pathLogo != "",
-              //   child: Row(
-              //     children: [
-              //       const Spacer(),
-              //       imageFromBase64String(sessionBloc.state.cfg!.pathLogo),
-              //       const Spacer()
-              //     ],
-              //   ),
-              // ),
-              //conection
               const Gap(10),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                 ),
                 child: Text(
-                  "conection".tr,
+                  "connection".tr,
                   style: const TextStyle(
                       fontFamily: 'poppins_bold',
                       fontSize: 20,
@@ -233,7 +139,7 @@ class SettingsPage extends StatelessWidget {
                   const Spacer(),
                   MaterialButton(
                     color: ColorsApp.secondary,
-                    onPressed: ()async {
+                    onPressed: () async {
                       await sessionBloc.checkConnection(alertBloc);
                     },
                     child: const Text("Comprobar Conexión",
@@ -242,7 +148,6 @@ class SettingsPage extends StatelessWidget {
                             fontFamily: 'poppins_normal',
                             fontSize: 18)),
                   ),
-
                   const Gap(12),
                 ],
               ),
@@ -273,20 +178,26 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   MaterialButton(
                     color: ColorsApp.secondary,
-                    onPressed: ()async {
+                    onPressed: () async {
                       ProgressDialogUtils.showProgressDialog();
-                      if(!await FtpService.checkFile(remoteName: "backup.backup")){
-                        var fileContents = await rootBundle.load('assets/backup.backup');
-                        File file = await writeToFile(fileContents,"${(await getApplicationDocumentsDirectory()).path}/backup.backup");
-                        bool upload  = await FtpService.uploadFile(file: file,);
-                        if(!upload){
-                          alertBloc.showAlertInfo(title: "error", subtitle: "Ah ocurrido un problema inesperado");
+                      if (!await FtpService.checkFile(
+                          remoteName: "backup.backup")) {
+                        var fileContents =
+                            await rootBundle.load('assets/backup.backup');
+                        File file = await writeToFile(fileContents,
+                            "${(await getApplicationDocumentsDirectory()).path}/backup.backup");
+                        bool upload = await FtpService.uploadFile(
+                          file: file,
+                        );
+                        if (!upload) {
+                          alertBloc.showAlertInfo(
+                              title: "error",
+                              subtitle: "Ah ocurrido un problema inesperado");
                           return;
                         }
                       }
 
                       sessionBloc.backUp(alertBloc);
-
                     },
                     child: const Text("Restablecer",
                         style: TextStyle(
@@ -319,8 +230,7 @@ class SettingsPage extends StatelessWidget {
 
 Future<File> writeToFile(ByteData data, String path) {
   final buffer = data.buffer;
-  return File(path).writeAsBytes(
-      buffer.asUint8ClampedList());
+  return File(path).writeAsBytes(buffer.asUint8ClampedList());
 }
 
 /*

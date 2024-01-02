@@ -51,7 +51,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if(newHost.value == "..."){
           alertCubit.showAlertInfo(
             title: "Error",
-            subtitle: "No se ha reconocido el mikrotik",
+            subtitle: "No se ha encontrado el mikrotik en esta red",
           );
         }else{
           emit(

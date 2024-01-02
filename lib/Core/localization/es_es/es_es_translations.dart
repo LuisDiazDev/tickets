@@ -15,10 +15,9 @@ final Map<String, String> esEs = {
   // Configuration
   "title_configuration":"Configuracion",
   "Information":"Informacion",
-  "name_bussines":"Nombre Empresa",
   "telephone": "Telefono",
-  "businnes_logo":"Logo Empresa:",
-  "conection":"Conexion",
+  "business_logo":"Logo Empresa:",
+  "connection":"Conexion",
   "user":"Usuario",
   "password":"Contraseña",
   "Reset": "restablecer"

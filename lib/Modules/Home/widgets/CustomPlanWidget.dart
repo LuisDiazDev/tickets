@@ -13,7 +13,6 @@ class CustomPlanWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var sp = profile.onLogin!.split(",");
     return GestureDetector(
       onTap: () async {
         var user = generatePassword();
@@ -44,10 +43,10 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: Visibility(
-                  visible: sp.length >= 4,
+                  visible: profile.metadata?.usageTime != null,
                   child: Builder(
                     builder: (context) {
-                      var text = sp[3]??"";
+                      var text = profile.metadata?.usageTime ?? "";
                       return Padding(
                         padding: const EdgeInsets.only(left: 40),
                         child: badges.Badge(
@@ -72,7 +71,8 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                    sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
+                  profile.metadata?.price.toString() ?? "",
+                    // sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,

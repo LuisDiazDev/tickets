@@ -98,8 +98,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                           ),
                           GestureDetector(
                             onTap: ()async{
-                              var ip = await NetworkInfo().getWifiIP();
-                              var host = await IpSearch.showDialogSearch(ip:ip??"...");
+                              var host = await IpSearch.showDialogSearch();
                               loginBloc.add(ChangeInitialHost(host));
                               // setState(() {
                               //

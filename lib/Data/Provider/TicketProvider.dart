@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:http/http.dart';
 
 import '../../models/dhcp_server_model.dart';
+import '../../models/hotspot_model.dart';
 import '../../models/profile_hotspot_model.dart';
 import '../../models/profile_model.dart';
 import '../../models/ticket_model.dart';
@@ -10,6 +9,8 @@ import 'restApiProvider.dart';
 
 class TicketProvider {
   final restApi = RestApiProvider();
+
+
 
   Future<List<TicketModel>> allTickets() async {
     var response = await restApi.get(url: "/ip/hotspot/user");
@@ -23,7 +24,21 @@ class TicketProvider {
         return [];
       }
     }
+    return [];
+  }
 
+  Future<List<Hotspot>> allHotspot() async {
+    var response = await restApi.get(url: "/ip/hotspot");
+
+    if (response.statusCode == 200) {
+      try {
+        var decode = hotspotFromJson(response.body);
+        return decode;
+      } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+        return [];
+      }
+    }
     return [];
   }
 
@@ -93,7 +108,7 @@ class TicketProvider {
       "disabled": "no",
       "limit-uptime": duration,
       "limit-bytes-total": "0",
-      "comment": "usuario (ticket creado desde app)"
+      "comment": "ticket creado desde TicketOS"
     });
   }
 
@@ -114,7 +129,12 @@ class TicketProvider {
   }
 
   Future<Response> newProfile(ProfileModel profile,String duration) async {
+    if (profile.name == "") {
+      throw Exception("El nombre no puede estar vacio");
+    }
     var p = await allProfiles();
+    var h = await allHotspot();
+    profile.metadata!.hotspot = h[0].name; // TODO
     for (var i = 0; i < p.length; i++) {
       if(p[i].name == profile.name){
         profile.name = "${profile.name} (copy)";
@@ -122,7 +142,7 @@ class TicketProvider {
       }
     }
     return await restApi.post(url: "/ip/hotspot/user/profile/add", body: {
-      "name": profile.name,
+      "name": profile.metadata!.toMikrotiketNameString(profile.name??""), // TODO mover toMikrotiketNameString a esta clase
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
       "shared-users": profile.sharedUsers,
@@ -135,7 +155,7 @@ class TicketProvider {
 
   Future<Response> updateProfile(ProfileModel profile) async {
     return await restApi.put(url: "/ip/hotspot/user/profile/${profile.id}", body: {
-      "name": profile.name,
+      "name": profile.metadata!.toMikrotiketNameString(profile.name??""),
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
       "shared-users": profile.sharedUsers,

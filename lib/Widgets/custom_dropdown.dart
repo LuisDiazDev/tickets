@@ -71,22 +71,18 @@ class _CustomDropDownState extends State<CustomDropDown> {
               ),
               const Gap(10),
               SizedBox(
-                width: MediaQuery.of(context).size.width * .21,
+                width: MediaQuery.of(context).size.width * .22,
                 child: DropdownButtonFormField2<String>(
                   isExpanded: true,
                   value: currentSelected,
                   decoration: InputDecoration(
                     // Add Horizontal padding using menuItemStyleData.padding so it matches
                     // the menu padding when button's width is not specified.
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                     // Add more decoration..
-                  ),
-                  hint: const Text(
-                    'Selecciona un Plan',
-                    style: TextStyle(fontSize: 14),
                   ),
                   items: widget.item
                       .map((p) => DropdownMenuItem<String>(
@@ -98,12 +94,6 @@ class _CustomDropDownState extends State<CustomDropDown> {
                             ),
                           ))
                       .toList(),
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Por favor selecciona un plan';
-                    }
-                    return null;
-                  },
                   onChanged: (str) {
                     widget.onChange(_controller.value.text + str!);
                     currentSelected = str;

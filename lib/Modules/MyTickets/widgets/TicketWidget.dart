@@ -24,21 +24,20 @@ class CustomTicketWidget extends StatelessWidget {
       ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
 
   Widget _badgeWidget(TicketsBloc ticketsBloc) {
-    var sp = profile?.onLogin?.split(",") ?? [];
     return Visibility(
-      visible: sp.length >= 4,
+      visible: profile?.metadata?.usageTime != null,
       child: Padding(
         padding: const EdgeInsets.only(left: 40),
         child: badges.Badge(
           badgeContent: Text(
-            sp.length > 3?sp[3]:"",
+            profile?.metadata?.usageTime ?? "",
             style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
           ),
           badgeStyle: const badges.BadgeStyle(
             badgeColor: ColorsApp.secondary,
           ),
           child: Icon(
-            getIcon(sp.length > 3?sp[3]:""),
+            getIcon(profile?.metadata?.usageTime ?? ""),
             color: ColorsApp.primary,
             size: 32,
           ),
@@ -70,26 +69,23 @@ class CustomTicketWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          TicketDialogUtils.showDialogT(
+          TicketDialogUtils.showNewTicketDetailDialog(
               configModel: session.state.cfg!,
               user: ticket.name!,
               duration: duration,
               price: price,
               shareF: () {
-                homeBloc.add(ShareQRImage(
-                    ticket.name ?? "",
-                    ticket.password ?? ""
-                ));
+                homeBloc.add(
+                    ShareQRImage(ticket.name ?? "", ticket.password ?? ""));
               },
               printF: () {
-                if (session.state.cfg?.connected ?? false) {
-                  if(!PrinterService.isProgress){
+                if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                  if (!PrinterService.isProgress) {
                     PrinterService().printerB(
                         user: ticket.name ?? "",
                         configModel: session.state.cfg,
                         duration: duration,
-                        price: price
-                    );
+                        price: price);
                   }
 
                   alertCubit.showAlertInfo(
@@ -103,14 +99,14 @@ class CustomTicketWidget extends StatelessWidget {
                     subtitle: "No hay impresora conectada",
                   );
                 }
-              }
-          );
+              });
         },
         child: ClipPath(
           clipper: CustomTicketClipper(), // <-- CustomClipper
           child: Container(
-              color: valid() ? ColorsApp.secondary.withOpacity(.4) : Colors
-                  .grey, // <-- background color
+              color: valid()
+                  ? ColorsApp.secondary.withOpacity(.4)
+                  : Colors.grey, // <-- background color
               height: 115, // <-- height
               width: 215, // <-- width
               child: Column(
@@ -142,9 +138,9 @@ class CustomTicketWidget extends StatelessWidget {
                               builder: (context) {
                                 late String text;
                                 if (ticket.bytesIn != "0") {
-                                  text = "D: ${ticket.getDownloadedInMB()} S: ${ticket
-                                      .getUploadedInMB()}";
-                                }else{
+                                  text =
+                                      "D: ${ticket.getDownloadedInMB()} S: ${ticket.getUploadedInMB()}";
+                                } else {
                                   text = "Sin consumo";
                                 }
                                 return Text(
@@ -190,21 +186,27 @@ class CustomTicketWidget extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 8.0, left: 10),
                           child: TextButton(
                             onPressed: () async {
-                              if (!(session.state.cfg?.connected ?? false)) {
-                                  if (session.state.cfg?.bluetoothDevice != null) {
-                                   await session.state.cfg!.bluetoothPrintService.connect(
-                                        session.state.cfg!.bluetoothDevice!);
-                                   session.state.cfg?.connected = true;
-                                  }
+                              if (!(session.state.cfg?.bluetoothDevice
+                                      ?.isConnected ??
+                                  false)) {
+                                if (session.state.cfg?.bluetoothDevice !=
+                                    null) {
+                                  await session.state.cfg?.bluetoothDevice!
+                                      .connect(
+                                          timeout: const Duration(seconds: 10),
+                                          mtu: null,
+                                          autoConnect: true);
+                                }
                               }
-                              if (session.state.cfg?.connected ?? false) {
-                                if(!PrinterService.isProgress){
+                              if (session.state.cfg?.bluetoothDevice
+                                      ?.isConnected ??
+                                  false) {
+                                if (!PrinterService.isProgress) {
                                   PrinterService().printerB(
                                       user: ticket.name ?? "",
                                       configModel: session.state.cfg,
                                       duration: duration,
-                                      price: price
-                                  );
+                                      price: price);
                                 }
 
                                 alertCubit.showAlertInfo(
@@ -241,16 +243,17 @@ class CustomTicketWidget extends StatelessWidget {
                               constraints: const BoxConstraints(),
                               onPressed: () {
                                 homeBloc.add(ShareQRImage(
-                                    ticket.name ?? "",
-                                    ticket.password ?? ""
-                                ));
-                              }, icon: const Icon(EvaIcons.shareOutline,
-                            color: ColorsApp.secondary,)),
+                                    ticket.name ?? "", ticket.password ?? ""));
+                              },
+                              icon: const Icon(
+                                EvaIcons.shareOutline,
+                                color: ColorsApp.secondary,
+                              )),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 5, top: 10.0, right: 5),
+                        padding:
+                            const EdgeInsets.only(left: 5, top: 10.0, right: 5),
                         child: IconButton(
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -258,7 +261,9 @@ class CustomTicketWidget extends StatelessWidget {
                               homeBloc.add(DeletedTicket(ticket.id!));
                             },
                             icon: const Icon(
-                              EvaIcons.trashOutline, color: Colors.red,)),
+                              EvaIcons.trashOutline,
+                              color: Colors.red,
+                            )),
                       )
                     ],
                   )
