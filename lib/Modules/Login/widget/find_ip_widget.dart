@@ -126,8 +126,10 @@ class _FindIpState extends State<FindIp> {
             continue;
           }
           var body = responses[i].body;
-          Navigator.pop(context, responses[i].request?.url.host);
-          return;
+          if (body.contains("Bad Request") && responses[i].statusCode == 400) {
+            Navigator.pop(context, responses[i].request?.url.host);
+            return;
+          }
         }
       }
     }
