@@ -1,4 +1,4 @@
-import 'package:TicketOs/models/profile_metadata_model.dart';
+import 'package:StarTickera/models/profile_metadata_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -70,7 +70,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
             color: ColorsApp.primary,
             fontFamily: 'poppins_bold',
             fontWeight: FontWeight.w600,
-            fontSize: 26),
+            fontSize: 22),
         child: IntrinsicWidth(
           child: Form(
               key: _formKey,
@@ -92,7 +92,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                               fontWeight: FontWeight.w600,
                               fontSize: 26),
                         ),
-                        const Gap(20),
+                        const Gap(18),
                       ],
                     ),
                   ),
@@ -115,23 +115,24 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                     initialString: price,
                     item: ConfigModel.settings["currency"] ?? [],
                   ),
-                  const Gap(10),
+                  const Gap(9),
                   CustomDropDown(
                     onChange: (str) {
                       durationT = str ?? durationT[durationT.length - 1];
                     },
                     initialString: durationT,
                     keyboard: TextInputType.number,
-                    title: "Duracion",
+                    title: "Duración",
                     initialDropdown: "m",
                     item: ConfigModel.settings["range-datetime"] ?? [],
                   ),
+                  const Gap(1),
                   CustomTextField(
                     onChanged: (str) {
                       numberOfSharedUserPerTicket = str ?? "1";
                     },
                     keyboard: TextInputType.number,
-                    title: "Veces que se puede usar el ticket",
+                    title: "Usuarios por ticket",
                     initialValue: numberOfSharedUserPerTicket,
                   ),
                   CheckBoxControl(

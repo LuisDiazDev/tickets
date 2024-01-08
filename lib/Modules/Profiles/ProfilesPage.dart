@@ -1,4 +1,4 @@
-import 'package:TicketOs/Modules/Profiles/widget/form_new_profile.dart';
+import 'package:StarTickera/Modules/Profiles/widget/form_new_profile.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

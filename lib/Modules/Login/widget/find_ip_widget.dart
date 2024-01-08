@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:TicketOs/Core/Values/Colors.dart';
+import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

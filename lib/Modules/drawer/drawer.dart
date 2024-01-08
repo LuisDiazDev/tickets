@@ -1,4 +1,4 @@
-import 'package:TicketOs/Core/localization/app_localization.dart';
+import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';

@@ -99,7 +99,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                     currentSelected = str;
                   },
                   buttonStyleData: const ButtonStyleData(
-                    padding: EdgeInsets.only(right: 8),
+                    padding: EdgeInsets.only(right: 6),
                   ),
                   iconStyleData: const IconStyleData(
                     icon: Icon(

@@ -1,6 +1,6 @@
-import 'package:TicketOs/Modules/Alerts/AlertCubit.dart';
-import 'package:TicketOs/Modules/Session/SessionCubit.dart';
-import 'package:TicketOs/models/profile_model.dart';
+import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
+import 'package:StarTickera/Modules/Session/SessionCubit.dart';
+import 'package:StarTickera/models/profile_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,4 +1,4 @@
-import 'package:TicketOs/models/profile_metadata_model.dart';
+import 'package:StarTickera/models/profile_metadata_model.dart';
 import 'package:test/test.dart';
 
 void main() {

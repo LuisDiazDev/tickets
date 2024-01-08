@@ -1,4 +1,4 @@
-name: TicketOs
+name: StarTickera
 description: app hotspot controller
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -40,7 +40,7 @@ dependencies:
   device_info: ^2.0.3
   flutter_blue_plus: ^1.31.0
   flutter_esc_pos_utils: ^1.0.0
-
+  location: ^5.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

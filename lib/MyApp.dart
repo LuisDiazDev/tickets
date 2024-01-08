@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Envios',
+      title: 'StarTickera',
       onGenerateRoute: routes,
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.initial,

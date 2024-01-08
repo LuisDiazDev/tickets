@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:TicketOs/Modules/Alerts/AlertCubit.dart';
+import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
 import 'package:device_info/device_info.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,8 @@ import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../Core/Values/Colors.dart';
 import '../Session/SessionCubit.dart';
+import 'package:location/location.dart' as loc2;
+
 
 const validBluetoothCharacteristics = [
   "2af1",
@@ -186,6 +188,21 @@ class PrintSettings extends StatelessWidget {
   }
 
   Future<void> showBluetoothDevicesList(BuildContext context) async {
+    if (Platform.isAndroid) {
+      await FlutterBluePlus.turnOn();
+    }
+
+    loc2.Location location = new loc2.Location();
+
+    bool ison = await location.serviceEnabled();
+    if (!ison) { //if defvice is off
+      bool isturnedon = await location.requestService();
+      if (isturnedon) {
+        log("GPS device is turned ON");
+      }else{
+        log("GPS Device is still OFF");
+      }
+    }
     Map<Permission, PermissionStatus> statuses =
         await (await buildPermissionList()).request();
     var wasApproved = await checkIfThePermissionIsGranted(statuses, context);

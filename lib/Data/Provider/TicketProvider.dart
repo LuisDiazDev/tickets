@@ -108,7 +108,7 @@ class TicketProvider {
       "disabled": "no",
       "limit-uptime": duration,
       "limit-bytes-total": "0",
-      "comment": "ticket creado desde TicketOS"
+      "comment": "ticket creado desde StarTickera"
     });
   }
 

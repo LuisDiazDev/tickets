@@ -1,4 +1,4 @@
-import 'package:TicketOs/Core/localization/app_localization.dart';
+import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
