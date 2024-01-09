@@ -2,8 +2,10 @@ import 'package:StarTickera/Modules/Login/widget/find_ip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:open_file/open_file.dart';
 
 import '../../Core/Values/Colors.dart';
+import '../../Data/Provider/virtualTicketRepository.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import 'bloc/LoginBloc.dart';
@@ -42,6 +44,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
 
   @override
   Widget build(BuildContext context) {
+    generateTickets(20);
     final loginBloc = BlocProvider.of<LoginBloc>(context);
        return SafeArea(
         child:Scaffold(

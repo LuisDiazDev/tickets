@@ -41,6 +41,9 @@ dependencies:
   flutter_blue_plus: ^1.31.0
   flutter_esc_pos_utils: ^1.0.0
   location: ^5.0.3
+  pdf: any
+  open_file: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
