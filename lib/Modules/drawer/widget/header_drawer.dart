@@ -1,4 +1,4 @@
-import 'package:TicketOs/Core/localization/app_localization.dart';
+import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Core/Values/Colors.dart';

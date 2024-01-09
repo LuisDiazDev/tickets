@@ -1,4 +1,4 @@
-import 'package:TicketOs/Modules/Login/widget/find_ip_widget.dart';
+import 'package:StarTickera/Modules/Login/widget/find_ip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -59,7 +59,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                        height: MediaQuery.of(context).size.height*.2,
                      ),
                      const Text(
-                        'TicketOs',
+                        'StarTickera',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF123258),
@@ -98,8 +98,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage> with TickerProviderSta
                           ),
                           GestureDetector(
                             onTap: ()async{
-                              var ip = await NetworkInfo().getWifiIP();
-                              var host = await IpSearch.showDialogSearch(ip:ip??"...");
+                              var host = await IpSearch.showDialogSearch();
                               loginBloc.add(ChangeInitialHost(host));
                               // setState(() {
                               //

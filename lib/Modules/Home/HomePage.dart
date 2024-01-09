@@ -1,4 +1,4 @@
-import 'package:TicketOs/Core/localization/app_localization.dart';
+import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -69,15 +69,6 @@ class _BuildHomePageState extends State<_BuildHomePage>
             child: Column(
               children: [
                 const Gap(12),
-                const Text(
-                  "Planes disponibles",
-                  style: TextStyle(
-                      color: ColorsApp.secondary,
-                      fontFamily: 'poppins_bold',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 26),
-                ),
-                const Gap(12),
                 Visibility(
                   visible: state.load,
                   child: Container(
@@ -99,15 +90,14 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                 .map((e) => CustomPlanWidget(
                                       profile: e,
                                       generatedUser: (user) {
-                                        var sp = e.onLogin?.split(",") ?? [];
-                                        var duration = sp.length > 3? sp[3]: "";
-                                        var price = sp.length > 4? sp[4]: "";
+                                        var duration = e.metadata?.usageTime ?? "";
+                                        var price = e.metadata?.price ?? "";
                                         home.add(
                                             GeneratedTicket(
-                                                e.name ?? "",
+                                                e.metadata!.toMikrotiketNameString(e.name??""),
                                                 user,
                                                 duration,
-                                                price
+                                                price.toString()
                                             )
                                         );
                                       },

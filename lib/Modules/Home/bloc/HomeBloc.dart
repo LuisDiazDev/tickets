@@ -25,26 +25,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(load: true));
         var profiles = await provider.allProfiles();
         emit(state.copyWith(load: false, profiles: profiles));
-
-        if(sessionCubit.state.cfg?.contact == "" || sessionCubit.state.cfg?.nameBusiness == ""){
-          NavigatorService.pushNamedAndRemoveUntil(Routes.settings,arguments: "Por favor escriba los datos del negocio");
-        }
       },
     );
 
     on<GeneratedTicket>(
       (event, emit) async {
-        if(!(sessionCubit.state.cfg?.connected ?? false)){
-          if (sessionCubit.state.cfg?.bluetoothDevice != null) {
-            await sessionCubit.state.cfg?.bluetoothPrintService.connect(sessionCubit.state.cfg!.bluetoothDevice!);
-            sessionCubit.state.cfg?.connected = true;
-          }
+        if (sessionCubit.state.cfg?.bluetoothDevice != null && !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
+          await sessionCubit.state.cfg?.bluetoothDevice?.connect();
         }
-        if(sessionCubit.state.cfg?.connected ?? false){
+        if(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false){
           var r = await provider.newTicket(event.name, event.profile,event.duration);
           if(r.statusCode == 200 || r.statusCode == 201){
             // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
-            TicketDialogUtils.showDialogT(
+            TicketDialogUtils.showNewTicketDetailDialog(
                 configModel: sessionCubit.state.cfg!,
                 user: event.name,
                 price: event.price,
@@ -58,11 +51,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
           }
           emit(state.copyWith(load: false,));
-          if(!PrinterService.isProgress){
-            PrinterService().printerB(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
-          }
+          PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          // if(!PrinterService.isProgress){
+          //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          // }
 
         }else{
+
           alertCubit.showDialog("Error", "No se ha detectado ninguna impresora conectada");
           NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
         }

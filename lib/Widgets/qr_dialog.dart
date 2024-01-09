@@ -1,4 +1,4 @@
-import 'package:TicketOs/models/config_model.dart';
+import 'package:StarTickera/models/config_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -8,7 +8,7 @@ import '../../Data/Services/navigator_service.dart';
 class TicketDialogUtils {
 
   ///common method for showing progress dialog
-  static void showDialogT(
+  static void showNewTicketDetailDialog(
       {BuildContext? context, isCancellable = true, String user = "", required ConfigModel configModel, Function()? printF, Function()? shareF,String price="",String duration=""}) async {
     if (
     NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
@@ -46,16 +46,6 @@ class TicketDialogUtils {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Visibility(
-                          visible: configModel.nameBusiness != "",
-                          child: Text(
-                            configModel.nameBusiness,
-                            style: const TextStyle(
-                              fontFamily: 'poppins_bold',
-                              fontSize: 24,
-                              color: Color(0xFF6565FF),
-                            ),
-                          ),),
                         Container(
                           padding: const EdgeInsets.all(16),
                           height: 240,
@@ -97,7 +87,7 @@ class TicketDialogUtils {
                               ),
                             ),
                             Text(
-                              "${configModel.dnsNamed}",
+                              configModel.dnsNamed,
                               style: const TextStyle(
                                 fontFamily: 'poppins_bold',
                                 fontSize: 18,
@@ -164,7 +154,7 @@ class TicketDialogUtils {
                                   Column(
                                     children: [
                                       const Text(
-                                        "Duracion",
+                                        "Duración",
                                         style: TextStyle(
                                           fontFamily: 'poppins_regular',
                                           fontSize: 12,
@@ -193,28 +183,6 @@ class TicketDialogUtils {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Visibility(
-                                visible: configModel.contact != "",
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "Contacto",
-                                      style: TextStyle(
-                                        fontFamily: 'poppins_regular',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Text(
-                                      configModel.contact,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontFamily: 'poppins_bold',
-                                        fontSize: 14,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -232,7 +200,7 @@ class TicketDialogUtils {
                                           boxShadow: [
                                             BoxShadow(
                                               blurRadius: 32.0,
-                                              color: Color.fromARGB(
+                                              color: const Color.fromARGB(
                                                   255, 133, 142, 212)
                                                   .withOpacity(0.68),
                                             ),
@@ -260,7 +228,7 @@ class TicketDialogUtils {
                                           boxShadow: [
                                             BoxShadow(
                                               blurRadius: 32.0,
-                                              color: Color.fromARGB(
+                                              color: const Color.fromARGB(
                                                   255, 133, 142, 212)
                                                   .withOpacity(0.68),
                                             ),

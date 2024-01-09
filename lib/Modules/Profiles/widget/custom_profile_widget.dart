@@ -7,6 +7,7 @@ import '../../../Core/Values/Colors.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
+import '../../../models/profile_metadata_model.dart';
 export '/core/utils/size_utils.dart';
 
 class CustomProfile extends StatelessWidget {
@@ -18,9 +19,11 @@ class CustomProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProfileBloc profileBloc = BlocProvider.of<ProfileBloc>(context);
-    var sp = profile.onLogin?.split(",") ?? [];
-    var duration = sp.length >= 4 ? sp[3] : "";
-    var price = sp.length >= 5 ? sp[4].replaceAll("S", "\$") : "";
+    if (profile.metadata == null) {
+      return Container();
+    }
+    var duration = profile.metadata!.usageTime ?? "";
+    var price = profile.metadata!.price ?? "";
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -36,7 +39,7 @@ class CustomProfile extends StatelessWidget {
                 child: SizedBox(
                   width: 150,
                   child: Text(
-                    profile.name ?? "",
+                    profile.name??"",
                     style: const TextStyle(
                       color: ColorsApp.primary,
                       fontSize: 18,
@@ -48,7 +51,7 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: Visibility(
-                  visible: sp.length >= 4,
+                  visible: price.toString().isNotEmpty,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: badges.Badge(
@@ -72,7 +75,7 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  price,
+                  price.toString(),
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,

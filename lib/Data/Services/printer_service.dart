@@ -1,11 +1,17 @@
-import 'package:TicketOs/models/profile_model.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'dart:math';
+
+import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 
 import '../../models/config_model.dart';
+
+class PrinterNotSelectedException implements Exception {
+  String cause = "No se ha seleccionado una impresora";
+}
 
 class PrinterService {
   static PrinterService? _instance;
   static bool isProgress = false;
+
   factory PrinterService() {
     _instance ??= PrinterService._();
     return _instance!;
@@ -13,176 +19,129 @@ class PrinterService {
 
   PrinterService._();
 
-  void printerB({String user = "", ConfigModel? configModel,String price="",String duration=""}) async {
+  void printTicket(
+      {String user = "",
+      ConfigModel? configModel,
+      String price = "",
+      String duration = ""}) async {
     price = price.replaceAll("S", "\$");
-    Map<String, dynamic> config = {
-      'width':0,
-      'height':70,
-      "font size":12,
-      'gap':2
-    };
-    var spacedPassword = user.split('').join(' ');
 
-    if(!isProgress){
+    if (configModel!.bluetoothCharacteristic == null) {
+      throw PrinterNotSelectedException();
+    }
+
       isProgress = true;
-      List<LineText> list = [];
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '1- Conectate al WIFI ${configModel?.nameBusiness}',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '2- Abre tu navegador y entra en',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '${configModel?.dnsNamed}',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: 'O escanea el codigo QR',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '.',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-        type: LineText.TYPE_QRCODE,
-        content:
-        'http://${configModel?.dnsNamed}/login?user=$user&password=$user',
-        size: 5,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '.',
-          weight: 0,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 0
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: 'Clave: $spacedPassword',
-          weight: 1,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: 'Precio           Duracion',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '$price             $duration',
-          weight: 1,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1,
-      ));
-      if(configModel?.contact != null && configModel?.contact != ""){
-        list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: 'Contacto ${configModel?.contact}',
-          weight: 0,
-          align: LineText.ALIGN_CENTER,
-          underline: 1
-        ));
-      }
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '--------------------------------',
-          weight: 1,
-          height: 10,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1,
-      ));
-      list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: '--------------------------------',
-        weight: 1,
-        height: 10,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ));
-
-      // Getting Started
-      if(configModel?.pathLogo != ""){
+      if (configModel.pathLogo != "") {
+        // TODO: Add path logo
         // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
       }
-      if (configModel?.connected ?? false) {
-        // List<LineText> list1 = [];
-        // ByteData data = await rootBundle.load("assets/guide3.png");
-        // List<int> imageBytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-        // String base64Image = base64Encode(imageBytes);
-        // list1.add(LineText(type: LineText.TYPE_IMAGE, x:10, y:10, content: base64Image,));
+      var ticketBytes = await buildTicketBody(
+          user: user,
+          configModel: configModel,
+          price: price,
+          duration: duration);
+      await printTicketInBTPrinter(configModel, ticketBytes);
+      // await configModel.bluetoothCharacteristic!
+      //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
 
-
-        await configModel?.bluetoothPrintService.printReceipt(config, list);
-        // await bluetoothPrintService.printReceipt(config, list1);
-      }
-      await Future.delayed(Duration(seconds: 3));
       isProgress = !isProgress;
-    }
+
   }
 
-  void checkConnectionPrinter({Duration? timeOut, ConfigModel? configModel}) async {
-    if (configModel?.bluetoothDevice != null && !(await configModel?.bluetoothPrintService.isConnected ?? false)) {
-      await configModel?.bluetoothPrintService.connect(configModel.bluetoothDevice!);
-    }
-    await configModel?.bluetoothPrintService.stopScan();
-    configModel?.bluetoothPrintService.startScan(
-        timeout: timeOut ?? const Duration(seconds: 10));
-
-    configModel?.bluetoothPrintService.scanResults.listen((event) async {
-      if (event.isNotEmpty &&
-          !(await configModel.bluetoothPrintService.isConnected ?? false)) {
-        var results = event.where(
-                (element) => element.name == configModel.bluetoothDevice!.name);
-        if (results.isNotEmpty) {
-          configModel.bluetoothPrintService.connect(results.first);
-        }else{
-          configModel.connected = false;
-        }
+  Future<void> printTicketInBTPrinter(ConfigModel? configModel, List<int> value,
+      {int timeout = 15}) async {
+    int chunk =
+        configModel!.bluetoothDevice!.mtuNow - 3; // 3 bytes ble overhead
+    for (int i = 0; i < value.length; i += chunk) {
+      List<int> subvalue = value.sublist(i, min(i + chunk, value.length));
+      try{
+        await configModel.bluetoothCharacteristic!
+            .write(subvalue, withoutResponse: false, timeout: timeout);
+      }catch(e){
+        await configModel.bluetoothDevice!.discoverServices();
+        await configModel.bluetoothCharacteristic!
+            .write(subvalue, withoutResponse: false, timeout: timeout);
+        print(e);
       }
-    });
+
+    }
   }
 
-  // Stream<int> get state {
-  //   return bluetoothPrintService.state;
-  // }
+  Future<List<int>> buildTicketBody(
+      {String user = "",
+      ConfigModel? configModel,
+      String price = "",
+      String duration = ""}) async {
+    // Using default profile
+    var spacedPassword = user.split('').join(' ').toUpperCase();
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm58, profile);
+    List<int> bytes = [];
+    var styles = const PosStyles(align: PosAlign.left, bold: false);
+    // bytes += generator.qrcode(
+    //     'http://${configModel.dnsNamed}/login?user=$user&password=$user',
+    //     size: const QRSize(8));
+    // bytes += generator.feed(1);
+    bytes += generator.text('Clave: $spacedPassword',
+        styles: const PosStyles(
+            align: PosAlign.left,
+            height: PosTextSize.size2,
+            width: PosTextSize.size2,
+            bold: true));
+    bytes += generator.feed(1);
+    String priceAndDurationLine = "";
+    if (price != "") {
+      priceAndDurationLine += "Precio: $price";
+    }
+    if (duration != "") {
+      priceAndDurationLine += "  |  Duracion: $duration";
+    }
+    bytes += generator.text(priceAndDurationLine);
 
-  // Stream<List<BluetoothDevice>> get scan {
-  //   return bluetoothPrintService.scanResults;
-  // }
+    // Time in format "day/month/year hh:mm:ss"
+    var now = DateTime.now();
+    String day = now.day.toString().padLeft(2, '0');
+    String month = now.month.toString().padLeft(2, '0');
+    String hour = now.hour.toString().padLeft(2, '0');
+    String minute = now.minute.toString().padLeft(2, '0');
+    String second = now.second.toString().padLeft(2, '0');
+    String currentDateTime = "$day/$month/${now.year} - $hour:$minute:$second";
+    bytes += generator.text('Fecha: $currentDateTime', styles: styles);
 
-  // void connect(BluetoothDevice bluetoothDevice) async {
-  //   if ((await bluetoothPrintService.isConnected ?? false)) {
-  //     await bluetoothPrintService.disconnect();
-  //   }
-  //
-  //   bluetoothPrintService.connect(bluetoothDevice);
-  // }
+    bytes += generator.text('1- Conectate al wifi', styles: styles);
+    bytes += generator.text('2- Abre tu navegador y entra en', styles: styles);
+    bytes += generator.text(configModel!.dnsNamed, styles: styles);
+    bytes += generator.text('--------------------------------');
+    bytes += generator.feed(1);
 
-  // void initScan({Duration? duration}) {
-  //   bluetoothPrintService.scan(
-  //       timeout: duration ?? const Duration(minutes: 4));
-  // }
+    return bytes;
+  }
+
+  void tryConnect({Duration? timeOut, ConfigModel? configModel}) async {
+    if (configModel?.bluetoothDevice != null) {
+      await configModel?.bluetoothDevice!.connect(
+          timeout: const Duration(seconds: 10), mtu: null, autoConnect: true);
+    }
+  }
+
+// Stream<int> get state {
+//   return bluetoothPrintService.state;
+// }
+
+// Stream<List<BluetoothDevice>> get scan {
+//   return bluetoothPrintService.scanResults;
+// }
+
+// void connect(BluetoothDevice bluetoothDevice) async {
+//   if ((await bluetoothPrintService.isConnected ?? false)) {
+//     await bluetoothPrintService.disconnect();
+//   }
+//
+//   bluetoothPrintService.connect(bluetoothDevice);
+// }
+
+// void initScan({Duration? duration}) {
+//   bluetoothPrintService.scan(
+//       timeout: duration ?? const Duration(minutes: 4));
+// }
 }

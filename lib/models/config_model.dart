@@ -1,6 +1,5 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'dart:convert';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class ConfigModel {
   String host,
@@ -12,27 +11,21 @@ class ConfigModel {
       shareUser,
       pathLogo,
       dnsNamed,
-      nameBusiness,
       port,
-      dhcp,
-      contact;
+      dhcp;
 
-  bool limitSpeedInternet, connected;
+  bool limitSpeedInternet;
   BluetoothDevice? bluetoothDevice;
+  BluetoothCharacteristic? bluetoothCharacteristic;
 
-  final BluetoothPrint bluetoothPrintService = BluetoothPrint.instance;
-  final FlutterReactiveBle bluetoothScanService = FlutterReactiveBle();
-  late Map<String, BluetoothDevice> bluetoothDevices = {};
+
 
   ConfigModel(
       {
         this.dnsNamed = "",
-      this.contact = "",
       this.dhcp = "",
       this.ip = "...",
       this.port = "3000",
-      this.connected = false,
-      this.nameBusiness = "",
       this.password = "1234",
       this.host = "192.168.20.5",
       this.user = "tickets",
@@ -41,7 +34,9 @@ class ConfigModel {
       this.limitSpeedInternet = false,
       this.maxDownload = "1M",
       this.maxUpload = "1M",
-      this.bluetoothDevice});
+      this.bluetoothDevice,
+      this.bluetoothCharacteristic
+      });
 
   static Map settings = {
     "download": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
@@ -51,11 +46,8 @@ class ConfigModel {
   };
 
   ConfigModel copyWith({
-    bool? connected,
     String? dnsNamed,
-    String? contact,
     bool? limitSpeedInternet,
-    String? nameBusiness,
     String? password,
     String? host,
     String? user,
@@ -67,14 +59,12 @@ class ConfigModel {
     String? maxUpload,
     String? port,
     BluetoothDevice? bluetoothDevice,
+    BluetoothCharacteristic? bluetoothCharacteristic,
   }) {
     return ConfigModel(
         dhcp: dhcp ?? this.dhcp,
         dnsNamed: dnsNamed ?? this.dnsNamed,
-        connected: connected ?? this.connected,
-        contact: contact ?? this.contact,
         limitSpeedInternet: limitSpeedInternet ?? this.limitSpeedInternet,
-        nameBusiness: nameBusiness ?? this.nameBusiness,
         password: password ?? this.password,
         host: host ?? this.host,
         ip: ip ?? this.ip,
@@ -84,14 +74,12 @@ class ConfigModel {
         pathLogo: pathLogo ?? this.pathLogo,
         maxDownload: maxDownload ?? this.maxDownload,
         maxUpload: maxUpload ?? this.maxUpload,
-        bluetoothDevice: bluetoothDevice ?? this.bluetoothDevice);
+        bluetoothDevice: bluetoothDevice ?? this.bluetoothDevice,
+        bluetoothCharacteristic: bluetoothCharacteristic ?? this.bluetoothCharacteristic);
   }
 
   factory ConfigModel.fromJson(Map<String, dynamic> json) => ConfigModel(
-      connected: json["connected"],
-      contact: json["contact"],
       limitSpeedInternet: json["limit-speed-internet"],
-      nameBusiness: json["name-business"],
       password: json["password"],
       host: json["host"],
       user: json["user"],
@@ -104,14 +92,37 @@ class ConfigModel {
       maxUpload: json["max-upload"],
       dnsNamed: json["dns-name"],
       bluetoothDevice:
-          json["blue"] != null ? BluetoothDevice.fromJson(json["blue"]) : null);
+          json["bt_service"] != null ? BluetoothDevice.fromId(json["bt_service"]) : null,
+      bluetoothCharacteristic: json["bt_char"] != null
+          ? bluetoothCharacteristicFromJson(json["bt_char"])
+          : null
+  );
+
+  static String bluetoothCharacteristicToJson(BluetoothCharacteristic? bluetoothCharacteristic) {
+    if (bluetoothCharacteristic == null) {
+      return "";
+    }
+    var m = <String, dynamic>{
+      "remoteId": bluetoothCharacteristic.remoteId.toString(),
+      "serviceUuid": bluetoothCharacteristic.serviceUuid.toString(),
+      "secondaryServiceUuid": bluetoothCharacteristic.secondaryServiceUuid.toString(),
+      "characteristicUuid": bluetoothCharacteristic.characteristicUuid.toString(),
+    };
+    return json.encode(m);
+  }
+
+  static BluetoothCharacteristic bluetoothCharacteristicFromJson(String bluetoothCharacteristic) {
+    var m = json.decode(bluetoothCharacteristic);
+    return BluetoothCharacteristic(
+      remoteId: DeviceIdentifier(m["remoteId"]),
+      serviceUuid: Guid.fromString(m["serviceUuid"]),
+      characteristicUuid: Guid.fromString(m["characteristicUuid"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "dns-name": dnsNamed,
-        "connected": connected,
-        "contact": contact,
         "limit-speed-internet": limitSpeedInternet,
-        "name-business": nameBusiness,
         "password": password,
         "host": host,
         "ip":ip,
@@ -122,6 +133,7 @@ class ConfigModel {
         "path-logo": pathLogo,
         "max-download": maxDownload,
         "max-upload": maxUpload,
-        "blue": bluetoothDevice?.toJson(),
+        "bt_service": bluetoothDevice?.remoteId.toString(),
+        "bt_char": bluetoothCharacteristicToJson(bluetoothCharacteristic)
       };
 }

@@ -1,3 +1,4 @@
+import 'package:StarTickera/models/profile_metadata_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -22,36 +23,37 @@ class FormNewProfileWidget extends StatefulWidget {
 
 class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   late ProfileModel profile;
-  String cant = "1",
-      initialDuration = "d",
-      initialPrice = "S",
+  String numberOfSharedUserPerTicket = "1",
+      initialDurationUnit = "d",
+      initialCurrency = "S",
       durationT = "1",
       price = "1",
+      currency = "\$",
       limitUpload = "1",
       limitDownload = "1";
+
   bool limitSpeed = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    profile = widget.current ?? ProfileModel(name: "Nuevo Plan");
+    profile = widget.current ?? ProfileModel(name: "Nuevo plan");
     if (widget.current != null) {
-      String currentPrice = profile.onLogin?.split(",")[4] ?? "";
-      String currentDuration = profile.onLogin?.split(",")[3] ?? "";
-      initialPrice = currentPrice
-          .split(RegExp(r"[0-9]"))
-          .last;
-      initialDuration = currentDuration
-          .split(RegExp(r"[0-9]"))
-          .last;
-      price = currentPrice.replaceAll(initialPrice, "");
-      durationT = currentDuration.replaceAll(initialDuration, "");
+      String currentPrice = profile.metadata?.price.toString() ?? "";
+      initialCurrency = currentPrice.split(RegExp(r"[0-9]")).last;
+      if (initialCurrency == "") {
+        initialCurrency = "S";
+      }
+
+      initialDurationUnit = profile.metadata!.usageTime.toString();
+      price = currentPrice.replaceAll(initialCurrency, "");
+      durationT = initialDurationUnit.toString();
       limitSpeed =
           widget.current?.rateLimit != null && widget.current!.rateLimit != "";
       if (limitSpeed) {
-        var str = widget.current!
-            .rateLimit!.toLowerCase()
+        var str = widget.current!.rateLimit!
+            .toLowerCase()
             .replaceAll("m", "")
             .split("/");
         limitDownload = str.first;
@@ -68,7 +70,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
             color: ColorsApp.primary,
             fontFamily: 'poppins_bold',
             fontWeight: FontWeight.w600,
-            fontSize: 26),
+            fontSize: 22),
         child: IntrinsicWidth(
           child: Form(
               key: _formKey,
@@ -83,14 +85,14 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       children: [
                         const Gap(10),
                         Text(
-                          profile.name!,
+                          profile.name??"",
                           style: const TextStyle(
                               color: ColorsApp.primary,
                               fontFamily: 'poppins_bold',
                               fontWeight: FontWeight.w600,
                               fontSize: 26),
                         ),
-                        const Gap(20),
+                        const Gap(18),
                       ],
                     ),
                   ),
@@ -99,39 +101,39 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       profile.name = str ?? "";
                     },
                     title: "Nombre",
-                    initialValue: profile.name!,
+                    initialValue: profile.name??"",
                   ),
                   const Gap(10),
                   CustomDropDown(
                     onChange: (str) {
                       price = str ?? "1";
                     },
-                    keyboard: const TextInputType.numberWithOptions(
-                        decimal: true),
+                    keyboard:
+                        const TextInputType.numberWithOptions(decimal: true),
                     title: "Precio",
-                    initialDropdown: initialPrice,
+                    initialDropdown: initialCurrency,
                     initialString: price,
                     item: ConfigModel.settings["currency"] ?? [],
                   ),
-                  const Gap(10),
+                  const Gap(9),
                   CustomDropDown(
                     onChange: (str) {
-                      durationT = str ?? "m";
+                      durationT = str ?? durationT[durationT.length - 1];
                     },
                     initialString: durationT,
                     keyboard: TextInputType.number,
-                    title: "Duracion",
-                    initialDropdown: initialDuration,
+                    title: "Duración",
+                    initialDropdown: "m",
                     item: ConfigModel.settings["range-datetime"] ?? [],
                   ),
+                  const Gap(1),
                   CustomTextField(
                     onChanged: (str) {
-                      cant = str ?? "1";
+                      numberOfSharedUserPerTicket = str ?? "1";
                     },
-
                     keyboard: TextInputType.number,
-                    title: "Cantidad de usuarios con mismo codigo",
-                    initialValue: cant,
+                    title: "Usuarios por ticket",
+                    initialValue: numberOfSharedUserPerTicket,
                   ),
                   CheckBoxControl(
                     title: "Limitar velocidad",
@@ -141,7 +143,6 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         limitSpeed = check;
                       });
                     },
-
                   ),
                   Visibility(
                     visible: limitSpeed,
@@ -182,22 +183,26 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       if (price == "1") {
                         price = "1S";
                       }
-                      // var validity = "1d";
-                      // var lock = '; [:local mac \$"mac-address"; /ip hotspot user set mac-address=\$mac [find where name=\$user]]';
-                      // var sLock = '; [:local mac \$"mac-address"; :local srv [/ip hotspot host get [find where mac-address="\$mac"] server]; /ip hotspot user set server=\$srv [find where name=\$user]]';
-                      // var record = '; :local mac \$"mac-address"; :local time [/system clock get time ]; /system script add name="\$date-|-\$time-|-\$user-|-$price-|-\$address-|-\$mac-|-$durationT-|-${profile.name}.-|-\$comment" owner="\$month\$year" source=\$date comment=RouterOs';
-                      var remove = '; {put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
-                      // var onLogin = ':put (",rem,$price,$durationT,$price,,Enable,Enable,"); :local mode "X"; {:local date [ /system clock get date ];:local year [ :pick \$date 7 11 ];:local month [ :pick \$date 0 3 ];:local comment [ /ip hotspot user get [/ip hotspot user find where name="\$user"] comment]; :local ucode [:pic \$comment 0 2]; :if (\$ucode = "vc" or \$ucode = "up" or \$comment = "") do={ /sys sch add name="\$user" disable=no start-date=\$date interval="$durationT"; :delay 2s; :local exp [ /sys sch get [ /sys sch find where name="\$user" ] next-run]; :local getxp [len \$exp]; :if (\$getxp = 15) do={ :local d [:pic \$exp 0 6]; :local t [:pic \$exp 7 16]; :local s ("/"); :local exp ("\$d\$s\$year \$t"); /ip hotspot user set comment="\$exp \$mode" [find where name="\$user"];}; :if (\$getxp = 8) do={ /ip hotspot user set comment="\$date \$exp \$mode" [find where name="\$user"];}; :if (\$getxp > 15) do={ /ip hotspot user set comment="\$exp \$mode" [find where name="\$user"];}; /sys sch remove [find where name="\$user"]';
-
-                      profile.onLogin =remove;// "$onLogin$record$lock$sLock}}";
-                      profile.sharedUsers = cant;
-                      profile.rateLimit =
-                      limitSpeed ? "${limitDownload
-                          .toUpperCase()}M/${limitUpload.toUpperCase()}M" : "";
-
+                      profile.sharedUsers = numberOfSharedUserPerTicket;
+                      profile.rateLimit = limitSpeed
+                          ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
+                          : "";
                       if (widget.current != null) {
                         widget.bloc.add(UpdateProfile(profile));
                       } else {
+                        var p = price.substring(0, price.length - 1);
+                        profile.metadata = ProfileMetadata(
+                          hotspot: "",
+                          prefix: "",
+                          userLength: 5,
+                          passwordLength: 5,
+                          dataLimit: 0,
+                          price: double.parse(p),
+                          usageTime: durationT,
+                          durationType: DurationType.SaveTime,
+                          isNumericUser: true,
+                          isNumericPassword: true,
+                        );
                         widget.bloc.add(NewProfile(profile, durationT));
                       }
                       Navigator.of(context).pop();

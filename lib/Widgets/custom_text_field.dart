@@ -77,19 +77,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
               suffix: Text(widget.leathig),
               fillColor: const Color.fromARGB(255, 241, 239, 239),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(29),
                 borderSide: const BorderSide(
                   color: Color.fromARGB(255, 241, 239, 239),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(29),
                 borderSide: const BorderSide(
                   color: Color.fromARGB(255, 241, 239, 239),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(29),
                 borderSide: const BorderSide(
                   color: Color.fromARGB(255, 241, 239, 239),
                 ),

@@ -1,4 +1,4 @@
-import 'package:TicketOs/Core/localization/app_localization.dart';
+import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -48,20 +48,20 @@ class DrawerCustom extends StatelessWidget {
               NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
             },
           ),
-          TileDrawer(
-            icon: EvaIcons.navigation2Outline,
-            title: "Activar Internet",
-            onTap: () async {
-              final sessionCubit = BlocProvider.of<SessionCubit>(context);
-              var url = Uri.parse('http://${sessionCubit.state.cfg?.dnsNamed}/login?user=admin&password=a');
-              if (!await launchUrl(url,webViewConfiguration: const WebViewConfiguration(
-                enableJavaScript: true,
-                enableDomStorage: true
-              ))) {
-                throw Exception('Could not launch $url');
-              }
-            },
-          ),
+          // TileDrawer(
+          //   icon: EvaIcons.navigation2Outline,
+          //   title: "Activar Internet",
+          //   onTap: () async {
+          //     final sessionCubit = BlocProvider.of<SessionCubit>(context);
+          //     var url = Uri.parse('http://${sessionCubit.state.cfg?.dnsNamed}/login?user=admin&password=a');
+          //     if (!await launchUrl(url,webViewConfiguration: const WebViewConfiguration(
+          //       enableJavaScript: true,
+          //       enableDomStorage: true
+          //     ))) {
+          //       throw Exception('Could not launch $url');
+          //     }
+          //   },
+          // ),
           TileDrawer(
             icon: EvaIcons.logOutOutline,
             title: "Cerrar Sesión",
