@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 
+import '../../Core/utils/format.dart';
 import '../../models/config_model.dart';
 
 class PrinterNotSelectedException implements Exception {
@@ -26,12 +27,12 @@ class PrinterService {
       String duration = ""}) async {
     price = price.replaceAll("S", "\$");
 
-    if (configModel!.bluetoothCharacteristic == null) {
-      throw PrinterNotSelectedException();
-    }
+    // if (configModel!.bluetoothCharacteristic == null) {
+    //   throw PrinterNotSelectedException();
+    // }
 
       isProgress = true;
-      if (configModel.pathLogo != "") {
+      if (configModel!.pathLogo != "") {
         // TODO: Add path logo
         // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
       }
@@ -40,7 +41,7 @@ class PrinterService {
           configModel: configModel,
           price: price,
           duration: duration);
-      await printTicketInBTPrinter(configModel, ticketBytes);
+     await printTicketInBTPrinter(configModel, ticketBytes);
       // await configModel.bluetoothCharacteristic!
       //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
 
@@ -94,7 +95,8 @@ class PrinterService {
       priceAndDurationLine += "Precio: $price";
     }
     if (duration != "") {
-      priceAndDurationLine += "  |  Duracion: $duration";
+
+      priceAndDurationLine += "  |  Duracion: ${formatDuration(duration)}";
     }
     bytes += generator.text(priceAndDurationLine);
 
@@ -123,6 +125,8 @@ class PrinterService {
           timeout: const Duration(seconds: 10), mtu: null, autoConnect: true);
     }
   }
+
+
 
 // Stream<int> get state {
 //   return bluetoothPrintService.state;

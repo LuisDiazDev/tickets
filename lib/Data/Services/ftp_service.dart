@@ -33,6 +33,17 @@ class FtpService {
     }
   }
 
+  static Future downloadFile({String? remoteName,required File file})async{
+    if(_init){
+      await _ftpConnect.connect();
+      var r = await _ftpConnect.downloadFile(remoteName,file);
+      await _ftpConnect.disconnect();
+      return r;
+    }else{
+      return false;
+    }
+  }
+
   static Future checkFile({String? remoteName})async{
     if(_init){
       await _ftpConnect.connect();

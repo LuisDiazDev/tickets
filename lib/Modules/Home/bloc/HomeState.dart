@@ -10,9 +10,11 @@ class HomeState extends Equatable {
   final bool isError;
   final List<TicketModel> tickets;
   final List<ProfileModel> profiles;
+  final String currentUser;
 
   const HomeState({
     this.load = false,
+    this.currentUser = "",
     this.tickets =const [],
     this.profiles =const [],
     this.isError = false,
@@ -24,12 +26,14 @@ class HomeState extends Equatable {
     List<TicketModel>? tickets,
     List<ProfileModel>? profiles,
     bool? isError,
+    String? currentUser,
   }) {
     return HomeState(
       load: load ?? this.load,
       profiles: profiles ?? this.profiles,
       tickets: tickets ?? this.tickets,
       isError: isError ?? this.isError,
+      currentUser: currentUser ?? this.currentUser
     );
   }
 
@@ -38,6 +42,7 @@ class HomeState extends Equatable {
     load,
     tickets,
     isError,
-    profiles
+    profiles,
+    currentUser
   ];
 }

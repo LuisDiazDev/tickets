@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../Core/utils/format.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Data/Provider/TicketProvider.dart';
@@ -27,31 +28,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(load: false, profiles: profiles));
       },
     );
-
+    on<NewQr>(
+          (event, emit) async {
+        emit(state.copyWith(currentUser: event.qr));
+        alertCubit.showAlertInfo(
+          title: "Se ha cargado el ticket",
+          subtitle: "Por favor seleccione un plan",
+        );
+      },
+    );
     on<GeneratedTicket>(
       (event, emit) async {
-        if (sessionCubit.state.cfg?.bluetoothDevice != null && !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
+        if (state.currentUser == "" && sessionCubit.state.cfg?.bluetoothDevice != null && !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
           await sessionCubit.state.cfg?.bluetoothDevice?.connect();
         }
-        if(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false){
-          var r = await provider.newTicket(event.name, event.profile,event.duration);
+        if(state.currentUser != "" || (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
+          var r = await provider.newTicket(state.currentUser != "" ? state.currentUser : event.name, event.profile,event.duration);
           if(r.statusCode == 200 || r.statusCode == 201){
             // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
             TicketDialogUtils.showNewTicketDetailDialog(
                 configModel: sessionCubit.state.cfg!,
-                user: event.name,
-                price: event.price,
-                duration: event.duration
+                user:state.currentUser != "" ? state.currentUser : event.name,
+                price:state.currentUser != "" ? state.currentUser : event.price,
+                duration: formatDuration(event.duration)
             );
-            alertCubit.showAlertInfo(
-              title: "Imprimiendo",
-              subtitle: "Espere un momento",
-            );
+            if(state.currentUser == "" ){
+              alertCubit.showAlertInfo(
+                title: "Imprimiendo",
+                subtitle: "Espere un momento",
+              );
+            }
+
           }else{
             alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
           }
-          emit(state.copyWith(load: false,));
-          PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          if(state.currentUser == "" ){
+            PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          }
+          emit(state.copyWith(currentUser: ""));
           // if(!PrinterService.isProgress){
           //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
           // }

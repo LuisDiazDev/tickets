@@ -1,10 +1,12 @@
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../Widgets/custom_appbar.dart';
+import '../../Widgets/qr_scan.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
@@ -22,7 +24,8 @@ class HomePage extends StatelessWidget {
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          HomeBloc(alertCubit,sessionCubit, provider: TicketProvider())..init(),
+          HomeBloc(alertCubit, sessionCubit, provider: TicketProvider())
+            ..init(),
       child: const _BuildHomePage(),
     );
   }
@@ -44,17 +47,30 @@ class _BuildHomePageState extends State<_BuildHomePage>
   Widget build(BuildContext context) {
     super.build(context);
     final home = BlocProvider.of<HomeBloc>(context);
-
     return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-      var filteredProfiles = state.profiles
-          .where((t) => t.name != "" && t.name != "default");
+      var filteredProfiles =
+          state.profiles.where((t) => t.name != "" && t.name != "default");
 
       return Scaffold(
         backgroundColor: ColorsApp.grey.withOpacity(.9),
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-          title: "title_home".tr,
-        ),
+            title: "title_home".tr,
+            action: IconButton(
+                onPressed: () async {
+                  String? user = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ScanQrScreen()));
+                  if(user != null){
+                    home.add(NewQr(user));
+
+                  }
+                },
+                icon: const Icon(
+                  EvaIcons.search,
+                  color: Colors.white,
+                ))),
         body: Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
@@ -82,31 +98,28 @@ class _BuildHomePageState extends State<_BuildHomePage>
                 ),
                 Visibility(
                     visible: filteredProfiles.isNotEmpty && !state.load,
-                    child: Builder(
-                      builder: (context) {
-                        return SingleChildScrollView(
-                          child: Wrap(
-                            children: filteredProfiles
-                                .map((e) => CustomPlanWidget(
-                                      profile: e,
-                                      generatedUser: (user) {
-                                        var duration = e.metadata?.usageTime ?? "";
-                                        var price = e.metadata?.price ?? "";
-                                        home.add(
-                                            GeneratedTicket(
-                                                e.metadata!.toMikrotiketNameString(e.name??""),
-                                                user,
-                                                duration,
-                                                price.toString()
-                                            )
-                                        );
-                                      },
-                                    ))
-                                .toList(),
-                          ),
-                        );
-                      }
-                    )),
+                    child: Builder(builder: (context) {
+                      return SingleChildScrollView(
+                        child: Wrap(
+                          children: filteredProfiles
+                              .map((e) => CustomPlanWidget(
+                                    profile: e,
+                                    generatedUser: (user) {
+                                      var duration =
+                                          e.metadata?.usageTime ?? "";
+                                      var price = e.metadata?.price ?? "";
+                                      home.add(GeneratedTicket(
+                                          e.metadata!.toMikrotiketNameString(
+                                              e.name ?? ""),
+                                          user,
+                                          duration,
+                                          price.toString()));
+                                    },
+                                  ))
+                              .toList(),
+                        ),
+                      );
+                    })),
                 Visibility(
                     visible: filteredProfiles.isEmpty && !state.load,
                     child: const Center(

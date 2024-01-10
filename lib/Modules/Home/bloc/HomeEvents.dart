@@ -16,3 +16,8 @@ class GeneratedTicket extends HomeEvent{
   GeneratedTicket(this.profile,this.name,this.duration,this.price);
 }
 
+class NewQr extends HomeEvent{
+  final String qr;
+  NewQr(this.qr);
+}
+

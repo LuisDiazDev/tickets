@@ -7,14 +7,14 @@ import '../../../Core/Values/Colors.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
-import '../../../models/profile_metadata_model.dart';
 export '/core/utils/size_utils.dart';
 
 class CustomProfile extends StatelessWidget {
   final ProfileModel profile;
   final Function()? onTap;
+  final Function()? copyTap;
 
-  const CustomProfile({super.key, required this.profile, this.onTap});
+  const CustomProfile({super.key, required this.profile, this.onTap,this.copyTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +24,8 @@ class CustomProfile extends StatelessWidget {
     }
     var duration = profile.metadata!.usageTime ?? "";
     var price = profile.metadata!.price ?? "";
+    var prefix = profile.metadata!.prefix ?? "";
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -39,7 +41,7 @@ class CustomProfile extends StatelessWidget {
                 child: SizedBox(
                   width: 150,
                   child: Text(
-                    profile.name??"",
+                    profile.name ?? "",
                     style: const TextStyle(
                       color: ColorsApp.primary,
                       fontSize: 18,
@@ -75,7 +77,7 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  price.toString(),
+                  "$price$prefix",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,
@@ -87,15 +89,27 @@ class CustomProfile extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      profile.rateLimit != null ? profile.rateLimit! : "",
-                      style: const TextStyle(
-                        color: ColorsApp.primary,
-                        fontSize: 18,
-                        fontFamily: "poppins_regular",
+                    Visibility(
+                      visible:profile.rateLimit != null,
+                      child: Text(
+                        profile.rateLimit != null ? profile.rateLimit! : "",
+                        style: const TextStyle(
+                          color: ColorsApp.primary,
+                          fontSize: 18,
+                          fontFamily: "poppins_regular",
+                        ),
                       ),
                     ),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: copyTap,
+                        icon: const Icon(
+                          EvaIcons.copyOutline,
+                          color: Colors.blue,
+                        )),
                     IconButton(
                         padding: EdgeInsets.zero,
                         constraints: BoxConstraints(),

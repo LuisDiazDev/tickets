@@ -2,6 +2,7 @@ import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/TicketProvider.dart';
 import '../../Widgets/custom_appbar.dart';
@@ -104,7 +105,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                               );
                             })),
                         const SizedBox(
-                          height: 50,
+                          height: 200,
                         ),
                       ],
                     );

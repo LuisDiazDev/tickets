@@ -59,7 +59,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
           Row(
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * .39,
+                width: MediaQuery.of(context).size.width * .3,
                 child: CustomTextField(
                   keyboard: widget.keyboard,
                   controller: _controller,
@@ -71,7 +71,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
               ),
               const Gap(10),
               SizedBox(
-                width: MediaQuery.of(context).size.width * .22,
+                width: MediaQuery.of(context).size.width * .39,
                 child: DropdownButtonFormField2<String>(
                   isExpanded: true,
                   value: currentSelected,
@@ -87,11 +87,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                   items: widget.item
                       .map((p) => DropdownMenuItem<String>(
                             value: p ?? "",
-                            child: Row(
-                              children: [
-                                Text(p == "S" ? p.replaceAll("S", "\$") : p ?? ""),
-                              ],
-                            ),
+                            child: Text(p == "S" ? p.replaceAll("S", "\$") : formatString(p) ?? ""),
                           ))
                       .toList(),
                   onChanged: (str) {
@@ -123,5 +119,20 @@ class _CustomDropDownState extends State<CustomDropDown> {
         ],
       ),
     );
+  }
+
+
+
+  String formatString(String str){
+    if(str == "m"){
+      return "Minutos";
+    }else if(str == "h"){
+      return "Hora";
+    }else if(str == "d"){
+      return "Dias";
+    }else if(str == "s"){
+      return "Semanas";
+    }
+    return str;
   }
 }

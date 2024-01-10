@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 
 import '../Core/Values/Colors.dart';
 
-AppBar customAppBar({String title=""}){
+AppBar customAppBar({String title="",Widget? action}){
   return AppBar(
     title: Text(title),
+    actions: [
+      action ?? Container(),
+    ],
     leading: Builder(
       builder: (BuildContext context) {
         return IconButton(

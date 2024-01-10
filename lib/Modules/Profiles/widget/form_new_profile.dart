@@ -14,8 +14,8 @@ import '../bloc/ProfileEvents.dart';
 class FormNewProfileWidget extends StatefulWidget {
   final ProfileModel? current;
   final ProfileBloc bloc;
-
-  const FormNewProfileWidget({super.key, this.current, required this.bloc});
+  final bool newProfile;
+  const FormNewProfileWidget({super.key, this.current, required this.bloc,this.newProfile=false});
 
   @override
   State<FormNewProfileWidget> createState() => _FormNewProfileWidgetState();
@@ -26,6 +26,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   String numberOfSharedUserPerTicket = "1",
       initialDurationUnit = "d",
       initialCurrency = "S",
+      initialDurationD = "m",
       durationT = "1",
       price = "1",
       currency = "\$",
@@ -47,8 +48,10 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
       }
 
       initialDurationUnit = profile.metadata!.usageTime.toString();
+      var num = initialDurationUnit.replaceAll(RegExp(r"\D"), "");
+      initialDurationD = initialDurationUnit.replaceAll(num, "");
       price = currentPrice.replaceAll(initialCurrency, "");
-      durationT = initialDurationUnit.toString();
+      durationT = num.toString();
       limitSpeed =
           widget.current?.rateLimit != null && widget.current!.rateLimit != "";
       if (limitSpeed) {
@@ -121,9 +124,10 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       durationT = str ?? durationT[durationT.length - 1];
                     },
                     initialString: durationT,
+
                     keyboard: TextInputType.number,
                     title: "Duración",
-                    initialDropdown: "m",
+                    initialDropdown: initialDurationD,
                     item: ConfigModel.settings["range-datetime"] ?? [],
                   ),
                   const Gap(1),
@@ -188,12 +192,42 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
                           : "";
                       if (widget.current != null) {
-                        widget.bloc.add(UpdateProfile(profile));
+                        if(widget.newProfile){
+                          var p = price.substring(0, price.length - 1);
+                          profile.metadata = ProfileMetadata(
+                            hotspot: "",
+                            prefix: price.replaceAll(RegExp(r"\D"), ""),
+                            userLength: 5,
+                            passwordLength: 5,
+                            dataLimit: 0,
+                            price: double.parse(p),
+                            usageTime: durationT,
+                            durationType: DurationType.SaveTime,
+                            isNumericUser: true,
+                            isNumericPassword: true,
+                          );
+                          widget.bloc.add(NewProfile(profile, durationT));
+                        }else{
+                          var p = price.substring(0, price.length - 1);
+                          profile.metadata = ProfileMetadata(
+                            hotspot: "",
+                            prefix: price.replaceAll(RegExp(r"\D"), ""),
+                            userLength: 5,
+                            passwordLength: 5,
+                            dataLimit: 0,
+                            price: double.parse(p),
+                            usageTime: durationT,
+                            durationType: DurationType.SaveTime,
+                            isNumericUser: true,
+                            isNumericPassword: true,
+                          );
+                          widget.bloc.add(UpdateProfile(profile));
+                        }
                       } else {
                         var p = price.substring(0, price.length - 1);
                         profile.metadata = ProfileMetadata(
                           hotspot: "",
-                          prefix: "",
+                          prefix: price.replaceAll(RegExp(r"\D"), ""),
                           userLength: 5,
                           passwordLength: 5,
                           dataLimit: 0,
@@ -208,7 +242,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      widget.current != null ? "Modificar" : 'Crear',
+                      widget.current != null && !widget.newProfile ?"Modificar" : 'Crear',
                       style: const TextStyle(
                           color: ColorsApp.primary,
                           fontFamily: "poppins_bold",

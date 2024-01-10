@@ -18,48 +18,74 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future<void> verify() async {
+
     ConfigModel? cfg = state.cfg;
+    cfg ??= ConfigModel();
 
-    var ip = await getIp();
+    emit(state.copyWith(
+        configModel: cfg));
 
-    if (ip["connect"] || state.isAuthenticated!) {
-      if(cfg != null){
-        connect(cfg);
-      }
-      cfg ??= ConfigModel();
+    await Future.delayed(const Duration(seconds: 1));
 
-
-      cfg = cfg.copyWith(
-          host: ip["ip"],
-          user: ip["connect"] ? "admin":null,
-          password: ip["connect"] ? "1234":null
-      );
-
-      emit(state.copyWith(
-          sessionStatus: SessionStatus.started,
-          configModel: cfg));
-
+    if (state.isAuthenticated!) {
       TicketProvider provider = TicketProvider();
       var profilesH =await provider.allProfilesHotspot();
       if(profilesH.isNotEmpty){
         emit(state.copyWith(
-            sessionStatus: SessionStatus.started,
-            configModel: cfg.copyWith(
+            configModel:state.cfg!.copyWith(
               dnsNamed: profilesH.last.dnsName,)));
+      }else{
+        emit(state.copyWith(
+            sessionStatus: SessionStatus.finish,
+            isAuthenticated: false,
+            configModel: ConfigModel()));
       }
 
       FtpService.initService(
           address: state.cfg?.host ?? "",
-          user: ip["connect"] ? "admin":state.cfg?.user ?? "",
-          pass: ip["connect"] ? "1234":state.cfg?.password ?? ""
+          user: state.cfg?.user ?? "",
+          pass: state.cfg?.password ?? ""
       );
 
       emit(state.copyWith(
           sessionStatus: SessionStatus.started));
     } else {
-      emit(state.copyWith(
-          sessionStatus: SessionStatus.finish,
-          configModel: ConfigModel()));
+
+      var ip = await getIp();
+      if(ip["connect"]){
+        TicketProvider provider = TicketProvider();
+        var profilesH =await provider.allProfilesHotspot();
+        if(profilesH.isNotEmpty){
+          emit(state.copyWith(
+              configModel:state.cfg!.copyWith(
+                dnsNamed: profilesH.last.dnsName,)));
+        }
+
+        FtpService.initService(
+            address: ip["ip"],
+            user: ip["connect"],
+            pass: ip["connect"]
+        );
+
+        emit(state.copyWith(
+            configModel: state.cfg!.copyWith(
+                host: ip["ip"],
+                user: ip["connect"],
+                password: ip["connect"],
+            ),
+            isAuthenticated: true,
+            sessionStatus: SessionStatus.started));
+      }else{
+        emit(state.copyWith(
+            sessionStatus: SessionStatus.finish,
+            configModel: ConfigModel()));
+      }
+      // // ip["connect"] ||
+      // if(cfg != null){
+      //     connect(cfg);
+      //   }
+
+
     }
 
   }

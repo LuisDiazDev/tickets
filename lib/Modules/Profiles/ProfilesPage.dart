@@ -86,6 +86,15 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                         profileModel: e),
                                     direction: AxisDirection.right);
                               },
+                              copyTap: () {
+                                showGlobalDrawer(
+                                    context: context,
+                                    builder: horizontalDrawerBuilder(
+                                        profileBloc,
+                                        newProfile:true,
+                                        profileModel: e),
+                                    direction: AxisDirection.right);
+                              },
                             ))
                         .toList(),
                   ),
@@ -156,7 +165,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
   }
 
   WidgetBuilder horizontalDrawerBuilder(ProfileBloc profileBloc,
-      {ProfileModel? profileModel}) {
+      {ProfileModel? profileModel,bool newProfile=false}) {
     return (BuildContext context) {
       return GestureDetector(
         onTap: () {
@@ -171,6 +180,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
               child: FormNewProfileWidget(
                 bloc: profileBloc,
                 current: profileModel,
+                newProfile:newProfile
               )),
         ),
       );
