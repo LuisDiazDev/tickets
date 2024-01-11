@@ -7,6 +7,17 @@ import '../../models/profile_model.dart';
 import '../../models/ticket_model.dart';
 import 'restApiProvider.dart';
 
+class UserAlreadyExist implements Exception {
+  final String message;
+
+  UserAlreadyExist(this.message);
+
+  @override
+  String toString() {
+    return "UserAlreadyExist: $message";
+  }
+}
+
 class TicketProvider {
   final restApi = RestApiProvider();
 
@@ -100,7 +111,7 @@ class TicketProvider {
   }
 
   Future<Response> newTicket(String name, String profile,String duration) async {
-    return await restApi.post(url: "/ip/hotspot/user/add", body: {
+    var r = await restApi.post(url: "/ip/hotspot/user/add", body: {
       "server": "hotspot1",
       "name": name,
       "password": name,
@@ -110,6 +121,13 @@ class TicketProvider {
       "limit-bytes-total": "0",
       "comment": "ticket creado desde StarTickera"
     });
+    if (r.statusCode == 200 || r.statusCode == 201) {
+      return r;
+    }
+    if (r.body.contains("already have user with this name for this server")) {
+      throw UserAlreadyExist(name);
+    }
+    throw Exception("Ah ocurrido un error");
   }
 
   Future<Response> backup(String name, String pass) async {

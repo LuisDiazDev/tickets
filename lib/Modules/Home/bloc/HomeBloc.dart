@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -19,7 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final TicketProvider provider;
   final SessionCubit sessionCubit;
 
-  HomeBloc(this.alertCubit,this.sessionCubit, {required this.provider})
+  HomeBloc(this.alertCubit, this.sessionCubit, {required this.provider})
       : super(const HomeState()) {
     on<FetchData>(
       (event, emit) async {
@@ -29,50 +30,65 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
     );
     on<NewQr>(
-          (event, emit) async {
+      (event, emit) async {
         emit(state.copyWith(currentUser: event.qr));
         alertCubit.showAlertInfo(
-          title: "Se ha cargado el ticket",
-          subtitle: "Por favor seleccione un plan",
+          title: "Por favor seleccione un plan",
+          subtitle: "Clave: ${event.qr}",
         );
       },
     );
     on<GeneratedTicket>(
       (event, emit) async {
-        if (state.currentUser == "" && sessionCubit.state.cfg?.bluetoothDevice != null && !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
+        if (state.currentUser == "" &&
+            sessionCubit.state.cfg?.bluetoothDevice != null &&
+            !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
           await sessionCubit.state.cfg?.bluetoothDevice?.connect();
         }
-        if(state.currentUser != "" || (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)){
-          var r = await provider.newTicket(state.currentUser != "" ? state.currentUser : event.name, event.profile,event.duration);
-          if(r.statusCode == 200 || r.statusCode == 201){
+        if (state.currentUser != "" ||
+            (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
+          final user = state.currentUser != "" ? state.currentUser : event.name;
+          late Response r;
+          try {
+            r = await provider.newTicket(user, event.profile, event.duration);
+          } on UserAlreadyExist {
+            alertCubit.showDialog("Error", "El usuario $user ya existe", "Posiblemente este ticket fue escaneado");
+            return;
+          } catch (e) {
+            alertCubit.showDialog("Error", "Ha ocurrido un error");
+            return;
+          }
+          if (r.statusCode == 200 || r.statusCode == 201) {
             // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
             TicketDialogUtils.showNewTicketDetailDialog(
                 configModel: sessionCubit.state.cfg!,
-                user:state.currentUser != "" ? state.currentUser : event.name,
-                price:state.currentUser != "" ? state.currentUser : event.price,
-                duration: formatDuration(event.duration)
-            );
-            if(state.currentUser == "" ){
+                user: state.currentUser != "" ? state.currentUser : event.name,
+                price: event.price,
+                duration: formatDuration(event.duration));
+            if (state.currentUser == "") {
               alertCubit.showAlertInfo(
                 title: "Imprimiendo",
                 subtitle: "Espere un momento",
               );
             }
-
-          }else{
-            alertCubit.showAlertInfo(title: "Error", subtitle: "Ah ocurrido un problema");
+          } else {
+            alertCubit.showAlertInfo(
+                title: "Error", subtitle: "Ah ocurrido un problema");
           }
-          if(state.currentUser == "" ){
-            PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+          if (state.currentUser == "") {
+            PrinterService().printTicket(
+                user: event.name,
+                configModel: sessionCubit.state.cfg,
+                price: event.price,
+                duration: event.duration);
           }
           emit(state.copyWith(currentUser: ""));
           // if(!PrinterService.isProgress){
           //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
           // }
-
-        }else{
-
-          alertCubit.showDialog("Error", "No se ha detectado ninguna impresora conectada");
+        } else {
+          alertCubit.showDialog(
+              "Error", "No se ha detectado ninguna impresora conectada");
           NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
         }
       },
@@ -80,7 +96,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<ShareQRImage>((event, emit) async {
       final image = await QrPainter(
-        data: "http://ticketwifi.net?user=${event.user}&=password=${event.password}",
+        data:
+            "http://ticketwifi.net?user=${event.user}&=password=${event.password}",
         version: QrVersions.auto,
         gapless: false,
       ).toImageData(200.0); // Generate QR code image data

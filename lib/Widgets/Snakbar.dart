@@ -54,17 +54,17 @@ class SnackBarCustom {
             minVerticalPadding: 0,
             title: Text(
               title,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.black),
             ),
             subtitle: Text(
               subtitle,
               style: const TextStyle(
-                  color: Colors.white, fontFamily: 'SourceSansPro'),
+                  color: Colors.black45, fontFamily: 'SourceSansPro'),
             ),
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                SizedBox(
+                const SizedBox(
                     width: 60,
                     child: Center(
                         child: Icon(
