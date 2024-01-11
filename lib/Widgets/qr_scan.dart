@@ -41,7 +41,9 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
             return;
           }
           setState(() {
-            qr = code;
+            if (qr != ""){
+              qr = code;
+            }
           });
           if(Navigator.canPop(context)){
             Navigator.pop(context,qr);

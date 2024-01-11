@@ -6,12 +6,17 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../Data/Services/navigator_service.dart';
 
 class TicketDialogUtils {
-
   ///common method for showing progress dialog
   static void showNewTicketDetailDialog(
-      {BuildContext? context, isCancellable = true, String user = "", required ConfigModel configModel, Function()? printF, Function()? shareF,String price="",String duration=""}) async {
-    if (
-    NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
+      {BuildContext? context,
+      isCancellable = true,
+      String user = "",
+      required ConfigModel configModel,
+      Function()? printF,
+      Function()? shareF,
+      String price = "",
+      String duration = ""}) async {
+    if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
       showDialog(
           context: NavigatorService.navigatorKey.currentState!.overlay!.context,
           builder: (context) {
@@ -68,8 +73,8 @@ class TicketDialogUtils {
                           ),
                           child: Center(
                             child: QrImageView(
-                              data: "http://${configModel
-                                  .dnsNamed}/login?user=$user&password=$user",
+                              data:
+                                  "http://${configModel.dnsNamed}/login?user=$user&password=$user",
                               size: 180,
                               // foregroundColor: const Color(0xFF8194FE),
                             ),
@@ -79,27 +84,33 @@ class TicketDialogUtils {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text(
-                              "Para navegar entra en",
-                              style: TextStyle(
-                                fontFamily: 'poppins_regular',
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              configModel.dnsNamed,
-                              style: const TextStyle(
-                                fontFamily: 'poppins_bold',
-                                fontSize: 18,
-                                color: Color(0xFF6565FF),
-                              ),
-                            ),
+                            Visibility(
+                              visible: configModel.dnsNamed.isNotEmpty,
+                                child: Column(
+                              children: [
+                                const Text(
+                                  "Para navegar entra en",
+                                  style: TextStyle(
+                                    fontFamily: 'poppins_regular',
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  configModel.dnsNamed,
+                                  style: const TextStyle(
+                                    fontFamily: 'poppins_bold',
+                                    fontSize: 18,
+                                    color: Color(0xFF6565FF),
+                                  ),
+                                ),
+                              ],
+                            )),
                             const Gap(8),
                             SizedBox(
                               width: 170,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Center(
                                     child: Column(
@@ -129,8 +140,8 @@ class TicketDialogUtils {
                             SizedBox(
                               width: 170,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     children: [
@@ -189,7 +200,7 @@ class TicketDialogUtils {
                                   Visibility(
                                     visible: printF != null,
                                     child: GestureDetector(
-                                      onTap:printF,
+                                      onTap: printF,
                                       child: Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
@@ -201,7 +212,7 @@ class TicketDialogUtils {
                                             BoxShadow(
                                               blurRadius: 32.0,
                                               color: const Color.fromARGB(
-                                                  255, 133, 142, 212)
+                                                      255, 133, 142, 212)
                                                   .withOpacity(0.68),
                                             ),
                                           ],
@@ -229,7 +240,7 @@ class TicketDialogUtils {
                                             BoxShadow(
                                               blurRadius: 32.0,
                                               color: const Color.fromARGB(
-                                                  255, 133, 142, 212)
+                                                      255, 133, 142, 212)
                                                   .withOpacity(0.68),
                                             ),
                                           ],
