@@ -9,12 +9,13 @@ AppBar customAppBar({String title="",Widget? action}){
     actions: [
       action ?? Container(),
     ],
+    backgroundColor: StarlinkColors.black,
     leading: Builder(
       builder: (BuildContext context) {
         return IconButton(
           icon: const Icon(
             EvaIcons.menu2Outline,
-            color: ColorsApp.primary,
+            color: StarlinkColors.white,
             size: 30,
           ),
           onPressed: () {

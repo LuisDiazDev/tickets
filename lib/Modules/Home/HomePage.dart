@@ -8,6 +8,7 @@ import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/qr_scan.dart';
+import '../../Widgets/starlink/section_title.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
@@ -25,8 +26,7 @@ class HomePage extends StatelessWidget {
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          HomeBloc(alertCubit, sessionCubit, provider: MkProvider())
-            ..init(),
+          HomeBloc(alertCubit, sessionCubit, provider: MkProvider())..init(),
       child: const _BuildHomePage(),
     );
   }
@@ -53,103 +53,82 @@ class _BuildHomePageState extends State<_BuildHomePage>
           state.profiles.where((t) => t.name != "" && t.name != "default");
 
       return Scaffold(
-        backgroundColor: ColorsApp.grey.withOpacity(.9),
+        backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-          title: "title_home".tr,
+          title: "VENTA DE TICKETS",
         ),
         body: Container(
-          color: Colors.transparent,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(18)),
-              color: Colors.white,
-            ),
-            child: Column(
-              children: [
-                const Gap(12),
-                Visibility(
-                  visible: state.load,
-                  child: Container(
-                      color: Colors.white,
-                      width: double.infinity,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorsApp.green,
-                        ),
-                      )),
-                ),
-                ScanQRButton(
-                  onPressed: () async {
-                    String? user = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ScanQrScreen()),
-                    );
-                    if (user != null) {
-                      home.add(NewQr(user));
-                    }
-                  },
-                ),
-                const Gap(12),
-                const Divider(
-                  height: 2,
-                  color: Colors.black,
-                  endIndent: 18,
-                  indent: 18,
-                ),
-                const Text(
-                  "Imprimir nuevos tickets",
-                  style: TextStyle(
-                      fontFamily: 'poppins_bold',
-                      fontSize: 20,
-                      color: ColorsApp.secondary,
-                      fontWeight: FontWeight.w500),
-                ),
-                Visibility(
-                    visible: filteredProfiles.isNotEmpty && !state.load,
-                    child: Builder(builder: (context) {
-                      return SingleChildScrollView(
-                        child: Wrap(
-                          children: filteredProfiles
-                              .map((e) => CustomPlanWidget(
-                                    profile: e,
-                                    generatedUser: (user) {
-                                      var duration =
-                                          e.metadata?.usageTime ?? "";
-                                      var price = e.metadata?.price ?? "";
-                                      home.add(GeneratedTicket(
-                                          e.metadata!.toMikrotiketNameString(
-                                              e.name ?? ""),
-                                          user,
-                                          duration,
-                                          price.toString()));
-                                    },
-                                  ))
-                              .toList(),
-                        ),
-                      );
-                    })),
-                Visibility(
-                    visible: filteredProfiles.isEmpty && !state.load,
+          margin: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(4),
+          child: Column(
+            children: [
+              const Gap(12),
+              Visibility(
+                visible: state.load,
+                child: Container(
+                    color: Colors.white,
+                    width: double.infinity,
                     child: const Center(
-                      child: Text(
-                        "Sin Planes disponibles",
-                        style: TextStyle(
-                            backgroundColor: Colors.transparent,
-                            color: ColorsApp.secondary,
-                            fontFamily: 'poppins_semi_bold',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.center,
+                      child: CircularProgressIndicator(
+                        color: ColorsApp.green,
                       ),
                     )),
-              ],
-            ),
+              ),
+              ScanVirtualTicketButton(
+                onPressed: () async {
+                  String? user = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ScanQrScreen()),
+                  );
+                  if (user != null) {
+                    home.add(NewQr(user));
+                  }
+                },
+              ),
+              const Gap(16),
+              const StarlinkSectionTitle(
+                  title: "IMPRIMIR NUEVOS TICKETS",
+                  alignment: Alignment.center),
+              Visibility(
+                  visible: filteredProfiles.isNotEmpty && !state.load,
+                  child: Builder(builder: (context) {
+                    return SingleChildScrollView(
+                      child: Wrap(
+                        children: filteredProfiles
+                            .map((e) => CustomPlanWidget(
+                                  profile: e,
+                                  generatedUser: (user) {
+                                    var duration = e.metadata?.usageTime ?? "";
+                                    var price = e.metadata?.price ?? "";
+                                    home.add(GeneratedTicket(
+                                        e.metadata!.toMikrotiketNameString(
+                                            e.name ?? ""),
+                                        user,
+                                        duration,
+                                        price.toString()));
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                    );
+                  })),
+              Visibility(
+                  visible: filteredProfiles.isEmpty && !state.load,
+                  child: const Center(
+                    child: Text(
+                      "Sin Planes disponibles",
+                      style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                          color: ColorsApp.secondary,
+                          fontFamily: 'poppins_semi_bold',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400),
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+            ],
           ),
         ),
       );

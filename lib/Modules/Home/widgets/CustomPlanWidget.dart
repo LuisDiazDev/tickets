@@ -9,7 +9,9 @@ export '/core/utils/size_utils.dart';
 class CustomPlanWidget extends StatelessWidget {
   final ProfileModel profile;
   final Function(String) generatedUser;
-  const CustomPlanWidget({super.key,required this.generatedUser, required this.profile});
+
+  const CustomPlanWidget(
+      {super.key, required this.generatedUser, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class CustomPlanWidget extends StatelessWidget {
         generatedUser(user);
       },
       child: Card(
-        color: ColorsApp.secondary.withOpacity(.4),
+        color: StarlinkColors.blue.withOpacity(.4),
         child: Container(
           padding: const EdgeInsets.all(12.0),
           width: 180,
@@ -34,8 +36,9 @@ class CustomPlanWidget extends StatelessWidget {
                     profile.name ?? "",
                     style: const TextStyle(
                       color: ColorsApp.primary,
-                      fontSize: 18,
-                      fontFamily: "poppins_regular",
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "DDIN-Bold",
                     ),
                   ),
                 ),
@@ -44,50 +47,52 @@ class CustomPlanWidget extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: Visibility(
                   visible: profile.metadata?.usageTime != null,
-                  child: Builder(
-                    builder: (context) {
-                      var text = profile.metadata?.usageTime ?? "";
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: badges.Badge(
-                          badgeContent: Text(
-                            text,
-                            style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
-                          ),
-                          badgeStyle: const badges.BadgeStyle(
-                            badgeColor: ColorsApp.secondary,
-                          ),
-                          child: Icon(
-                            getIcon(text),
+                  child: Builder(builder: (context) {
+                    var text = profile.metadata?.usageTime ?? "";
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: badges.Badge(
+                        badgeContent: Text(
+                          text,
+                          style: const TextStyle(
                             color: ColorsApp.primary,
-                            size: 32,
+                            fontSize: 14,
+                            fontFamily: "DDIN-Bold",
                           ),
                         ),
-                      );
-                    }
-                  ),
+                        badgeStyle: const badges.BadgeStyle(
+                          badgeColor: StarlinkColors.blue,
+                        ),
+                        child: Icon(
+                          getIcon(text),
+                          color: StarlinkColors.white,
+                          size: 32,
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
                   "${profile.metadata?.price.toString().replaceAll(".0", "") ?? ""}\$",
-                    // sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
+                  // sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,
-                    fontFamily: "poppins_regular",
+                    fontFamily: "DDIN",
                   ),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  profile.rateLimit != null ? profile.rateLimit! :"",
+                  profile.rateLimit != null ? profile.rateLimit! : "",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,
-                    fontFamily: "poppins_regular",
+                    fontFamily: "DDIN",
                   ),
                 ),
               ),
@@ -98,12 +103,12 @@ class CustomPlanWidget extends StatelessWidget {
     );
   }
 
-  IconData getIcon(String type){
-    if(type.contains("m") || type.contains("h")){
-      return  EvaIcons.clockOutline;
+  IconData getIcon(String type) {
+    if (type.contains("m") || type.contains("h")) {
+      return EvaIcons.clockOutline;
     }
-    if(type.contains("d")){
-      return  EvaIcons.calendarOutline;
+    if (type.contains("d")) {
+      return EvaIcons.calendarOutline;
     }
 
     return EvaIcons.activity;

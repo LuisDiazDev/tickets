@@ -1,3 +1,4 @@
+import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,13 +17,13 @@ class DrawerCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: StarlinkColors.black,
       child: Column(
         children: [
           const HeaderDrawer(),
           TileDrawer(
-            icon: EvaIcons.home,
-            title: "home_drawer".tr,
+            icon: Icons.money,
+            title: "VENDER TICKETS",
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.home);
             },
@@ -42,7 +43,7 @@ class DrawerCustom extends StatelessWidget {
             },
           ),
           TileDrawer(
-            icon: EvaIcons.settings,
+            icon: Icons.settings,
             title: "configuration".tr,
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
@@ -50,7 +51,7 @@ class DrawerCustom extends StatelessWidget {
           ),
           TileDrawer(
             icon: EvaIcons.logOutOutline,
-            title: "Cerrar Sesión",
+            title: "CERRAR SESIÓN",
             onTap: () async {
               final sessionCubit = BlocProvider.of<SessionCubit>(context);
               sessionCubit.changeState(
