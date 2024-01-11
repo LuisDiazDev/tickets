@@ -1,24 +1,24 @@
 final Map<String, String> esEs = {
   // Drawer
-  "title_drawer": "Sistema Ticket",
-  "home_drawer": "Inicio",
-  "list_tickets_drawer": "Mis Tickets",
-  "services_drawer": "Mis Planes",
-  "configuration": "Configuracion",
+  "title_drawer": "StarTickets",
+  "home_drawer": "INICIO",
+  "list_tickets_drawer": "MIS TICKETS",
+  "services_drawer": "MIS PLANES",
+  "configuration": "CONFIGURACIÓN",
 
   // Home
-  "title_home":"Sistema Ventas",
+  "title_home":"SISTEMA VENTAS",
 
   // List Tickets
-  "title_list_tickets":"Mis Tickets",
+  "title_list_tickets":"MIS TICKETS",
 
   // Configuration
-  "title_configuration":"Configuración",
-  "Information":"Información",
-  "telephone": "Teléfono",
-  "business_logo":"Logo Empresa:",
-  "connection":"Conexión",
-  "user":"Usuario",
-  "password":"Contraseña",
-  "Reset": "Restablecer"
+  "title_configuration":"CONFIGURACIÓN",
+  "Information":"INFORMACIÓN",
+  "telephone": "TELÉFONO",
+  "business_logo":"LOGO EMPRESA:",
+  "connection":"CONEXIÓN",
+  "user":"USUARIO",
+  "password":"CONTRASEÑA",
+  "Reset": "RESTABLECER"
 };

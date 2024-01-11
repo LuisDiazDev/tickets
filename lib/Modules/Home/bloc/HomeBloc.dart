@@ -52,7 +52,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           try {
             r = await provider.newTicket(user, event.profile, event.duration);
           } on UserAlreadyExist {
-            alertCubit.showDialog("Error", "El usuario $user ya existe, Posiblemente este ticket fue escaneado");
+            alertCubit.showDialog("El usuario $user ya existe", "Posiblemente el usuario ya este conectado");
             return;
           } catch (e) {
             alertCubit.showDialog("Error", "Ha ocurrido un error");
