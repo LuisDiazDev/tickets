@@ -88,3 +88,11 @@ flutter:
     - family: poppins_extra_bold
       fonts:
         - asset: assets/fontstyles/Poppins/Poppins-ExtraBold.ttf
+
+    - family: DDin
+      fonts:
+        - asset: assets/fontstyles/starlink/D-DIN.otf
+
+    - family: DDin_Bold
+      fonts:
+        - asset: assets/fontstyles/starlink/D-DIN-Bold.otf

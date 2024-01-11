@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Widgets/starlink/button.dart';
+import 'package:StarTickera/Widgets/starlink/section_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +14,8 @@ import '../../Data/Provider/virtualTicketRepository.dart';
 import '../../Data/Services/ftp_service.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
+import '../../Widgets/starlink/card.dart';
+import '../../Widgets/starlink/text_field.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
@@ -28,10 +32,9 @@ class SettingsPage extends StatelessWidget {
     final sessionBloc = BlocProvider.of<SessionCubit>(context);
     final alertBloc = BlocProvider.of<AlertCubit>(context);
 
-
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: ColorsApp.grey.withOpacity(.9),
+        backgroundColor: StarlinkColors.black.withOpacity(.9),
         drawer: const DrawerCustom(),
         appBar: customAppBar(title: "title_configuration".tr),
         body: Container(
@@ -47,172 +50,87 @@ class SettingsPage extends StatelessWidget {
                 sessionBloc: sessionBloc,
                 alertCubit: alertBloc,
               ),
-              //information
-              const Gap(25),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                child: Text(
-                  "Information".tr,
-                  style: const TextStyle(
-                      fontFamily: 'poppins_bold',
-                      fontSize: 20,
-                      color: ColorsApp.secondary,
-                      fontWeight: FontWeight.w500),
-                ),
+              const StarlinkSectionTitle(
+                title: "INFORMACIÓN",
               ),
-              const Divider(
-                height: 2,
-                color: Colors.black,
-                endIndent: 18,
-                indent: 18,
+              StarlinkTextField(
+                initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
+                onChanged: (str) {
+                  sessionBloc.changeState(sessionBloc.state.copyWith(
+                      configModel: sessionBloc.state.cfg!
+                          .copyWith(dnsNamed: str ?? "")));
+                },
+                title: "Página Hotspot",
+                textHint: "Ejemplo: wifi.com",
               ),
-              const Gap(5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                    // width: MediaQuery.sizeOf(context).width * .6,
-                    child: CustomTextField(
-                      initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
-                      onChanged: (str) {
-                        sessionBloc.changeState(sessionBloc.state.copyWith(
-                            configModel: sessionBloc.state.cfg!
-                                .copyWith(dnsNamed: str ?? "")));
-                      },
-                      title: "Página hotspot",
-                    ),
-                  ),
-                ],
+              const Gap(16),
+              const StarlinkSectionTitle(
+                title: "CONEXIÓN",
               ),
-              const Gap(10),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                child: Text(
-                  "connection".tr,
-                  style: const TextStyle(
-                      fontFamily: 'poppins_bold',
-                      fontSize: 20,
-                      color: ColorsApp.secondary,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              const Divider(
-                height: 2,
-                color: Colors.black,
-                endIndent: 18,
-                indent: 18,
-              ),
-              CustomTextField(
+              StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.host ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(sessionBloc.state.copyWith(
                       configModel: sessionBloc.state.cfg!.copyWith(host: str)));
                 },
                 title: "Mikrotik",
+                textHint: "Dirección IP de tu Mikrotik",
               ),
-              CustomTextField(
+              StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.user ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(sessionBloc.state.copyWith(
                       configModel: sessionBloc.state.cfg!.copyWith(user: str)));
                 },
-                title: "user".tr,
+                title: "Usuario",
+                textHint: "Usuario de tu Mikrotik",
               ),
-              CustomTextField(
+              StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.password ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(sessionBloc.state.copyWith(
                       configModel:
                           sessionBloc.state.cfg!.copyWith(password: str)));
                 },
-                password: true,
-                title: "password".tr,
+                title: "Contraseña",
+                textHint: "Contraseña de tu Mikrotik",
               ),
               const Gap(8),
-              Center(
-                child: MaterialButton(
-                  color: ColorsApp.secondary,
-                  onPressed: () async {
-                    await sessionBloc.checkConnection(alertBloc);
-                  },
-                  child: const Text("Comprobar Conexión",
-                      style: TextStyle(
-                          color: ColorsApp.primary,
-                          fontFamily: 'poppins_normal',
-                          fontSize: 18)),
-                ),
+              StarlinkButton(
+                text: "COMPROBAR CONEXIÓN",
+                onPressed: () async {
+                  await sessionBloc.checkConnection(alertBloc);
+                },
               ),
               const Gap(16),
-              const Divider(
-                height: 2,
-                color: Colors.black,
-                endIndent: 18,
-                indent: 18,
+              StarlinkButton(
+                text: "RESTABLECER MIKROTIK",
+                type: ButtonType.destructive,
+                onPressed: () async {
+                  ProgressDialogUtils.showProgressDialog();
+                  sessionBloc.backUp(alertBloc);
+                },
               ),
               const Gap(16),
-              //BackUp
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    color: ColorsApp.secondary,
-                    onPressed: () async {
-                      ProgressDialogUtils.showProgressDialog();
-                      generateTickets(10);
-
-                      sessionBloc.backUp(alertBloc);
-                    },
-                    child: const Text("Generar tickets virtuales",
-                        style: TextStyle(
-                            color: ColorsApp.primary,
-                            fontFamily: 'poppins_normal',
-                            fontSize: 18)),
-                  ),
-                ],
+              const StarlinkSectionTitle(
+                title: "Tickets Virtuales",
               ),
-              const Gap(8),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: Text(
-                    "Restablecer Mikrotik".tr,
-                    style: const TextStyle(
-                        fontFamily: 'poppins_bold',
-                        fontSize: 20,
-                        color: ColorsApp.secondary,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+              const CustomCard(
+                type: CardType.info,
+                title: "Tickets Virtuales",
+                message:
+                    "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
+                        "Son mas rapidos de imprimir y no necesitan una impresora térmica (tickera)",
               ),
-              const Divider(
-                height: 2,
-                color: Colors.black,
-                endIndent: 18,
-                indent: 18,
+              StarlinkButton(
+                text: "GENERAR TICKETS VIRTUALES",
+                onPressed: () async {
+                  ProgressDialogUtils.showProgressDialog();
+                  generateTickets(10);
+                  sessionBloc.backUp(alertBloc);
+                },
               ),
-              Center(
-                child: MaterialButton(
-                  color: ColorsApp.secondary,
-                  onPressed: () async {
-                    ProgressDialogUtils.showProgressDialog();
-                    sessionBloc.backUp(alertBloc);
-
-                  },
-                  child: const Text("Restablecer",
-                      style: TextStyle(
-                          color: ColorsApp.primary,
-                          fontFamily: 'poppins_normal',
-                          fontSize: 18)),
-                ),
-              )
+              const Gap(16),
             ],
           )),
         ),
