@@ -5,14 +5,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/rand.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../Alerts/AlertCubit.dart';
 import 'TicketsEvents.dart';
 import 'TicketsState.dart';
 
 class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
   final AlertCubit alertCubit;
-  final TicketProvider provider;
+  final MkProvider provider;
 
   TicketsBloc(this.alertCubit, {required this.provider})
       : super(const TicketsState()) {

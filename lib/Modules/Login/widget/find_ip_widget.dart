@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import '../../../Core/Values/Colors.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../../Data/Services/navigator_service.dart';
 
 class IpSearch {
@@ -74,7 +74,7 @@ class FindIp extends StatefulWidget {
 }
 
 class _FindIpState extends State<FindIp> {
-  late TicketProvider ticketProvider;
+  late MkProvider ticketProvider;
   String findIp = "", locate = "";
   int current = 0;
   bool limitUp = false, limitDown = false;
@@ -82,7 +82,7 @@ class _FindIpState extends State<FindIp> {
   @override
   void initState() {
     super.initState();
-    ticketProvider = TicketProvider();
+    ticketProvider = MkProvider();
     if (widget.ip == "..." || widget.ip == "") {
       findIp = "...";
     } else {

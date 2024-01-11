@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-import '../../Data/Provider/TicketProvider.dart';
+import '../../Data/Provider/MkProvider.dart';
 
 Future<Map> getIp()async{
   var localIp = await NetworkInfo().getWifiIP();
@@ -22,7 +22,7 @@ Future<Map> getIp()async{
 
 Future<Map> _check(int current,String locate) async {
   const int requestCount = 128;
-  var ticketProvider = TicketProvider();
+  var ticketProvider = MkProvider();
   for (int i = 2; i < 255; i += requestCount) {
 
     List<Future<Response>> promises = [];

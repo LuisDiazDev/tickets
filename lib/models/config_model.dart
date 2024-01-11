@@ -17,8 +17,7 @@ class ConfigModel {
   bool limitSpeedInternet;
   BluetoothDevice? bluetoothDevice;
   BluetoothCharacteristic? bluetoothCharacteristic;
-
-
+  List<WifiDataModels> wifiCredentials;
 
   ConfigModel(
       {
@@ -35,7 +34,8 @@ class ConfigModel {
       this.maxDownload = "1M",
       this.maxUpload = "1M",
       this.bluetoothDevice,
-      this.bluetoothCharacteristic
+      this.bluetoothCharacteristic,
+      this.wifiCredentials = const []
       });
 
   static Map settings = {
@@ -60,6 +60,7 @@ class ConfigModel {
     String? port,
     BluetoothDevice? bluetoothDevice,
     BluetoothCharacteristic? bluetoothCharacteristic,
+    List<WifiDataModels>? wifiCredentials,
   }) {
     return ConfigModel(
         dhcp: dhcp ?? this.dhcp,
@@ -74,6 +75,7 @@ class ConfigModel {
         pathLogo: pathLogo ?? this.pathLogo,
         maxDownload: maxDownload ?? this.maxDownload,
         maxUpload: maxUpload ?? this.maxUpload,
+        wifiCredentials: wifiCredentials?? this.wifiCredentials,
         bluetoothDevice: bluetoothDevice ?? this.bluetoothDevice,
         bluetoothCharacteristic: bluetoothCharacteristic ?? this.bluetoothCharacteristic);
   }
@@ -136,4 +138,32 @@ class ConfigModel {
         "bt_service": bluetoothDevice?.remoteId.toString(),
         "bt_char": bluetoothCharacteristicToJson(bluetoothCharacteristic)
       };
+}
+
+class WifiDataModels{
+  String ssid;
+  String pass;
+
+
+  WifiDataModels({this.pass="",this.ssid=""});
+
+  WifiDataModels copyWith({
+    String? ssid,
+    String? pass,
+  }) {
+    return WifiDataModels(
+        ssid: ssid ?? this.ssid,
+        pass: pass ?? this.pass
+    );
+  }
+
+  factory WifiDataModels.fromJson(Map<String, dynamic> json) => WifiDataModels(
+    ssid: json["ssid"],
+    pass: json["pass"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ssid": ssid,
+    "pass":pass,
+  };
 }

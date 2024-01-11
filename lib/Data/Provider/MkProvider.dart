@@ -18,10 +18,8 @@ class UserAlreadyExist implements Exception {
   }
 }
 
-class TicketProvider {
+class MkProvider {
   final restApi = RestApiProvider();
-
-
 
   Future<List<TicketModel>> allTickets() async {
     var response = await restApi.get(url: "/ip/hotspot/user");
@@ -37,6 +35,8 @@ class TicketProvider {
     }
     return [];
   }
+
+
 
   Future<List<Hotspot>> allHotspot() async {
     var response = await restApi.get(url: "/ip/hotspot");
@@ -90,6 +90,13 @@ class TicketProvider {
       // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
       return false;
     }
+  }
+
+  Future<Response> exportData({String file="default"})async{
+    return await restApi.post(url: "/export", body: {
+      "file": file,
+      "show-sensitive":true
+    });
   }
 
   Future<List<ProfileHotspotModel>> allProfilesHotspot() async {

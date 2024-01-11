@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/format.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../../Routes/Route.dart';
 import '../../../Widgets/qr_dialog.dart';
 import '../../Alerts/AlertCubit.dart';
@@ -17,7 +17,7 @@ import 'HomeState.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final AlertCubit alertCubit;
-  final TicketProvider provider;
+  final MkProvider provider;
   final SessionCubit sessionCubit;
 
   HomeBloc(this.alertCubit, this.sessionCubit, {required this.provider})
@@ -52,7 +52,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           try {
             r = await provider.newTicket(user, event.profile, event.duration);
           } on UserAlreadyExist {
-            alertCubit.showDialog("Error", "El usuario $user ya existe", "Posiblemente este ticket fue escaneado");
+            alertCubit.showDialog("Error", "El usuario $user ya existe, Posiblemente este ticket fue escaneado");
             return;
           } catch (e) {
             alertCubit.showDialog("Error", "Ha ocurrido un error");

@@ -351,7 +351,9 @@ class PrintSettings extends StatelessWidget {
             alertCubit.showAlertInfo(
                 title: "Conectado",
                 subtitle: "Conectado a la impresora ${bluetooth.device.advName}");
-            Navigator.pop(context);
+            if(Navigator.canPop(context)){
+              Navigator.pop(context);
+            }
             return;
           }
         }

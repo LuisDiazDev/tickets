@@ -44,7 +44,7 @@ class FtpService {
     }
   }
 
-  static Future checkFile({String? remoteName})async{
+  static Future<bool> checkFile({String? remoteName})async{
     if(_init){
       await _ftpConnect.connect();
       var r = await _ftpConnect.existFile(remoteName??"backup.backup");

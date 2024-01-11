@@ -1,7 +1,7 @@
 import '../../../../Core/Values/Enums.dart';
 import '../../../../Core/utils/TextsInputs.dart';
 import '../../../Core/utils/progress_dialog_utils.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../../Data/Services/ftp_service.dart';
 import '../../../models/dhcp_server_model.dart';
 import '../../Alerts/AlertCubit.dart';
@@ -74,7 +74,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         try {
           ProgressDialogUtils.showProgressDialog();
-          TicketProvider provider = TicketProvider();
+          MkProvider provider = MkProvider();
           var host = event.host == "" ? "192.168.20.5" : event.host;
           var r = await provider.allDhcpServer(
             user: event.email,

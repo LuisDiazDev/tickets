@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
 import '../../models/profile_model.dart';
@@ -25,7 +25,7 @@ class TicketsPage extends StatelessWidget {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     return BlocProvider(
       create: (context) =>
-          TicketsBloc(alertCubit, provider: TicketProvider())..init(),
+          TicketsBloc(alertCubit, provider: MkProvider())..init(),
       child: const _BuildTicketsPage(),
     );
   }

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../Core/Values/Enums.dart';
 import '../../Core/utils/get_ip_mk.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
-import '../../Data/Provider/TicketProvider.dart';
+import '../../Data/Provider/MkProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
 import '../../Data/Services/ftp_service.dart';
 import '../../Data/Services/printer_service.dart';
@@ -18,23 +21,22 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future<void> verify() async {
-
     ConfigModel? cfg = state.cfg;
     cfg ??= ConfigModel();
 
-    emit(state.copyWith(
-        configModel: cfg));
+    emit(state.copyWith(configModel: cfg));
 
     await Future.delayed(const Duration(seconds: 1));
 
     if (state.isAuthenticated!) {
-      TicketProvider provider = TicketProvider();
-      var profilesH =await provider.allProfilesHotspot();
-      if(profilesH.isNotEmpty){
+      MkProvider provider = MkProvider();
+      var profilesH = await provider.allProfilesHotspot();
+      if (profilesH.isNotEmpty) {
         emit(state.copyWith(
-            configModel:state.cfg!.copyWith(
-              dnsNamed: profilesH.last.dnsName,)));
-      }else{
+            configModel: state.cfg!.copyWith(
+          dnsNamed: profilesH.last.dnsName,
+        )));
+      } else {
         emit(state.copyWith(
             sessionStatus: SessionStatus.finish,
             isAuthenticated: false,
@@ -44,53 +46,84 @@ class SessionCubit extends HydratedCubit<SessionState> {
       FtpService.initService(
           address: state.cfg?.host ?? "",
           user: state.cfg?.user ?? "",
-          pass: state.cfg?.password ?? ""
-      );
+          pass: state.cfg?.password ?? "");
 
-      emit(state.copyWith(
-          sessionStatus: SessionStatus.started));
+      emit(state.copyWith(sessionStatus: SessionStatus.started));
+
+      _loadWifiSetting();
     } else {
-
       var ip = await getIp();
-      if(ip["connect"]){
-        TicketProvider provider = TicketProvider();
-        var profilesH =await provider.allProfilesHotspot();
-        if(profilesH.isNotEmpty){
+      if (ip["connect"]) {
+        MkProvider provider = MkProvider();
+        var profilesH = await provider.allProfilesHotspot();
+        if (profilesH.isNotEmpty) {
           emit(state.copyWith(
-              configModel:state.cfg!.copyWith(
-                dnsNamed: profilesH.last.dnsName,)));
+              configModel: state.cfg!.copyWith(
+            dnsNamed: profilesH.last.dnsName,
+          )));
         }
 
-        FtpService.initService(
-            address: ip["ip"],
-            user: "admin",
-            pass: state.cfg?.password ?? ""
-        );
+        FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
 
         emit(state.copyWith(
-            configModel: state.cfg!.copyWith(
-                host: ip["ip"],
-                user: "admin",
-                password: state.cfg?.password ?? ""
-            ),
+            configModel: state.cfg!
+                .copyWith(host: ip["ip"], user: "admin", password: "1234"),
             isAuthenticated: true,
             sessionStatus: SessionStatus.started));
-      }else{
+
+        _loadWifiSetting();
+      } else {
         emit(state.copyWith(
-            sessionStatus: SessionStatus.finish,
-            configModel: ConfigModel()));
+            sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
       }
       // // ip["connect"] ||
       // if(cfg != null){
       //     connect(cfg);
       //   }
-
-
     }
-
   }
 
-  void connect( ConfigModel? cfg ){
+  void _loadWifiSetting() async {
+    var exist = await FtpService.checkFile(remoteName: "info.rsc");
+
+    if (exist) {
+      final Directory directory = Directory.systemTemp.createTempSync();
+      File file = File("${directory.path}/info.rsc")..createSync();
+
+      var d = await FtpService.downloadFile(file: file, remoteName: "info.rsc");
+
+      if (d) {
+        List<WifiDataModels> wDetails = [];
+        var data = await file.readAsString();
+        var interfaces = data.split("/");
+        var wifiInterface = interfaces
+            .firstWhere((element) => element.contains("interface wifi"));
+        var wifiInterfaceDetails = wifiInterface.split("add");
+        for (var interfaceW in wifiInterfaceDetails) {
+          var details = interfaceW.split(" ");
+          if(!interfaceW.contains("interface")){
+            wDetails.add(WifiDataModels(
+              ssid: details.firstWhere((element) => element.contains("ssid")).replaceAll(".ssid=", "") ?? "",
+              pass: details.firstWhere((element) => element.contains("pass")).replaceAll(".passphrase=", "") ?? "",
+            ));
+          }
+
+        }
+        emit(state.copyWith(
+            configModel: state.cfg!
+                .copyWith(wifiCredentials: wDetails)));
+
+      } else {}
+    } else {
+      MkProvider provider = MkProvider();
+      var r = await provider.exportData(file: "info.rsc");
+      if (r.statusCode == 200 || r.statusCode == 201) {
+        _loadWifiSetting();
+      }
+    }
+  }
+
+  void _connect(ConfigModel? cfg) {
     PrinterService().tryConnect(configModel: cfg);
   }
 
@@ -112,34 +145,33 @@ class SessionCubit extends HydratedCubit<SessionState> {
     return state.toJson();
   }
 
-  Future checkConnection(AlertCubit alertCubit) async{
+  Future checkConnection(AlertCubit alertCubit) async {
     ProgressDialogUtils.showProgressDialog();
-    TicketProvider provider = TicketProvider();
+    MkProvider provider = MkProvider();
 
-    var r =await provider.allProfilesHotspot();
+    var r = await provider.allProfilesHotspot();
     ProgressDialogUtils.hideProgressDialog();
-    if(r.isNotEmpty){
-        alertCubit.showDialog("Conectado", "se estableció la conexión");
-    }else{
-      alertCubit.showAlertInfo(title: "Ah ocurrido un error",subtitle: ""
-          "1. revise que el mikrotik este encendido"
-          "2. chequee la direccion del mikrotik y que las credenciales sean correctas");
+    if (r.isNotEmpty) {
+      alertCubit.showDialog("Conectado", "se estableció la conexión");
+    } else {
+      alertCubit.showAlertInfo(
+          title: "Ah ocurrido un error",
+          subtitle: ""
+              "1. revise que el mikrotik este encendido"
+              "2. chequee la direccion del mikrotik y que las credenciales sean correctas");
     }
-
   }
 
-  Future backUp(AlertCubit alertCubit) async{
-
-    TicketProvider provider = TicketProvider();
+  Future backUp(AlertCubit alertCubit) async {
+    MkProvider provider = MkProvider();
 
     var r = await provider.backup("backup.backup", "");
-    if(r.statusCode == 200){
+    if (r.statusCode == 200) {
       await Future.delayed(Duration(seconds: 20));
       ProgressDialogUtils.hideProgressDialog();
-    }else{
+    } else {
       ProgressDialogUtils.hideProgressDialog();
-      alertCubit.showAlertInfo(title: "error", subtitle:r.body);
+      alertCubit.showAlertInfo(title: "error", subtitle: r.body);
     }
-
   }
 }

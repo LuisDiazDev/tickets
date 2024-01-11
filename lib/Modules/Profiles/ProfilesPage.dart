@@ -3,7 +3,7 @@ import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Core/Values/Colors.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../models/profile_model.dart';
 import '../Alerts/AlertCubit.dart';
@@ -21,7 +21,7 @@ class ProfilePage extends StatelessWidget {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     return BlocProvider(
       create: (context) =>
-          ProfileBloc(alertCubit, provider: TicketProvider())..init(),
+          ProfileBloc(alertCubit, provider: MkProvider())..init(),
       child: const _BuildHomePage(),
     );
   }

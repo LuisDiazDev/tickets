@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
-import '../../../Data/Provider/TicketProvider.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/qr_scan.dart';
 import '../Alerts/AlertCubit.dart';
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          HomeBloc(alertCubit, sessionCubit, provider: TicketProvider())
+          HomeBloc(alertCubit, sessionCubit, provider: MkProvider())
             ..init(),
       child: const _BuildHomePage(),
     );
