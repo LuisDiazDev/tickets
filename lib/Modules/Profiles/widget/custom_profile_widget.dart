@@ -23,7 +23,8 @@ class CustomProfile extends StatelessWidget {
       return Container();
     }
     var duration = profile.metadata!.usageTime ?? "";
-    var price = profile.metadata!.price ?? "";
+    String price = "${profile.metadata?.price ?? ""}";
+    price = price.replaceAll(".0", "");
     var prefix = profile.metadata!.prefix ?? "";
 
     return GestureDetector(
@@ -77,7 +78,7 @@ class CustomProfile extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  "$price$prefix",
+                  "$price\$",
                   style: const TextStyle(
                     color: ColorsApp.primary,
                     fontSize: 18,

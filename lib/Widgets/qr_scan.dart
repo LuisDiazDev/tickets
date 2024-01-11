@@ -30,12 +30,16 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: QrCamera(
+        formats: const [BarcodeFormats.QR_CODE],
         onError: (context, error) => Text(
           error.toString(),
-          style: TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red),
         ),
         cameraDirection: dirState ? CameraDirection.FRONT : CameraDirection.BACK,
         qrCodeCallback: (code) {
+          if (code!.length > 8){
+            return;
+          }
           setState(() {
             qr = code;
           });
@@ -47,7 +51,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
           decoration: BoxDecoration(
             color: Colors.transparent,
             border: Border.all(
-              color: Colors.grey,
+              color: Colors.red,
               width: 2.0,
               style: BorderStyle.solid,
             ),

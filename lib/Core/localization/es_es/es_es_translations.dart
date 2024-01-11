@@ -13,12 +13,12 @@ final Map<String, String> esEs = {
   "title_list_tickets":"Mis Tickets",
 
   // Configuration
-  "title_configuration":"Configuracion",
-  "Information":"Informacion",
-  "telephone": "Telefono",
+  "title_configuration":"Configuración",
+  "Information":"Información",
+  "telephone": "Teléfono",
   "business_logo":"Logo Empresa:",
-  "connection":"Conexion",
+  "connection":"Conexión",
   "user":"Usuario",
   "password":"Contraseña",
-  "Reset": "restablecer"
+  "Reset": "Restablecer"
 };

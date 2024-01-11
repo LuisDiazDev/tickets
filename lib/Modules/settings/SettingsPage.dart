@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../Core/Values/Colors.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
+import '../../Data/Provider/virtualTicketRepository.dart';
 import '../../Data/Services/ftp_service.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
@@ -134,37 +135,61 @@ class SettingsPage extends StatelessWidget {
                 title: "password".tr,
               ),
               const Gap(8),
+              Center(
+                child: MaterialButton(
+                  color: ColorsApp.secondary,
+                  onPressed: () async {
+                    await sessionBloc.checkConnection(alertBloc);
+                  },
+                  child: const Text("Comprobar Conexión",
+                      style: TextStyle(
+                          color: ColorsApp.primary,
+                          fontFamily: 'poppins_normal',
+                          fontSize: 18)),
+                ),
+              ),
+              const Gap(16),
+              const Divider(
+                height: 2,
+                color: Colors.black,
+                endIndent: 18,
+                indent: 18,
+              ),
+              const Gap(16),
+              //BackUp
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Spacer(),
                   MaterialButton(
                     color: ColorsApp.secondary,
                     onPressed: () async {
-                      await sessionBloc.checkConnection(alertBloc);
+                      ProgressDialogUtils.showProgressDialog();
+                      generateTickets(10);
+
+                      sessionBloc.backUp(alertBloc);
                     },
-                    child: const Text("Comprobar Conexión",
+                    child: const Text("Generar tickets virtuales",
                         style: TextStyle(
                             color: ColorsApp.primary,
                             fontFamily: 'poppins_normal',
                             fontSize: 18)),
                   ),
-                  const Gap(12),
                 ],
               ),
-
-              //BackUp
               const Gap(8),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                child: Text(
-                  "Restablecer Mikrotik".tr,
-                  style: const TextStyle(
-                      fontFamily: 'poppins_bold',
-                      fontSize: 20,
-                      color: ColorsApp.secondary,
-                      fontWeight: FontWeight.w500),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  child: Text(
+                    "Restablecer Mikrotik".tr,
+                    style: const TextStyle(
+                        fontFamily: 'poppins_bold',
+                        fontSize: 20,
+                        color: ColorsApp.secondary,
+                        fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
               const Divider(
@@ -173,41 +198,21 @@ class SettingsPage extends StatelessWidget {
                 endIndent: 18,
                 indent: 18,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    color: ColorsApp.secondary,
-                    onPressed: () async {
-                      ProgressDialogUtils.showProgressDialog();
-                      if (!await FtpService.checkFile(
-                          remoteName: "backup.backup")) {
-                        var fileContents =
-                            await rootBundle.load('assets/backup.backup');
-                        File file = await writeToFile(fileContents,
-                            "${(await getApplicationDocumentsDirectory()).path}/backup.backup");
-                        bool upload = await FtpService.uploadFile(
-                          file: file,
-                        );
-                        if (!upload) {
-                          alertBloc.showAlertInfo(
-                              title: "error",
-                              subtitle: "Ah ocurrido un problema inesperado");
-                          return;
-                        }
-                      }
+              Center(
+                child: MaterialButton(
+                  color: ColorsApp.secondary,
+                  onPressed: () async {
+                    ProgressDialogUtils.showProgressDialog();
+                    sessionBloc.backUp(alertBloc);
 
-                      sessionBloc.backUp(alertBloc);
-                    },
-                    child: const Text("Restablecer",
-                        style: TextStyle(
-                            color: ColorsApp.primary,
-                            fontFamily: 'poppins_normal',
-                            fontSize: 18)),
-                  ),
-                ],
-              ),
-              const Gap(16),
+                  },
+                  child: const Text("Restablecer",
+                      style: TextStyle(
+                          color: ColorsApp.primary,
+                          fontFamily: 'poppins_normal',
+                          fontSize: 18)),
+                ),
+              )
             ],
           )),
         ),

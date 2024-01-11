@@ -1,4 +1,5 @@
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Modules/Home/widgets/scann_qr_button.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,22 +56,8 @@ class _BuildHomePageState extends State<_BuildHomePage>
         backgroundColor: ColorsApp.grey.withOpacity(.9),
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-            title: "title_home".tr,
-            action: IconButton(
-                onPressed: () async {
-                  String? user = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ScanQrScreen()));
-                  if(user != null){
-                    home.add(NewQr(user));
-
-                  }
-                },
-                icon: const Icon(
-                  EvaIcons.search,
-                  color: Colors.white,
-                ))),
+          title: "title_home".tr,
+        ),
         body: Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
@@ -95,6 +82,33 @@ class _BuildHomePageState extends State<_BuildHomePage>
                           color: ColorsApp.green,
                         ),
                       )),
+                ),
+                ScanQRButton(
+                  onPressed: () async {
+                    String? user = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ScanQrScreen()),
+                    );
+                    if (user != null) {
+                      home.add(NewQr(user));
+                    }
+                  },
+                ),
+                const Gap(12),
+                const Divider(
+                  height: 2,
+                  color: Colors.black,
+                  endIndent: 18,
+                  indent: 18,
+                ),
+                const Text(
+                  "Imprimir nuevos tickets",
+                  style: TextStyle(
+                      fontFamily: 'poppins_bold',
+                      fontSize: 20,
+                      color: ColorsApp.secondary,
+                      fontWeight: FontWeight.w500),
                 ),
                 Visibility(
                     visible: filteredProfiles.isNotEmpty && !state.load,

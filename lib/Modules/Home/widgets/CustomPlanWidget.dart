@@ -71,7 +71,7 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  profile.metadata?.price.toString() ?? "",
+                  "${profile.metadata?.price.toString().replaceAll(".0", "") ?? ""}\$",
                     // sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
                   style: const TextStyle(
                     color: ColorsApp.primary,

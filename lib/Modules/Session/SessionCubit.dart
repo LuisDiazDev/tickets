@@ -63,15 +63,15 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
         FtpService.initService(
             address: ip["ip"],
-            user: ip["connect"],
-            pass: ip["connect"]
+            user: "admin",
+            pass: state.cfg?.password ?? ""
         );
 
         emit(state.copyWith(
             configModel: state.cfg!.copyWith(
                 host: ip["ip"],
-                user: ip["connect"],
-                password: ip["connect"],
+                user: "admin",
+                password: state.cfg?.password ?? ""
             ),
             isAuthenticated: true,
             sessionStatus: SessionStatus.started));
