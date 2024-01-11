@@ -31,6 +31,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
       price = "1",
       currency = "\$",
       limitUpload = "1",
+      limitDownloadMb="0",
       limitDownload = "1";
 
   bool limitSpeed = false;
@@ -132,7 +133,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
               initialValue: numberOfSharedUserPerTicket,
             ),
             CheckBoxControl(
-              title: "Limitar velocidad",
+              title: "Limitar",
               checked: limitSpeed,
               onChanged: (check) {
                 setState(() {
@@ -164,7 +165,19 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                 initialValue: limitUpload,
               ),
             ),
-            const Spacer(),
+            Visibility(
+              visible: limitSpeed,
+              child: CustomTextField(
+                leathig: "MBs",
+                onChanged: (str) {
+                  limitDownloadMb = str!;
+                },
+                keyboard: TextInputType.number,
+                title: "Maximo (0 es ilimitado)",
+                initialValue: limitDownloadMb,
+              ),
+            ),
+            const Gap(10),
             MaterialButton(
               height: 45,
               shape: const StadiumBorder(),

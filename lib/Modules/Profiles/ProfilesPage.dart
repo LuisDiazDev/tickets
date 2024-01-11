@@ -177,11 +177,17 @@ class _BuildHomePageState extends State<_BuildHomePage>
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(.8),
               ),
-              child: FormNewProfileWidget(
-                bloc: profileBloc,
-                current: profileModel,
-                newProfile:newProfile
-              )),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height*.8,
+                child: SingleChildScrollView(
+                  child: FormNewProfileWidget(
+                      bloc: profileBloc,
+                      current: profileModel,
+                      newProfile:newProfile
+                  ),
+                ),
+              )
+          ),
         ),
       );
     };
