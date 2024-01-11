@@ -113,7 +113,7 @@ class SettingsPage extends StatelessWidget {
               ),
               const Gap(16),
               const StarlinkSectionTitle(
-                title: "Tickets Virtuales",
+                title: "TICKETS VIRTUALES",
               ),
               const CustomCard(
                 type: CardType.info,

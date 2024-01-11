@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class StarlinkSectionTitle extends StatelessWidget {
   final String title;
+  final Alignment alignment;
   const StarlinkSectionTitle({
     super.key,
     required this.title,
+    this.alignment = Alignment.topLeft,
   });
 
   @override
@@ -15,9 +17,9 @@ class StarlinkSectionTitle extends StatelessWidget {
         horizontal: 10,
         vertical: 1.0,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+      child: Container(
+        alignment: alignment,
+        child:
           Text(
             title,
             style: const TextStyle(
@@ -28,7 +30,6 @@ class StarlinkSectionTitle extends StatelessWidget {
               fontFamily: 'DDIN-Bold',
             ),
           ),
-        ],
       ),
     );
   }
