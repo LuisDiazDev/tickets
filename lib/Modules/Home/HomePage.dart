@@ -102,12 +102,15 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                   generatedUser: (user) {
                                     var duration = e.metadata?.usageTime ?? "";
                                     var price = e.metadata?.price ?? "";
+                                    var limit = e.metadata?.dataLimit ?? 0;
                                     home.add(GeneratedTicket(
                                         e.metadata!.toMikrotiketNameString(
                                             e.name ?? ""),
                                         user,
                                         duration,
-                                        price.toString()));
+                                        price.toString(),
+                                        limitMb: limit
+                                    ));
                                   },
                                 ))
                             .toList(),

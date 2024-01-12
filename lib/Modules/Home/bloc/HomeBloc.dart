@@ -50,7 +50,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final user = state.currentUser != "" ? state.currentUser : event.name;
           late Response r;
           try {
-            r = await provider.newTicket(user, event.profile, event.duration);
+            r = await provider.newTicket(user, event.profile, event.duration,limitBytesTotal: event.limitMb);
           } on UserAlreadyExist {
             alertCubit.showDialog("El usuario $user ya existe", "Posiblemente el usuario ya este conectado");
             return;

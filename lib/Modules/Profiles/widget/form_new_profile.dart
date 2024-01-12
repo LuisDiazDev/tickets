@@ -192,6 +192,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                 if (price == "1") {
                   price = "1S";
                 }
+
                 profile.sharedUsers = numberOfSharedUserPerTicket;
                 profile.rateLimit = limitSpeed
                     ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
@@ -204,7 +205,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       prefix: price.replaceAll(RegExp(r"\D"), ""),
                       userLength: 5,
                       passwordLength: 5,
-                      dataLimit: 0,
+                      dataLimit: int.tryParse(limitDownloadMb) ?? 0,
                       price: double.parse(p),
                       usageTime: durationT,
                       durationType: DurationType.SaveTime,
@@ -219,7 +220,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       prefix: price.replaceAll(RegExp(r"\D"), ""),
                       userLength: 5,
                       passwordLength: 5,
-                      dataLimit: 0,
+                      dataLimit: int.tryParse(limitDownloadMb) ?? 0,
                       price: double.parse(p),
                       usageTime: durationT,
                       durationType: DurationType.SaveTime,
@@ -235,7 +236,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                     prefix: price.replaceAll(RegExp(r"\D"), ""),
                     userLength: 5,
                     passwordLength: 5,
-                    dataLimit: 0,
+                    dataLimit: int.tryParse(limitDownloadMb) ?? 0,
                     price: double.parse(p),
                     usageTime: durationT,
                     durationType: DurationType.SaveTime,

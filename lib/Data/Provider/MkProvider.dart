@@ -117,7 +117,7 @@ class MkProvider {
     return [];
   }
 
-  Future<Response> newTicket(String name, String profile,String duration) async {
+  Future<Response> newTicket(String name, String profile,String duration,{int limitBytesTotal=0}) async {
     var r = await restApi.post(url: "/ip/hotspot/user/add", body: {
       "server": "hotspot1",
       "name": name,
@@ -125,7 +125,7 @@ class MkProvider {
       "profile": profile,
       "disabled": "no",
       "limit-uptime": duration,
-      "limit-bytes-total": "0",
+      "limit-bytes-total": limitBytesTotal,
       "comment": "ticket creado desde StarTickera"
     });
     if (r.statusCode == 200 || r.statusCode == 201) {

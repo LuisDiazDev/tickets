@@ -13,7 +13,8 @@ class GeneratedTicket extends HomeEvent{
   final String name;
   final String duration;
   final String price;
-  GeneratedTicket(this.profile,this.name,this.duration,this.price);
+  final int limitMb;
+  GeneratedTicket(this.profile,this.name,this.duration,this.price,{this.limitMb=0});
 }
 
 class NewQr extends HomeEvent{
