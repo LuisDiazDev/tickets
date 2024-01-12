@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../../Core/Values/Colors.dart';
 import '../../../Core/utils/rand.dart';
+import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/profile_model.dart';
 export '/core/utils/size_utils.dart';
 
@@ -32,16 +33,12 @@ class CustomPlanWidget extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: SizedBox(
                   width: 140,
-                  child: Text(
+                  child: StarlinkText(
                     profile.name ?? "",
-                    style: const TextStyle(
-                      color: ColorsApp.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "DDIN-Bold",
+                    size: 16,
+                    isBold: true,
                     ),
                   ),
-                ),
               ),
               Align(
                 alignment: Alignment.topRight,
@@ -52,13 +49,10 @@ class CustomPlanWidget extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(left: 40),
                       child: badges.Badge(
-                        badgeContent: Text(
+                        badgeContent: StarlinkText(
                           text,
-                          style: const TextStyle(
-                            color: ColorsApp.primary,
-                            fontSize: 14,
-                            fontFamily: "DDIN-Bold",
-                          ),
+                          size: 14,
+                          isBold: true,
                         ),
                         badgeStyle: const badges.BadgeStyle(
                           badgeColor: StarlinkColors.blue,
@@ -75,25 +69,16 @@ class CustomPlanWidget extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.bottomLeft,
-                child: Text(
+                child: StarlinkText(
                   "${profile.metadata?.price.toString().replaceAll(".0", "") ?? ""}\$",
-                  // sp.length >4 ? sp[4].replaceAll("S", "\$"):"",
-                  style: const TextStyle(
-                    color: ColorsApp.primary,
-                    fontSize: 18,
-                    fontFamily: "DDIN",
-                  ),
+                  size: 18,
                 ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
-                child: Text(
+                child: StarlinkText(
                   profile.rateLimit != null ? profile.rateLimit! : "",
-                  style: const TextStyle(
-                    color: ColorsApp.primary,
-                    fontSize: 18,
-                    fontFamily: "DDIN",
-                  ),
+                  size: 18,
                 ),
               ),
             ],

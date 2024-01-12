@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/text_style.dart';
 
 class TileDrawer extends StatelessWidget {
   final IconData icon;
@@ -20,14 +21,10 @@ class TileDrawer extends StatelessWidget {
         ListTile(
           leading: Icon(icon, color: StarlinkColors.white),
           onTap: onTap,
-          title: Text(
+          title: StarlinkText(
             title,
-            style: const TextStyle(
-              color: StarlinkColors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              fontFamily: "DDIN-Bold",
-            ),
+            size: 22,
+            isBold: true,
           ),
         ),
         const Divider(

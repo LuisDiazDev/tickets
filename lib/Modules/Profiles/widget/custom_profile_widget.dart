@@ -5,6 +5,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:gap/gap.dart';
 
 import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
@@ -33,20 +34,16 @@ class CustomProfile extends StatelessWidget {
         color: StarlinkColors.midDarkGray,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          width: MediaQuery.of(context).size.width-20,
+          width: MediaQuery.of(context).size.width - 20,
           height: 100,
           child: Column(
             children: [
               Row(
                 children: [
-                  Text(
+                  StarlinkText(
                     profile.name ?? "",
-                    style: const TextStyle(
-                      color: StarlinkColors.white,
-                      fontSize: 18,
-                      fontFamily: "DDIN-Bold",
-                      fontWeight: FontWeight.bold,
-                    ),
+                    size: 16,
+                    isBold: true,
                   ),
                   const Spacer(),
                   Row(
@@ -71,32 +68,24 @@ class CustomProfile extends StatelessWidget {
                   )
                 ],
               ),
-              const Spacer(),              // Duration
+              const Spacer(), // Duration
 
               Row(
                 children: [
                   Visibility(
                     visible: price.toString().isNotEmpty,
-                    child: Text(
+                    child: StarlinkText(
                       "Duración: $duration",
-                      style: const TextStyle(
-                        color: StarlinkColors.white,
-                        fontSize: 18,
-                        fontFamily: "DDIN-Bold",
-                        fontWeight: FontWeight.bold,
-                      ),
+                      isBold: true,
+                      size: 18,
                     ),
                   ),
                   const Spacer(),
-                  Text(
+                  StarlinkText(
                     "Precio: $price\$",
-                    style: const TextStyle(
-                      color: StarlinkColors.white,
-                      fontSize: 18,
-                      fontFamily: "DDIN-Bold",
-                    ),
+                    size: 18,
+                    isBold: true,
                   ),
-
                 ],
               ),
             ],
