@@ -45,27 +45,35 @@ class SettingsPage extends StatelessWidget {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Gap(20),
+              const StarlinkSectionTitle(
+                title: "TICKETS VIRTUALES",
+              ),
+              const StarlinkCard(
+                type: CardType.info,
+                title: "Tickets Virtuales",
+                message:
+                    "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
+                    "Son mas rápidos de imprimir y no necesitan una impresora térmica (tickera)",
+              ),
+              StarlinkButton(
+                text: "GENERAR TICKETS VIRTUALES",
+                onPressed: () async {
+                  ProgressDialogUtils.showProgressDialog();
+                  generateTickets(10);
+                  sessionBloc.backUp(alertBloc);
+                },
+              ),
+              /////////////////////////////
+              const Gap(40),
               PrintSettings(
                 sessionBloc: sessionBloc,
                 alertCubit: alertBloc,
               ),
-              const StarlinkSectionTitle(
-                title: "INFORMACIÓN",
-              ),
-              StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel: sessionBloc.state.cfg!
-                          .copyWith(dnsNamed: str ?? "")));
-                },
-                title: "Página Hotspot",
-                textHint: "Ejemplo: wifi.com",
-              ),
+
+              //////////////////
               const Gap(16),
               const StarlinkSectionTitle(
-                title: "CONEXIÓN",
+                title: "INFORMACIÓN DEL MIKROTIK",
               ),
               StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.host ?? "",
@@ -95,6 +103,19 @@ class SettingsPage extends StatelessWidget {
                 title: "Contraseña",
                 textHint: "Contraseña de tu Mikrotik",
               ),
+              const StarlinkSectionTitle(
+                title: "HOTSPOT",
+              ),
+              StarlinkTextField(
+                initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
+                onChanged: (str) {
+                  sessionBloc.changeState(sessionBloc.state.copyWith(
+                      configModel: sessionBloc.state.cfg!
+                          .copyWith(dnsNamed: str ?? "")));
+                },
+                title: "Página Hotspot",
+                textHint: "Ejemplo: wifi.com",
+              ),
               const Gap(8),
               StarlinkButton(
                 text: "COMPROBAR CONEXIÓN",
@@ -108,25 +129,6 @@ class SettingsPage extends StatelessWidget {
                 type: ButtonType.destructive,
                 onPressed: () async {
                   ProgressDialogUtils.showProgressDialog();
-                  sessionBloc.backUp(alertBloc);
-                },
-              ),
-              const Gap(16),
-              const StarlinkSectionTitle(
-                title: "TICKETS VIRTUALES",
-              ),
-              const CustomCard(
-                type: CardType.info,
-                title: "Tickets Virtuales",
-                message:
-                    "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
-                        "Son mas rapidos de imprimir y no necesitan una impresora térmica (tickera)",
-              ),
-              StarlinkButton(
-                text: "GENERAR TICKETS VIRTUALES",
-                onPressed: () async {
-                  ProgressDialogUtils.showProgressDialog();
-                  generateTickets(10);
                   sessionBloc.backUp(alertBloc);
                 },
               ),

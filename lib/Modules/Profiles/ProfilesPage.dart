@@ -1,4 +1,5 @@
 import 'package:StarTickera/Modules/Profiles/widget/form_new_profile.dart';
+import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,23 +47,11 @@ class _BuildHomePageState extends State<_BuildHomePage>
 
     return BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
-        appBar: customAppBar(title: "Mis Planes"),
+        appBar: customAppBar(title: "PLANES"),
         body: Stack(
           children: [
-            Visibility(
-              visible: state.load,
-              child: Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  height: 200,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorsApp.green,
-                    ),
-                  )),
-            ),
             Visibility(
               visible: !state.load && state.profiles.isNotEmpty,
               child: Container(
@@ -72,7 +61,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 child: SingleChildScrollView(
                   child: Wrap(
-                    alignment: WrapAlignment.start,
+                    alignment: WrapAlignment.center,
                     spacing: 5,
                     children: state.profiles
                         .where((p) => p.name != "default")
@@ -91,7 +80,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                     context: context,
                                     builder: horizontalDrawerBuilder(
                                         profileBloc,
-                                        newProfile:true,
+                                        newProfile: true,
                                         profileModel: e),
                                     direction: AxisDirection.right);
                               },
@@ -104,84 +93,42 @@ class _BuildHomePageState extends State<_BuildHomePage>
             Visibility(
                 visible: !state.load && state.profiles.isEmpty,
                 child: Center(
-                  child: MaterialButton(
-                    height: 45,
-                    shape: StadiumBorder(),
-                    color: ColorsApp.secondary,
+                  child: StarlinkButton(
+                    text: 'CREAR NUEVO PLAN',
                     onPressed: () {
                       showGlobalDrawer(
                           context: context,
                           builder: horizontalDrawerBuilder(profileBloc),
                           direction: AxisDirection.right);
                     },
-                    child: const Text(
-                      'Crear Nuevo Plan',
-                      style: TextStyle(
-                          color: ColorsApp.primary,
-                          fontFamily: "poppins_bold",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18),
-                    ),
                   ),
                 ))
           ],
         ),
         bottomSheet: Visibility(
           visible: state.profiles.isNotEmpty && !state.load,
-          child: GestureDetector(
-            onTap: () {
-              showGlobalDrawer(
-                  context: context,
-                  builder: horizontalDrawerBuilder(profileBloc),
-                  direction: AxisDirection.right);
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 46,
-                  decoration: const BoxDecoration(color: ColorsApp.secondary),
-                  child: const Center(
-                    child: Text(
-                      'Agregar',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Nunito Sans',
-                        fontWeight: FontWeight.w700,
-                        height: 0.08,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: StarlinkButton(
+              text: "CREAR NUEVO PLAN",
+              type: ButtonType.primary,
+              onPressed: () {
+                showGlobalDrawer(
+                    context: context,
+                    builder: horizontalDrawerBuilder(profileBloc),
+                    direction: AxisDirection.right);
+              }),
         ),
       );
     });
   }
 
   WidgetBuilder horizontalDrawerBuilder(ProfileBloc profileBloc,
-      {ProfileModel? profileModel,bool newProfile=false}) {
+      {ProfileModel? profileModel, bool newProfile = false}) {
     return (BuildContext context) {
-      return GestureDetector(
-        onTap: () {
-          // Navigator.of(context).pop();
-        },
-        child: Drawer(
-          child: Container(
-              width: 400,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.8),
-              ),
-              child: FormNewProfileWidget(
-                bloc: profileBloc,
-                current: profileModel,
-                newProfile:newProfile
-              )),
+      return Drawer(
+        child: FormNewProfileWidget(
+          bloc: profileBloc,
+          current: profileModel,
+          newProfile: newProfile,
         ),
       );
     };
