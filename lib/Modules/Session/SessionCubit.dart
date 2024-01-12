@@ -102,10 +102,16 @@ class SessionCubit extends HydratedCubit<SessionState> {
         for (var interfaceW in wifiInterfaceDetails) {
           var details = interfaceW.split(" ");
           if(!interfaceW.contains("interface")){
-            wDetails.add(WifiDataModels(
-              ssid: details.firstWhere((element) => element.contains("ssid")).replaceAll(".ssid=", "") ?? "",
-              pass: details.firstWhere((element) => element.contains("pass")).replaceAll(".passphrase=", "") ?? "",
-            ));
+            try {
+              wDetails.add(WifiDataModels(
+                ssid: details.firstWhere((element) => element.contains("ssid"))
+                    .replaceAll(".ssid=", "") ?? "",
+                pass: details.firstWhere((element) => element.contains("pass"))
+                    .replaceAll(".passphrase=", "") ?? "",
+              ));
+            } catch (e) {
+              print(e);
+            }
           }
 
         }

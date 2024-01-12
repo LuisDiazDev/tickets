@@ -197,12 +197,20 @@ class CustomTicketWidget extends StatelessWidget {
                                           timeout: const Duration(seconds: 10),
                                           mtu: null,
                                           autoConnect: true);
+                                  if (session.state.cfg?.bluetoothDevice
+                                          ?.isConnected ??
+                                      false) {
+                                    session.changeState(session.state.copyWith(
+                                        configModel: session.state.cfg!
+                                            .copyWith(bluetoothDevice: session.state.cfg?.bluetoothDevice)));
+                                  }
                                 }
                               }
                               if (session.state.cfg?.bluetoothDevice
                                       ?.isConnected ??
                                   false) {
                                 if (!PrinterService.isProgress) {
+
                                   PrinterService().printTicket(
                                       user: ticket.name ?? "",
                                       configModel: session.state.cfg,

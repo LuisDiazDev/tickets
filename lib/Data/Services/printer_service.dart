@@ -129,6 +129,7 @@ class PrinterService {
     if (configModel?.bluetoothDevice != null) {
       await configModel?.bluetoothDevice!.connect(
           timeout: const Duration(seconds: 10), mtu: null, autoConnect: true);
+      configModel!.bluetoothDevice = configModel.bluetoothDevice;
     }
   }
 

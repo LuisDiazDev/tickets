@@ -37,7 +37,7 @@ class StarlinkTextField extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: StarlinkColors.white,
-              fontSize: 12.0,
+              fontSize: 14.0,
               // bold
               fontFamily: 'DDIN-Bold',
             ),
@@ -53,7 +53,7 @@ class StarlinkTextField extends StatelessWidget {
                   keyboardType: keyboardType,
                   style: const TextStyle(
                     color: StarlinkColors.white,
-                    fontSize: 14.0,
+                    fontSize: 16.0,
                     // bold
                     fontFamily: 'DDIN-Bold',
                   ),
@@ -61,7 +61,7 @@ class StarlinkTextField extends StatelessWidget {
                     hintText: textHint,
                     hintStyle: const TextStyle(
                       color: StarlinkColors.gray,
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                       // bold
                       fontFamily: 'DDIN-Bold',
                     ),
@@ -84,21 +84,21 @@ class StarlinkTextField extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8.0),
-              Expanded(
-                child: Visibility(
-                  visible: textSuffix.isNotEmpty,
+              Visibility(
+                visible: textSuffix.isNotEmpty,
+                child: Expanded(
                   child: Text(
                     textSuffix,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: StarlinkColors.white,
-                      fontSize: 14.0,
+                      fontSize: 16.0,
                       // bold
                       fontFamily: 'DDIN-Bold',
                     ),
                   ),
                 ),
-              ),
+              )
             ],
 
           ),
@@ -109,7 +109,7 @@ class StarlinkTextField extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: StarlinkColors.red,
-                fontSize: 14.0,
+                fontSize: 16.0,
                 // bold
                 fontFamily: 'DDIN',
               ),

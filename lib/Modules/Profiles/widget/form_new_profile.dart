@@ -2,11 +2,11 @@ import 'package:StarTickera/models/profile_metadata_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../../../Core/Values/Colors.dart';
-import '../../../Widgets/check_box.dart';
-import '../../../Widgets/custom_dropdown.dart';
-import '../../../Widgets/custom_text_field.dart';
-import '../../../models/config_model.dart';
+import '../../../Widgets/starlink/button.dart';
+import '../../../Widgets/starlink/checkbox.dart';
+import '../../../Widgets/starlink/dropdown.dart';
+import '../../../Widgets/starlink/section_title.dart';
+import '../../../Widgets/starlink/text_field.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileBloc.dart';
 import '../bloc/ProfileEvents.dart';
@@ -15,7 +15,9 @@ class FormNewProfileWidget extends StatefulWidget {
   final ProfileModel? current;
   final ProfileBloc bloc;
   final bool newProfile;
-  const FormNewProfileWidget({super.key, this.current, required this.bloc,this.newProfile=false});
+
+  const FormNewProfileWidget(
+      {super.key, this.current, required this.bloc, this.newProfile = false});
 
   @override
   State<FormNewProfileWidget> createState() => _FormNewProfileWidgetState();
@@ -26,12 +28,10 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   String numberOfSharedUserPerTicket = "1",
       initialDurationUnit = "d",
       initialCurrency = "S",
-      initialDurationD = "m",
       durationT = "1",
       price = "1",
       currency = "\$",
       limitUpload = "1",
-      limitDownloadMb="0",
       limitDownload = "1";
 
   bool limitSpeed = false;
@@ -42,27 +42,27 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
     super.initState();
     profile = widget.current ?? ProfileModel(name: "Nuevo plan");
     if (widget.current != null) {
-      String currentPrice = profile.metadata?.price.toString() ?? "";
-      initialCurrency = currentPrice.split(RegExp(r"[0-9]")).last;
-      if (initialCurrency == "") {
-        initialCurrency = "S";
-      }
-
-      initialDurationUnit = profile.metadata!.usageTime.toString();
-      var num = initialDurationUnit.replaceAll(RegExp(r"\D"), "");
-      initialDurationD = initialDurationUnit.replaceAll(num, "");
-      price = currentPrice.replaceAll(initialCurrency, "");
-      durationT = num.toString();
-      limitSpeed =
-          widget.current?.rateLimit != null && widget.current!.rateLimit != "";
-      if (limitSpeed) {
-        var str = widget.current!.rateLimit!
-            .toLowerCase()
-            .replaceAll("m", "")
-            .split("/");
-        limitDownload = str.first;
-        limitUpload = str.last;
-      }
+      // String currentPrice = profile.metadata?.price.toString() ?? "";
+      // initialCurrency = currentPrice.split(RegExp(r"[0-9]")).last;
+      // if (initialCurrency == "") {
+      //   initialCurrency = "S";
+      // }
+      //
+      // initialDurationUnit = profile.metadata!.usageTime.toString();
+      // var num = initialDurationUnit.replaceAll(RegExp(r"\D"), "");
+      // initialDurationUnit = initialDurationUnit.replaceAll(num, "");
+      // price = currentPrice.replaceAll(initialCurrency, "");
+      // durationT = num.toString();
+      // limitSpeed =
+      //     widget.current?.rateLimit != null && widget.current!.rateLimit != "";
+      // if (limitSpeed) {
+      //   var str = widget.current!.rateLimit!
+      //       .toLowerCase()
+      //       .replaceAll("m", "")
+      //       .split("/");
+      //   limitDownload = str.first;
+      //   limitUpload = str.last;
+      // }
     }
   }
 
@@ -70,123 +70,175 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              color: ColorsApp.secondary.withOpacity(.8),
-              width: double.infinity,
-              child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              // Encaabezado
+              StarlinkSectionTitle(
+                title: profile.name ?? "",
+              ),
+              StarlinkTextField(
+                onChanged: (str) {
+                  profile.name = str;
+                },
+                title: "Nombre del plan",
+                initialValue: profile.name ?? "",
+                textHint: "Nombre del plan",
+              ),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Gap(10),
-                  Text(
-                    profile.name??"",
-                    style: const TextStyle(
-                        color: ColorsApp.primary,
-                        fontFamily: 'poppins_bold',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 26),
+                  Expanded(
+                    child: StarlinkTextField(
+                      title: "Precio",
+                      onChanged: (str) {
+                        price = str ?? "1";
+                      },
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      initialValue: price,
+                      textHint: "Precio del plan",
+                      // item: ConfigModel.settings["currency"] ?? [],
+                    ),
                   ),
-                  const Gap(14),
+                  Expanded(
+                    child: StarlinkTextField(
+                      title: "Moneda",
+                      maxLength: 1,
+                      onChanged: (str) {
+                        currency = str;
+                      },
+                      initialValue: currency,
+                      textHint: "Moneda del plan",
+                    ),
+                  ),
                 ],
               ),
-            ),
-            CustomTextField(
-              onChanged: (str) {
-                profile.name = str ?? "";
-              },
-              title: "Nombre",
-              initialValue: profile.name??"",
-            ),
-            const Gap(8),
-            CustomDropDown(
-              onChange: (str) {
-                price = str ?? "1";
-              },
-              keyboard:
-                  const TextInputType.numberWithOptions(decimal: true),
-              title: "Precio",
-              initialDropdown: initialCurrency,
-              initialString: price,
-              item: ConfigModel.settings["currency"] ?? [],
-            ),
-            const Gap(7),
-            CustomDropDown(
-              onChange: (str) {
-                durationT = str ?? durationT[durationT.length - 1];
-              },
-              initialString: durationT,
-
-              keyboard: TextInputType.number,
-              title: "Duración",
-              initialDropdown: initialDurationD,
-              item: ConfigModel.settings["range-datetime"] ?? [],
-            ),
-            const Gap(1),
-            CustomTextField(
-              onChanged: (str) {
-                numberOfSharedUserPerTicket = str ?? "1";
-              },
-              keyboard: TextInputType.number,
-              title: "Usuarios por ticket",
-              initialValue: numberOfSharedUserPerTicket,
-            ),
-            CheckBoxControl(
-              title: "Limitar velocidad",
-              checked: limitSpeed,
-              onChanged: (check) {
-                setState(() {
-                  limitSpeed = check;
-                });
-              },
-            ),
-            Visibility(
-              visible: limitSpeed,
-              child: CustomTextField(
-                leathig: "MBs",
-                onChanged: (str) {
-                  limitDownload = str!;
-                },
-                keyboard: TextInputType.number,
-                title: "Bajada",
-                initialValue: limitDownload,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: StarlinkTextField(
+                      title: "Duración",
+                      onChanged: (str) {
+                        durationT = str;
+                      },
+                      initialValue: durationT,
+                      keyboardType: TextInputType.number,
+                      textHint: "Duración del plan",
+                    ),
+                  ),
+                  Expanded(
+                    child: StarlinkDropdown(
+                      onChanged: (str) {
+                        initialDurationUnit = str![0].toLowerCase();
+                      },
+                      values: const ["Minutos", "Horas", "Días", "Semanas"],
+                      initialValue: mapDurationUnit(initialDurationUnit),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Visibility(
-              visible: limitSpeed,
-              child: CustomTextField(
-                leathig: "MBs",
+              const Gap(1),
+              StarlinkTextField(
+                title: "Usuarios por ticket",
                 onChanged: (str) {
-                  limitUpload = str!;
+                  numberOfSharedUserPerTicket = str ?? "1";
                 },
-                title: "Subida",
-                keyboard: TextInputType.number,
-                initialValue: limitUpload,
+                keyboardType: TextInputType.number,
+                initialValue: numberOfSharedUserPerTicket,
+                textHint: "Número de usuarios por ticket",
               ),
-            ),
-            const Spacer(),
-            MaterialButton(
-              height: 45,
-              shape: const StadiumBorder(),
-              color: ColorsApp.secondary,
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                }
-                if (durationT == "1") {
-                  durationT = "1d";
-                }
-                if (price == "1") {
-                  price = "1S";
-                }
-                profile.onLogin = '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
-                profile.sharedUsers = numberOfSharedUserPerTicket;
-                profile.rateLimit = limitSpeed
-                    ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
-                    : "";
-                if (widget.current != null) {
-                  if(widget.newProfile){
+              const Gap(8),
+              StarlinkCheckBox(
+                title: 'Limitar velocidad',
+                initialState: limitSpeed,
+                onChanged: (check) {
+                  setState(() {
+                    limitSpeed = check!;
+                  });
+                },
+              ),
+              Visibility(
+                visible: limitSpeed,
+                child: StarlinkTextField(
+                  title: "Bajada",
+                  textSuffix: "MBs",
+                  onChanged: (str) {
+                    limitDownload = str;
+                  },
+                  keyboardType: TextInputType.number,
+                  initialValue: limitDownload,
+                  textHint: 'Velocidad de bajada',
+                ),
+              ),
+              Visibility(
+                visible: limitSpeed,
+                child: StarlinkTextField(
+                  title: "Subida",
+                  textSuffix: "MBs",
+                  onChanged: (str) {
+                    limitUpload = str;
+                  },
+                  keyboardType: TextInputType.number,
+                  initialValue: limitUpload,
+                  textHint: 'Velocidad de subida',
+                ),
+              ),
+              const Spacer(),
+              StarlinkButton(
+                text: widget.current != null && !widget.newProfile
+                    ? "Modificar"
+                    : 'Crear',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                  }
+                  if (durationT == "1") {
+                    durationT = "1d";
+                  }
+                  if (price == "1") {
+                    price = "1S";
+                  }
+                  profile.sharedUsers = numberOfSharedUserPerTicket;
+                  profile.rateLimit = limitSpeed
+                      ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
+                      : "";
+                  if (widget.current != null) {
+                    if (widget.newProfile) {
+                      var p = price.substring(0, price.length - 1);
+                      profile.metadata = ProfileMetadata(
+                        hotspot: "",
+                        prefix: price.replaceAll(RegExp(r"\D"), ""),
+                        userLength: 5,
+                        passwordLength: 5,
+                        dataLimit: 0,
+                        price: double.parse(p),
+                        usageTime: durationT,
+                        durationType: DurationType.SaveTime,
+                        isNumericUser: true,
+                        isNumericPassword: true,
+                      );
+                      widget.bloc.add(NewProfile(profile, durationT));
+                    } else {
+                      var p = price.substring(0, price.length - 1);
+                      profile.metadata = ProfileMetadata(
+                        hotspot: "",
+                        prefix: price.replaceAll(RegExp(r"\D"), ""),
+                        userLength: 5,
+                        passwordLength: 5,
+                        dataLimit: 0,
+                        price: double.parse(p),
+                        usageTime: durationT,
+                        durationType: DurationType.SaveTime,
+                        isNumericUser: true,
+                        isNumericPassword: true,
+                      );
+                      widget.bloc.add(UpdateProfile(profile));
+                    }
+                  } else {
                     var p = price.substring(0, price.length - 1);
                     profile.metadata = ProfileMetadata(
                       hotspot: "",
@@ -201,51 +253,27 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       isNumericPassword: true,
                     );
                     widget.bloc.add(NewProfile(profile, durationT));
-                  }else{
-                    var p = price.substring(0, price.length - 1);
-                    profile.metadata = ProfileMetadata(
-                      hotspot: "",
-                      prefix: price.replaceAll(RegExp(r"\D"), ""),
-                      userLength: 5,
-                      passwordLength: 5,
-                      dataLimit: 0,
-                      price: double.parse(p),
-                      usageTime: durationT,
-                      durationType: DurationType.SaveTime,
-                      isNumericUser: true,
-                      isNumericPassword: true,
-                    );
-                    widget.bloc.add(UpdateProfile(profile));
                   }
-                } else {
-                  var p = price.substring(0, price.length - 1);
-                  profile.metadata = ProfileMetadata(
-                    hotspot: "",
-                    prefix: price.replaceAll(RegExp(r"\D"), ""),
-                    userLength: 5,
-                    passwordLength: 5,
-                    dataLimit: 0,
-                    price: double.parse(p),
-                    usageTime: durationT,
-                    durationType: DurationType.SaveTime,
-                    isNumericUser: true,
-                    isNumericPassword: true,
-                  );
-                  widget.bloc.add(NewProfile(profile, durationT));
-                }
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                widget.current != null && !widget.newProfile ?"Modificar" : 'Crear',
-                style: const TextStyle(
-                    color: ColorsApp.primary,
-                    fontFamily: "poppins_bold",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18),
+                  Navigator.of(context).pop();
+                },
               ),
-            ),
-            const Gap(8),
-          ],
+            ],
+          ),
         ));
+  }
+
+  String mapDurationUnit(String str) {
+    switch (str) {
+      case "m":
+        return "Minutos";
+      case "h":
+        return "Horas";
+      case "d":
+        return "Días";
+      case "s":
+        return "Semanas";
+      default:
+        throw Exception("Invalid duration unit");
+    }
   }
 }

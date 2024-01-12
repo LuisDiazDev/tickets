@@ -47,6 +47,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         if (state.currentUser != "" ||
             (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
+          sessionCubit.changeState(sessionCubit.state.copyWith(
+              configModel: sessionCubit.state.cfg!
+                  .copyWith(bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
           final user = state.currentUser != "" ? state.currentUser : event.name;
           late Response r;
           try {
