@@ -20,12 +20,12 @@ const Map<CardType, IconData> _cardIcon = {
 };
 
 // Crea un widget personalizado para tu tarjeta
-class CustomCard extends StatelessWidget {
+class StarlinkCard extends StatelessWidget {
   final CardType type;
   final String title;
   final String message;
 
-  const CustomCard({
+  const StarlinkCard({
     Key? key,
     required this.type,
     required this.title,

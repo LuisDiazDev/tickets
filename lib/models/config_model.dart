@@ -42,6 +42,7 @@ class ConfigModel {
     "download": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
     "upload": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
     "range-datetime": ["m", "h", "d", "s"],
+    "range-datetime-full": ["min", "horas", "dias", "semanas"],
     "currency": ["S", "bs"]
   };
 

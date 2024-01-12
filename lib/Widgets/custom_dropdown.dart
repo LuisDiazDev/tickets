@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/text_field.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -48,13 +49,11 @@ class _CustomDropDownState extends State<CustomDropDown> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Gap(10),
-          Text(
-            widget.title,
-            style: const TextStyle(
-                fontFamily: 'poppins_semi_bold',
-                fontSize: 18,
-                color: ColorsApp.secondary,
-                fontWeight: FontWeight.w400),
+          StarlinkTextField(
+              initialValue: widget.initialString,
+              onChanged: widget.onChange,
+              title: widget.title,
+              textHint: "",
           ),
           Row(
             children: [

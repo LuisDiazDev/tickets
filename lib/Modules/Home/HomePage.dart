@@ -64,17 +64,6 @@ class _BuildHomePageState extends State<_BuildHomePage>
           child: Column(
             children: [
               const Gap(12),
-              Visibility(
-                visible: state.load,
-                child: Container(
-                    color: Colors.white,
-                    width: double.infinity,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: ColorsApp.green,
-                      ),
-                    )),
-              ),
               ScanVirtualTicketButton(
                 onPressed: () async {
                   String? user = await Navigator.push(

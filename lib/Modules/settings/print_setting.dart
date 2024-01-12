@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
+import 'package:StarTickera/Widgets/starlink/card.dart';
+import 'package:StarTickera/Widgets/starlink/section_title.dart';
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:device_info/device_info.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +16,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../Core/Values/Colors.dart';
 import '../Session/SessionCubit.dart';
 import 'package:location/location.dart' as loc2;
-
 
 const validBluetoothCharacteristics = [
   "2af1",
@@ -30,24 +32,13 @@ class PrintSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-      ),
-      child: Row(
-        children: [
-          const Text(
-            "Impresora:",
-            style: TextStyle(
-                fontFamily: 'poppins_semi_bold',
-                fontSize: 18,
-                color: ColorsApp.secondary,
-                fontWeight: FontWeight.w400),
-          ),
-          const Spacer(),
-          connected(context)
-        ],
-      ),
+    return Column(
+      children: [
+        const StarlinkSectionTitle(
+          title: "CONFIGURACIÓN DE IMPRESORA TÉRMICA",
+        ),
+        buildPrinterStateWidget(context)
+      ],
     );
   }
 
@@ -55,8 +46,7 @@ class PrintSettings extends StatelessWidget {
       Map<Permission, PermissionStatus> statuses, context) async {
     var perms = await buildPermissionList();
     for (var perm in perms) {
-      if (statuses[perm]!.isDenied) {
-        showBluetoothDeviceListPopUp(context);
+      if (!statuses.containsKey(perm) || statuses[perm]!.isDenied) {
         return false;
       }
     }
@@ -93,27 +83,31 @@ class PrintSettings extends StatelessWidget {
     return permissionsToRequest;
   }
 
-  Widget connected(BuildContext context) {
+  Widget buildPrinterStateWidget(BuildContext context) {
     if (sessionBloc.state.cfg!.bluetoothDevice == null) {
-      return Row(
+      return Column(
         children: [
-          TextButton(
-              onPressed: () async {
-                await showBluetoothDevicesList(context);
-              },
-              child: const Text(
-                "Conectar",
-                style: TextStyle(
-                    fontFamily: 'poppins_semi_bold',
-                    fontSize: 18,
-                    color: Colors.red,
-                    fontWeight: FontWeight.w400),
-              )),
-          const Gap(3),
-          const Icon(
-            EvaIcons.printer,
-            color: Colors.red,
-          )
+          Row(
+            children: [
+              TextButton(
+                onPressed: () async {
+                  await showBluetoothDevicesList(context);
+                },
+                child: StarlinkText("Conectar", color: StarlinkColors.red),
+              ),
+              const Gap(3),
+              const Icon(
+                EvaIcons.printer,
+                color: Colors.red,
+              ),
+            ],
+          ),
+          const StarlinkCard(
+            type: CardType.error,
+            title: "Impresora no conectada",
+            message:
+                "No se ha conectado ninguna impresora, por lo que no podrá imprimir tickets. De todas formas puede usar tickets virtuales o ver el ticket por pantalla.",
+          ),
         ],
       );
     }
@@ -122,60 +116,70 @@ class PrintSettings extends StatelessWidget {
         builder: (context, AsyncSnapshot<BluetoothConnectionState> snapchat) {
           switch (snapchat.data) {
             case BluetoothConnectionState.connected:
-              return Row(
+              return Column(
                 children: [
-                  TextButton(
-                      onPressed: () async {
-                        await showBluetoothDevicesList(context);
-                      },
-                      child: const Text(
-                        "Conectada",
-                        style: TextStyle(color: Colors.blueAccent),
-                      )),
-                  const Gap(3),
-                  const Icon(
-                    EvaIcons.printer,
-                    color: Colors.green,
-                  )
+                  Row(
+                    children: [
+                      TextButton(
+                          onPressed: () async {
+                            await showBluetoothDevicesList(context);
+                          },
+                          child: StarlinkText(
+                            "Buscar mas impresoras",
+                            color: StarlinkColors.green,
+                          )),
+                      const Gap(3),
+                      const Icon(
+                        EvaIcons.printer,
+                        color: StarlinkColors.green,
+                      )
+                    ],
+                  ),
+                  StarlinkCard(
+                    type: CardType.success,
+                    title: "Impresora conectada",
+                    message:
+                        "La impresora está conectada y lista para imprimir tickets.\nModelo: ${sessionBloc.state.cfg!.bluetoothDevice!.advName}",
+                  ),
                 ],
               );
             case BluetoothConnectionState.disconnected:
-              return Row(
+              return Column(
                 children: [
-                  TextButton(
-                      onPressed: () async {
-                        await showBluetoothDevicesList(context);
-                      },
-                      child: const Text(
-                        "Desconectada",
-                        style: TextStyle(
-                            fontFamily: 'poppins_semi_bold',
-                            fontSize: 18,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w400),
-                      )),
-                  const Gap(3),
-                  const Icon(
-                    EvaIcons.printer,
-                    color: Colors.red,
-                  )
+                  Row(
+                    children: [
+                      TextButton(
+                          onPressed: () async {
+                            await showBluetoothDevicesList(context);
+                          },
+                          child: StarlinkText(
+                            "Buscar otra impresora",
+                            color: StarlinkColors.yellow,
+                          )),
+                      const Gap(3),
+                      const Icon(
+                        EvaIcons.printer,
+                        color: Colors.yellow,
+                      )
+                    ],
+                  ),
+                  StarlinkCard(
+                    type: CardType.warning,
+                    title: "Impresora desconectada",
+                    message:
+                    "La impresora configurada (${sessionBloc.state.cfg!.bluetoothDevice!.advName}) está desconectada. Por favor, conéctela para poder imprimir tickets o configure otra.",
+                  ),
                 ],
               );
             default:
               return Row(
                 children: [
                   TextButton(
-                      onPressed: () async {
-                        await showBluetoothDevicesList(context);
-                      },
-                      child: const Text(
-                        "Conectar",
-                        style: TextStyle(
-                            fontFamily: 'poppins_semi_bold',
-                            fontSize: 18,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w400),
-                      )),
+                    onPressed: () async {
+                      await showBluetoothDevicesList(context);
+                    },
+                    child: StarlinkText("Conectar", color: StarlinkColors.red),
+                  ),
                   const Gap(3),
                   const Icon(
                     EvaIcons.printer,
@@ -195,11 +199,12 @@ class PrintSettings extends StatelessWidget {
     loc2.Location location = new loc2.Location();
 
     bool ison = await location.serviceEnabled();
-    if (!ison) { //if defvice is off
+    if (!ison) {
+      //if defvice is off
       bool isturnedon = await location.requestService();
       if (isturnedon) {
         log("GPS device is turned ON");
-      }else{
+      } else {
         log("GPS Device is still OFF");
       }
     }
@@ -350,8 +355,9 @@ class PrintSettings extends StatelessWidget {
                     .copyWith(bluetoothCharacteristic: c)));
             alertCubit.showAlertInfo(
                 title: "Conectado",
-                subtitle: "Conectado a la impresora ${bluetooth.device.advName}");
-            if(Navigator.canPop(context)){
+                subtitle:
+                    "Conectado a la impresora ${bluetooth.device.advName}");
+            if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
             return;

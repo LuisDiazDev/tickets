@@ -85,7 +85,7 @@ class StarlinkButton extends StatelessWidget {
                   style: TextStyle(
                     // bold
                     fontFamily: 'DDin-Bold',
-                    fontSize: 12,
+                    fontSize: 14,
                     color: isEnabled
 
                         ? textColor
