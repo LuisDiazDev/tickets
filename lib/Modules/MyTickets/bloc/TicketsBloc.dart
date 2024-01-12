@@ -19,6 +19,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
     on<FetchData>(
       (event, emit) async {
         emit(state.copyWith(load: event.load));
+        // Hacer en paralelo
         var data = (await provider.allTickets())..sort((a,b)=>b.id!.compareTo(a.id!));
         var profiles = await provider.allProfiles();
         emit(state.copyWith(load: false, tickets: data, profiles: profiles));
@@ -68,6 +69,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         add(FetchData(load: false));
         alertCubit.showDialog("", "Se ha eliminado un ticket");
       } else{
+        add(FetchData(load: false));
         alertCubit.showDialog("error", r.body);
       }
 

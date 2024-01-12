@@ -40,7 +40,7 @@ class _CheckBoxControlState extends State<CheckBoxControl> {
                 style:const TextStyle(
                     backgroundColor: Colors.transparent,
                     color: ColorsApp.secondary,
-                    fontFamily: 'poppins_semi_bold',
+                    fontFamily: 'DDIN-Bold',
                     fontSize: 18,
                     fontWeight: FontWeight.w400
                 ),

@@ -20,33 +20,31 @@ class PrinterService {
 
   PrinterService._();
 
-  void printTicket(
-      {String user = "",
-      ConfigModel? configModel,
-      String price = "",
-      String duration = ""}) async {
+  void printTicket({String user = "",
+    ConfigModel? configModel,
+    String price = "",
+    String duration = ""}) async {
     price = price.replaceAll("S", "\$");
 
     // if (configModel!.bluetoothCharacteristic == null) {
     //   throw PrinterNotSelectedException();
     // }
 
-      isProgress = true;
-      if (configModel!.pathLogo != "") {
-        // TODO: Add path logo
-        // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
-      }
-      var ticketBytes = await buildTicketBody(
-          user: user,
-          configModel: configModel,
-          price: price,
-          duration: duration);
-     await printTicketInBTPrinter(configModel, ticketBytes);
-      // await configModel.bluetoothCharacteristic!
-      //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
+    isProgress = true;
+    if (configModel!.pathLogo != "") {
+      // TODO: Add path logo
+      // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
+    }
+    var ticketBytes = await buildTicketBody(
+        user: user,
+        configModel: configModel,
+        price: price,
+        duration: duration);
+    await printTicketInBTPrinter(configModel, ticketBytes);
+    // await configModel.bluetoothCharacteristic!
+    //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
 
-      isProgress = !isProgress;
-
+    isProgress = !isProgress;
   }
 
   Future<void> printTicketInBTPrinter(ConfigModel? configModel, List<int> value,
@@ -55,24 +53,21 @@ class PrinterService {
         configModel!.bluetoothDevice!.mtuNow - 3; // 3 bytes ble overhead
     for (int i = 0; i < value.length; i += chunk) {
       List<int> subvalue = value.sublist(i, min(i + chunk, value.length));
-      try{
+      try {
         await configModel.bluetoothCharacteristic!
             .write(subvalue, withoutResponse: false, timeout: timeout);
-      }catch(e){
+      } catch (e) {
         await configModel.bluetoothDevice!.discoverServices();
         await configModel.bluetoothCharacteristic!
             .write(subvalue, withoutResponse: false, timeout: timeout);
-        print(e);
       }
-
     }
   }
 
-  Future<List<int>> buildTicketBody(
-      {String user = "",
-      ConfigModel? configModel,
-      String price = "",
-      String duration = ""}) async {
+  Future<List<int>> buildTicketBody({String user = "",
+    ConfigModel? configModel,
+    String price = "",
+    String duration = ""}) async {
     // Using default profile
     var spacedPassword = user.split('').join(' ').toUpperCase();
     final profile = await CapabilityProfile.load();
@@ -95,7 +90,6 @@ class PrinterService {
       priceAndDurationLine += "Precio: $price";
     }
     if (duration != "") {
-
       priceAndDurationLine += "  |  Duracion: ${formatDuration(duration)}";
     }
     bytes += generator.text(priceAndDurationLine);
@@ -111,10 +105,16 @@ class PrinterService {
     bytes += generator.text('Fecha: $currentDateTime', styles: styles);
 
     bytes += generator.text('1- Conectate al wifi:', styles: styles);
-    if(configModel!.wifiCredentials.isNotEmpty){
-      bytes += generator.text("Nombre:${configModel.wifiCredentials.first.ssid} Clave:${configModel.wifiCredentials.first.pass.replaceAll("\n", "")}", styles: styles);
-      if(configModel.wifiCredentials.length>1){
-        bytes += generator.text("Nombre:${configModel.wifiCredentials.last.ssid} Clave:${configModel.wifiCredentials.last.pass.replaceAll("\n", "")}", styles: styles);
+    if (configModel!.wifiCredentials.isNotEmpty) {
+      bytes += generator.text(
+          "Nombre:${configModel.wifiCredentials.first.ssid} Clave:${configModel
+              .wifiCredentials.first.pass.replaceAll("\n", "")}",
+          styles: styles);
+      if (configModel.wifiCredentials.length > 1) {
+        bytes += generator.text(
+            "Nombre:${configModel.wifiCredentials.last.ssid} Clave:${configModel
+                .wifiCredentials.last.pass.replaceAll("\n", "")}",
+            styles: styles);
       }
     }
     bytes += generator.text('2- Abre tu navegador y entra en', styles: styles);
@@ -124,35 +124,4 @@ class PrinterService {
 
     return bytes;
   }
-
-  void tryConnect({Duration? timeOut, ConfigModel? configModel}) async {
-    if (configModel?.bluetoothDevice != null) {
-      await configModel?.bluetoothDevice!.connect(
-          timeout: const Duration(seconds: 10), mtu: null, autoConnect: true);
-      configModel!.bluetoothDevice = configModel.bluetoothDevice;
-    }
-  }
-
-
-
-// Stream<int> get state {
-//   return bluetoothPrintService.state;
-// }
-
-// Stream<List<BluetoothDevice>> get scan {
-//   return bluetoothPrintService.scanResults;
-// }
-
-// void connect(BluetoothDevice bluetoothDevice) async {
-//   if ((await bluetoothPrintService.isConnected ?? false)) {
-//     await bluetoothPrintService.disconnect();
-//   }
-//
-//   bluetoothPrintService.connect(bluetoothDevice);
-// }
-
-// void initScan({Duration? duration}) {
-//   bluetoothPrintService.scan(
-//       timeout: duration ?? const Duration(minutes: 4));
-// }
 }

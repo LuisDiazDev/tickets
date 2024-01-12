@@ -9,6 +9,7 @@ import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/qr_scan.dart';
 import '../../Widgets/starlink/section_title.dart';
+import '../../Widgets/starlink/text_style.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
@@ -112,16 +113,11 @@ class _BuildHomePageState extends State<_BuildHomePage>
                   })),
               Visibility(
                   visible: filteredProfiles.isEmpty && !state.load,
-                  child: const Center(
-                    child: Text(
+                  child: Center(
+                    child: StarlinkText(
                       "Sin Planes disponibles",
-                      style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                          color: ColorsApp.secondary,
-                          fontFamily: 'poppins_semi_bold',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400),
-                      textAlign: TextAlign.center,
+                      size: 18,
+                      isBold: true,
                     ),
                   )),
             ],

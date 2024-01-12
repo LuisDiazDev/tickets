@@ -43,7 +43,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (state.currentUser == "" &&
             sessionCubit.state.cfg?.bluetoothDevice != null &&
             !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
-          await sessionCubit.state.cfg?.bluetoothDevice?.connect();
+          await sessionCubit.state.cfg?.bluetoothDevice?.connect(timeout: const Duration(seconds: 20));
         }
         if (state.currentUser != "" ||
             (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {

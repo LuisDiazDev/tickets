@@ -1,4 +1,6 @@
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Widgets/starlink/button.dart';
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,27 +51,16 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
     super.build(context);
     return BlocBuilder<TicketsBloc, TicketsState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
-        appBar: customAppBar(title: "title_list_tickets".tr),
+        appBar: customAppBar(title: "TICKETS CREADOS"),
         body: Stack(
           children: [
-            Visibility(
-              visible: state.load,
-              child: Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height * .85,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorsApp.green,
-                    ),
-                  )),
-            ),
             Visibility(
               visible: state.tickets.isNotEmpty && !state.load,
               child: Container(
                 color: Colors.transparent,
+                alignment: Alignment.topCenter,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
@@ -79,17 +70,17 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                         t.profile != "default" &&
                         !t.name!.contains("-"));
                     if (tickets.isEmpty) {
-                      return Center(
-                        child: MaterialButton(
-                          onPressed: () {
-                            showGlobalDrawer(
-                                context: context,
-                                builder:
-                                    horizontalDrawerBuilder(state, homeBloc),
-                                direction: AxisDirection.right);
-                          },
-                          child: const Text("Crear Nuevo Ticket"),
-                        ),
+                      return Column(
+                        children: [
+                          const Gap(100),
+                          Center(
+                            child: StarlinkText(
+                              "No hay tickets creados",
+                              size: 18,
+                              isBold: true,
+                            ),
+                          ),
+                        ],
                       );
                     }
                     return Wrap(
@@ -125,39 +116,14 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
         ),
         bottomSheet: Visibility(
           visible: state.tickets.isNotEmpty,
-          child: GestureDetector(
-            onTap: () {
+          child: StarlinkButton(
+            onPressed: () {
               showGlobalDrawer(
                   context: context,
                   builder: horizontalDrawerBuilder(state, homeBloc),
                   direction: AxisDirection.right);
             },
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 46,
-                    decoration: const BoxDecoration(color: ColorsApp.secondary),
-                    child: const Center(
-                      child: Text(
-                        'Agregar',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontFamily: 'Nunito Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0.08,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            text: "CREAR NUEVO TICKET",
           ),
         ),
       );

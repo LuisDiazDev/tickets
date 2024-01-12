@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
 import '../Core/Values/Colors.dart';
@@ -10,14 +11,10 @@ class DialogWidget {
     String titleAction = "Ok",
   }) {
     return AlertDialog(
-
-      title: Text(
+      title: StarlinkText(
         title,
-        style: const TextStyle(
-            fontFamily: 'poppins_semi_bold',
-            fontSize: 22,
-            color: ColorsApp.secondary,
-            fontWeight: FontWeight.w400),
+        size: 22,
+        isBold: true,
       ),
       content: Text(content,
           style: const TextStyle(
