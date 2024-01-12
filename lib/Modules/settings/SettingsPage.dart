@@ -103,9 +103,6 @@ class SettingsPage extends StatelessWidget {
                 title: "Contraseña",
                 textHint: "Contraseña de tu Mikrotik",
               ),
-              const StarlinkSectionTitle(
-                title: "HOTSPOT",
-              ),
               StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
                 onChanged: (str) {
