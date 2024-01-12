@@ -180,6 +180,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                 if (price == "1") {
                   price = "1S";
                 }
+                profile.onLogin = '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
                 profile.sharedUsers = numberOfSharedUserPerTicket;
                 profile.rateLimit = limitSpeed
                     ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
