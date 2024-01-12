@@ -23,7 +23,7 @@
     <script src="/md5.js"></script>
     <script>
         function doLogin() {
-            const pass = document.login.password.value.toLowerCase();
+            const pass = document.login.password.value.toUpperCase();
             document.sendin.username.value = pass;
             document.sendin.password.value = hexMD5('$(chap-id)' + pass + '$(chap-challenge)');
             document.sendin.submit();

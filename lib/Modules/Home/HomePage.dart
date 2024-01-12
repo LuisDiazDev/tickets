@@ -83,26 +83,30 @@ class _BuildHomePageState extends State<_BuildHomePage>
               Visibility(
                   visible: filteredProfiles.isNotEmpty && !state.load,
                   child: Builder(builder: (context) {
-                    return SingleChildScrollView(
-                      child: Wrap(
-                        children: filteredProfiles
-                            .map((e) => CustomPlanWidget(
-                                  profile: e,
-                                  generatedUser: (user) {
-                                    var duration = e.metadata?.usageTime ?? "";
-                                    var price = e.metadata?.price ?? "";
-                                    var limit = e.metadata?.dataLimit ?? 0;
-                                    home.add(GeneratedTicket(
-                                        e.metadata!.toMikrotiketNameString(
-                                            e.name ?? ""),
-                                        user,
-                                        duration,
-                                        price.toString(),
-                                        limitMb: limit
-                                    ));
-                                  },
-                                ))
-                            .toList(),
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height*.591,
+                      width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          children: filteredProfiles
+                              .map((e) => CustomPlanWidget(
+                                    profile: e,
+                                    generatedUser: (user) {
+                                      var duration = e.metadata?.usageTime ?? "";
+                                      var price = e.metadata?.price ?? "";
+                                      var limit = e.metadata?.dataLimit ?? 0;
+                                      home.add(GeneratedTicket(
+                                          e.metadata!.toMikrotiketNameString(
+                                              e.name ?? ""),
+                                          user,
+                                          duration,
+                                          price.toString(),
+                                          limitMb: limit
+                                      ));
+                                    },
+                                  ))
+                              .toList(),
+                        ),
                       ),
                     );
                   })),

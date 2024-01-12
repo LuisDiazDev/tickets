@@ -125,7 +125,7 @@ class MkProvider {
       "profile": profile,
       "disabled": "no",
       "limit-uptime": duration,
-      "limit-bytes-total": limitBytesTotal,
+      "limit-bytes-total": limitBytesTotal != 0 ? "${limitBytesTotal}M":limitBytesTotal,
       "comment": "ticket creado desde StarTickera"
     });
     if (r.statusCode == 200 || r.statusCode == 201) {

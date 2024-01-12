@@ -1,1 +1,1 @@
-curl -T login.html ftp://192.168.1.21/hotspot/ --user admin:1234
+curl -T login.html ftp://192.168.20.5/hotspot/ --user admin:1234

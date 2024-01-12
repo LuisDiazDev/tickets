@@ -40,10 +40,13 @@ class CustomProfile extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  StarlinkText(
-                    profile.name ?? "",
-                    size: 16,
-                    isBold: true,
+                  Container(
+                    constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width*.2, maxWidth: MediaQuery.of(context).size.width*.6),
+                    child: StarlinkText(
+                      profile.name ?? "",
+                      size: 16,
+                      isBold: true,
+                    ),
                   ),
                   const Spacer(),
                   Row(

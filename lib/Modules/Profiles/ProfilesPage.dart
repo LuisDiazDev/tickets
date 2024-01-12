@@ -3,6 +3,7 @@ import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
@@ -60,32 +61,32 @@ class _BuildHomePageState extends State<_BuildHomePage>
                 height: MediaQuery.of(context).size.height,
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 child: SingleChildScrollView(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 5,
-                    children: state.profiles
-                        .where((p) => p.name != "default")
-                        .map((e) => CustomProfile(
-                              profile: e,
-                              onTap: () {
-                                showGlobalDrawer(
-                                    context: context,
-                                    builder: horizontalDrawerBuilder(
-                                        profileBloc,
-                                        profileModel: e),
-                                    direction: AxisDirection.right);
-                              },
-                              copyTap: () {
-                                showGlobalDrawer(
-                                    context: context,
-                                    builder: horizontalDrawerBuilder(
-                                        profileBloc,
-                                        newProfile: true,
-                                        profileModel: e),
-                                    direction: AxisDirection.right);
-                              },
-                            ))
-                        .toList(),
+                  child: Column(
+                    children: [
+                      ...state.profiles
+                          .where((p) => p.name != "default")
+                          .map((e) => CustomProfile(
+                        profile: e,
+                        onTap: () {
+                          showGlobalDrawer(
+                              context: context,
+                              builder: horizontalDrawerBuilder(
+                                  profileBloc,
+                                  profileModel: e),
+                              direction: AxisDirection.right);
+                        },
+                        copyTap: () {
+                          showGlobalDrawer(
+                              context: context,
+                              builder: horizontalDrawerBuilder(
+                                  profileBloc,
+                                  newProfile: true,
+                                  profileModel: e),
+                              direction: AxisDirection.right);
+                        },
+                      )),
+                      const Gap(45)
+                    ],
                   ),
                 ),
               ),
