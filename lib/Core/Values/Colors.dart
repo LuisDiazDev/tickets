@@ -13,6 +13,7 @@ class ColorsApp{
 
 class StarlinkColors {
   static const Color blue = Color(0xFF3e80e0);
+  static const Color lightBlue = Color(0xff6ca9f6);
   static const Color red = Color(0xFFed524a);
   static const Color green = Color(0xFF6cce76);
   static const Color yellow = Color(0xFFffd554);

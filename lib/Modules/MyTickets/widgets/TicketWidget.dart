@@ -11,6 +11,7 @@ import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Routes/Route.dart';
 import '../../../Widgets/qr_dialog.dart';
+import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/ticket_model.dart';
 import '../bloc/TicketsBloc.dart';
 import '../bloc/TicketsEvents.dart';
@@ -24,22 +25,22 @@ class CustomTicketWidget extends StatelessWidget {
   bool valid() =>
       ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
 
-  Widget _badgeWidget(TicketsBloc ticketsBloc) {
+  Widget buildDataUsageBadgedWidget(TicketsBloc ticketsBloc) {
     return Visibility(
       visible: profile?.metadata?.usageTime != null,
       child: Padding(
         padding: const EdgeInsets.only(left: 40),
         child: badges.Badge(
-          badgeContent: Text(
+          badgeContent: StarlinkText(
             profile?.metadata?.usageTime ?? "",
-            style: const TextStyle(color: ColorsApp.primary, fontSize: 14),
+            size: 14,
           ),
           badgeStyle: const badges.BadgeStyle(
             badgeColor: ColorsApp.secondary,
           ),
           child: Icon(
             getIcon(profile?.metadata?.usageTime ?? ""),
-            color: ColorsApp.primary,
+            color: StarlinkColors.lightBlue,
             size: 32,
           ),
         ),
@@ -66,6 +67,14 @@ class CustomTicketWidget extends StatelessWidget {
     var sp = profile?.onLogin?.split(",") ?? [];
     var duration = sp.length > 3 ? sp[3] : "";
     var price = sp.length > 4 ? sp[4] : "";
+    var dateSP = ticket.comment?.split("|");
+    var hour = "";
+    var date = "";
+    if (dateSP?.length == 2) {
+      var dateSP2 = dateSP![1].split(" ");
+      date = dateSP2[1];
+      hour = dateSP2[2];
+    }
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -106,7 +115,7 @@ class CustomTicketWidget extends StatelessWidget {
           clipper: CustomTicketClipper(), // <-- CustomClipper
           child: Container(
               color: valid()
-                  ? ColorsApp.secondary.withOpacity(.4)
+                  ? StarlinkColors.blue.withOpacity(.7)
                   : Colors.grey, // <-- background color
               height: 115, // <-- height
               width: 215, // <-- width
@@ -114,171 +123,156 @@ class CustomTicketWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0, left: 14),
-                            child: Text(
-                              ticket.name ?? "",
-                              style: const TextStyle(
-                                color: ColorsApp.primary,
-                                fontSize: 18,
-                                fontFamily: "poppins_regular",
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 1.0, left: 14),
-                            child: Builder(
-                              builder: (context) {
-                                late String text;
-                                if (ticket.bytesIn != "0") {
-                                  text =
-                                      "D: ${ticket.getDownloadedInMB()} S: ${ticket.getUploadedInMB()}";
-                                } else {
-                                  text = "Sin consumo";
-                                }
-                                return Text(
-                                  text,
-                                  style: const TextStyle(
-                                      color: ColorsApp.primary,
-                                      fontSize: 14,
-                                      fontFamily: "poppins_semi_bold",
-                                      fontWeight: FontWeight.w400),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      _badgeWidget(homeBloc),
-                      // const badges.Badge(
-                      //   badgeContent: Text(
-                      //     '01',
-                      //     style:
-                      //         TextStyle(color: ColorsApp.primary, fontSize: 14),
-                      //   ),
-                      //   badgeStyle: badges.BadgeStyle(
-                      //     badgeColor: ColorsApp.secondary,
-                      //   ),
-                      //   child: Icon(
-                      //     EvaIcons.calendarOutline,
-                      //     color: ColorsApp.primary,
-                      //     size: 32,
-                      //   ),
-                      // ),
-                      const SizedBox(
-                        width: 20,
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Visibility(
-                        visible: valid(),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 10),
-                          child: TextButton(
-                            onPressed: () async {
-                              if (!(session.state.cfg?.bluetoothDevice
-                                      ?.isConnected ??
-                                  false)) {
-                                if (session.state.cfg?.bluetoothDevice !=
-                                    null) {
-                                  await session.state.cfg?.bluetoothDevice!
-                                      .connect(
-                                          timeout: const Duration(seconds: 10),
-                                          mtu: null,
-                                          autoConnect: true);
-                                  if (session.state.cfg?.bluetoothDevice
-                                          ?.isConnected ??
-                                      false) {
-                                    session.changeState(session.state.copyWith(
-                                        configModel: session.state.cfg!
-                                            .copyWith(bluetoothDevice: session.state.cfg?.bluetoothDevice)));
-                                  }
-                                }
-                              }
-                              if (session.state.cfg?.bluetoothDevice
-                                      ?.isConnected ??
-                                  false) {
-                                if (!PrinterService.isProgress) {
-
-                                  PrinterService().printTicket(
-                                      user: ticket.name ?? "",
-                                      configModel: session.state.cfg,
-                                      duration: duration,
-                                      price: price);
-                                }
-
-                                alertCubit.showAlertInfo(
-                                  title: "Imprimiendo",
-                                  subtitle: "Espere un momento",
-                                );
-                              } else {
-                                NavigatorService.pushNamedAndRemoveUntil(
-                                    Routes.settings);
-                                alertCubit.showAlertInfo(
-                                  title: "Error",
-                                  subtitle: "No hay impresora conectada",
-                                );
-                              }
-                            },
-                            child: const Text(
-                              "Imprimir",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: ColorsApp.secondary,
-                                  fontFamily: "poppins_semi_bold",
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Visibility(
-                        visible: valid(),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                homeBloc.add(ShareQRImage(
-                                    ticket.name ?? "", ticket.password ?? ""));
-                              },
-                              icon: const Icon(
-                                EvaIcons.shareOutline,
-                                color: ColorsApp.secondary,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5, top: 10.0, right: 5),
-                        child: IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              homeBloc.add(DeletedTicket(ticket.id!));
-                            },
-                            icon: const Icon(
-                              EvaIcons.trashOutline,
-                              color: Colors.red,
-                            )),
-                      )
-                    ],
-                  )
+                  buildFirstRow(date, hour, homeBloc),
+                  buildSecondRow(session, duration, price, alertCubit, homeBloc)
                 ],
               )),
         ),
+      ),
+    );
+  }
+
+  Row buildSecondRow(SessionCubit session, String duration, String price,
+      AlertCubit alertCubit, TicketsBloc homeBloc) {
+    return Row(
+      children: [
+        Visibility(
+          visible: valid(),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: TextButton(
+              onPressed: () async {
+                if (!(session.state.cfg?.bluetoothDevice?.isConnected ??
+                    false)) {
+                  if (session.state.cfg?.bluetoothDevice != null) {
+                    await session.state.cfg?.bluetoothDevice!.connect(
+                        timeout: const Duration(seconds: 10));
+                    if (session.state.cfg?.bluetoothDevice?.isConnected ??
+                        false) {
+                      session.changeState(session.state.copyWith(
+                          configModel: session.state.cfg!.copyWith(
+                              bluetoothDevice:
+                                  session.state.cfg?.bluetoothDevice)));
+                    }
+                  }
+                }
+                if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                  if (!PrinterService.isProgress) {
+                    PrinterService().printTicket(
+                        user: ticket.name ?? "",
+                        configModel: session.state.cfg,
+                        duration: duration,
+                        price: price);
+                  }
+
+                  alertCubit.showAlertInfo(
+                    title: "Imprimiendo",
+                    subtitle: "Espere un momento",
+                  );
+                } else {
+                  NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                  alertCubit.showAlertInfo(
+                    title: "Error",
+                    subtitle: "No hay impresora conectada",
+                  );
+                }
+              },
+              child: StarlinkText(
+                "IMPRIMIR",
+                size: 16,
+                isBold: true,
+              ),
+            ),
+          ),
+        ),
+        const Spacer(),
+        Visibility(
+          visible: valid(),
+          child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () {
+                homeBloc.add(
+                    ShareQRImage(ticket.name ?? "", ticket.password ?? ""));
+              },
+              icon: const Icon(
+                EvaIcons.shareOutline,
+                color: StarlinkColors.lightBlue,
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 5,  right: 5),
+          child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () {
+                homeBloc.add(DeletedTicket(ticket.id!));
+              },
+              icon: const Icon(
+                EvaIcons.trashOutline,
+                color: Colors.red,
+              )),
+        )
+      ],
+    );
+  }
+
+  Row buildFirstRow(String date, String hour, TicketsBloc homeBloc) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  StarlinkText(
+                    ticket.name ?? "",
+                    size: 16,
+                    isBold: true,
+                  ),
+                  const Gap(60),
+                  Column(
+                    children: [
+                      StarlinkText(
+                        date,
+                        size: 10,
+                      ),
+                      StarlinkText(
+                        hour,
+                        size: 10,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            buildDataUsageWidget(),
+          ],
+        ),
+        buildDataUsageBadgedWidget(homeBloc),
+      ],
+    );
+  }
+
+  Padding buildDataUsageWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 1.0, left: 10),
+      child: Builder(
+        builder: (context) {
+          late String text;
+          if (ticket.bytesIn != "0") {
+            text =
+                "D: ${ticket.getDownloadedInMB()} S: ${ticket.getUploadedInMB()}";
+          } else {
+            text = "Sin consumo";
+          }
+          return StarlinkText(
+            text,
+            size: 14,
+          );
+        },
       ),
     );
   }
@@ -291,7 +285,7 @@ class CustomTicketClipper extends CustomClipper<Path> {
     //Radius
     path.addRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
+        Rect.fromLTWH(0, 0, size.width, size.height - 1),
         const Radius.circular(8),
       ),
     );
@@ -316,7 +310,7 @@ class CustomTicketClipper extends CustomClipper<Path> {
     // Horizontal Line Dash
     const dashWidth = 10;
     const dashSpace = 5;
-    final dashCount = size.width ~/ (dashWidth + dashSpace);
+    final dashCount = (size.width ~/ (dashWidth + dashSpace)) - 1;
 
     for (var i = 0; i < dashCount; i++) {
       path.addRect(

@@ -10,13 +10,13 @@ class ThemeApp{
       backgroundColor: Color(0xff123258),
 
     ),
-    fontFamily: 'poppins_regular',
+    fontFamily: 'DDIN',
     colorScheme:const ColorScheme(
-      primary: ColorsApp.primary,
-      secondary: ColorsApp.secondary,
+      primary: StarlinkColors.black,
+      secondary: StarlinkColors.gray,
       surface: Colors.black,
       background: _backgroundColorLight,
-      error: ColorsApp.alert,
+      error: StarlinkColors.red,
       onPrimary: Colors.black,
       onSecondary: ColorsApp.secondary,
       onSurface: Colors.black,
@@ -39,7 +39,7 @@ class ThemeApp{
         ),
         textStyle: MaterialStateProperty.all(
           const TextStyle(
-            fontFamily: 'poppins_bold',
+            fontFamily: 'DDIN-Bold',
             fontWeight: FontWeight.bold,
             color: Colors.grey,
           ),
@@ -65,7 +65,7 @@ class ThemeApp{
       centerTitle: true,
       titleTextStyle: const TextStyle(
         color: ColorsApp.primary,
-        fontFamily: 'poppins_bold',
+        fontFamily: 'DDIN-Bold',
         fontWeight: FontWeight.w600,
         fontSize: 26
       ),
@@ -74,7 +74,7 @@ class ThemeApp{
     textTheme: const TextTheme(
       subtitle1: TextStyle(
         color: ColorsApp.textColor,
-        fontFamily: 'poppins_bold',
+        fontFamily: 'DDIN-Bold',
         fontWeight: FontWeight.w600,
       ),
 

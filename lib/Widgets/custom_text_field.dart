@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -53,13 +54,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               child: Column(
                 children: [
                   const Gap(10),
-                  Text(
+                  StarlinkText(
                     widget.title,
-                    style: const TextStyle(
-                        fontFamily: 'poppins_semi_bold',
-                        fontSize: 18,
-                        color: ColorsApp.secondary,
-                        fontWeight: FontWeight.w400),
+                    size: 18,
+                    isBold: true,
                   ),
                   const Gap(4),
                 ],

@@ -1,6 +1,6 @@
 final Map<String, String> esEs = {
   // Drawer
-  "title_drawer": "StarTickets",
+  "title_drawer": "StarTickera",
   "home_drawer": "INICIO",
   "list_tickets_drawer": "MIS TICKETS",
   "services_drawer": "MIS PLANES",

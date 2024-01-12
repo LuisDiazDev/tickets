@@ -1,4 +1,5 @@
 import 'package:StarTickera/Core/Values/Colors.dart';
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
 class StarlinkTextField extends StatelessWidget {
@@ -32,15 +33,10 @@ class StarlinkTextField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
+          StarlinkText(
             title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: StarlinkColors.white,
-              fontSize: 14.0,
-              // bold
-              fontFamily: 'DDIN-Bold',
-            ),
+            size: 14.0,
+            isBold: true,
           ),
           const SizedBox(height: 1.0),
           Row(
@@ -75,12 +71,6 @@ class StarlinkTextField extends StatelessWidget {
                             borderSide: BorderSide(color: StarlinkColors.gray),
                           ),
                   ),
-                  controller: TextEditingController.fromValue(
-                    TextEditingValue(
-                      text: initialValue,
-                      selection: TextSelection.collapsed(offset: initialValue.length),
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -100,7 +90,6 @@ class StarlinkTextField extends StatelessWidget {
                 ),
               )
             ],
-
           ),
           Visibility(
             visible: errorText.isNotEmpty,

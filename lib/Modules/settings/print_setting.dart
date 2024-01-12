@@ -141,7 +141,7 @@ class PrintSettings extends StatelessWidget {
 
   Column buildPrinterDisconnectedStateWidget(BuildContext context) {
     if (sessionBloc.state.cfg!.bluetoothDevice?.advName == ""){
-      sessionBloc.state.cfg!.bluetoothDevice?.connect().then((value) async {
+      sessionBloc.state.cfg!.bluetoothDevice?.connect(timeout: const Duration(seconds: 10)).then((value) async {
         await sessionBloc.state.cfg!.bluetoothDevice!.readRssi();
       });
     }
@@ -341,7 +341,7 @@ class PrintSettings extends StatelessWidget {
     sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
 
     await bluetooth.device.connect(
-        timeout: const Duration(seconds: 20), mtu: null, autoConnect: true);
+        timeout: const Duration(seconds: 20));
     log("MTU: ${bluetooth.device.mtuNow}");
     for (var i = 0; i < 20; i++) {
       if (!bluetooth.device.isConnected) {

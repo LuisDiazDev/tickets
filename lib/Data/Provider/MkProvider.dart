@@ -126,7 +126,7 @@ class MkProvider {
       "disabled": "no",
       "limit-uptime": duration,
       "limit-bytes-total": limitBytesTotal,
-      "comment": "ticket creado desde StarTickera"
+      "comment": "Creado desde StarTickera | ${getLatinDate()}"
     });
     if (r.statusCode == 200 || r.statusCode == 201) {
       return r;
@@ -135,6 +135,17 @@ class MkProvider {
       throw UserAlreadyExist(name);
     }
     throw Exception("Ah ocurrido un error");
+  }
+
+  String getLatinDate() {
+    var now = DateTime.now();
+    var y = now.year;
+    var m = now.month.toString().padLeft(2, "0");
+    var d = now.day.toString().padLeft(2, "0");
+    var h = now.hour.toString().padLeft(2, "0");
+    var min = now.minute.toString().padLeft(2, "0");
+    var sec = now.second.toString().padLeft(2, "0");
+    return "$d-$m-$y $h:$min:$sec";
   }
 
   Future<Response> backup(String name, String pass) async {
@@ -146,7 +157,9 @@ class MkProvider {
   }
 
   Future<Response> removeTicket(String id) async {
-    return await restApi.delete(url: "/ip/hotspot/user/$id");
+    // id = id.replaceAll("*", "");
+    var result = await restApi.delete(url: "/ip/hotspot/user/$id");
+    return result;
   }
 
   Future<Response> removeProfile(String id) async {

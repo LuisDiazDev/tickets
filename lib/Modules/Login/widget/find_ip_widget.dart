@@ -89,9 +89,6 @@ class _FindIpState extends State<FindIp> {
       var lst = widget.ip.split(".");
       current = int.parse(lst.last);
       locate = lst[2];
-      // if (locate == "20") {
-      //   current = 5;
-      // }
     }
     search();
   }
@@ -126,12 +123,10 @@ class _FindIpState extends State<FindIp> {
             continue;
           }
           var body = responses[i].body;
-          Navigator.pop(context, responses[i].request?.url.host);
           return;
         }
       }
     }
-    Navigator.pop(context, "...");
   }
 
   @override

@@ -37,6 +37,14 @@ class TicketModel {
     this.profile,
   });
 
+  String getCreationDate(){
+    var date = comment?.split("|")?? [];
+    if(date.length > 1){
+      return date[1];
+    }
+    return "";
+  }
+
   factory TicketModel.fromJson(Map<String, dynamic> json) => TicketModel(
     id: json[".id"],
     limitUptime: json["limit-uptime"],

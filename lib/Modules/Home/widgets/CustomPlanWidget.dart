@@ -25,7 +25,7 @@ class CustomPlanWidget extends StatelessWidget {
         color: StarlinkColors.blue.withOpacity(.4),
         child: Container(
           padding: const EdgeInsets.all(12.0),
-          width: 180,
+          width: MediaQuery.of(context).size.width-20,
           height: 110,
           child: Stack(
             children: [

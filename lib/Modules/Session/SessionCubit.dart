@@ -129,9 +129,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
     }
   }
 
-  void _connect(ConfigModel? cfg) {
-    PrinterService().tryConnect(configModel: cfg);
-  }
 
   void exitSession() {
     emit(const SessionState(sessionStatus: SessionStatus.finish));
