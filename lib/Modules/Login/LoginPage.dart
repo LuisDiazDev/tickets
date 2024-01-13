@@ -41,6 +41,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
     with TickerProviderStateMixin {
   String email = "";
   int _viewShowRoomCounter = 0;
+
   @override
   Widget build(BuildContext context) {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
@@ -58,7 +59,8 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                       // show the
                       _viewShowRoomCounter++;
                       if (_viewShowRoomCounter == 10) {
-                        NavigatorService.pushNamedAndRemoveUntil(Routes.showroom);
+                        NavigatorService.pushNamedAndRemoveUntil(
+                            Routes.showroom);
                       }
                     },
                     child: StarlinkText(
@@ -120,13 +122,17 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                         title: 'CONTRASEÑA',
                         textHint: 'CONTRASEÑA DEL MIKROTIK',
                       ),
-                      StarlinkButton(text: "INICIAR SESIÓN", onPressed: () {
-                        loginBloc.add(LogIn(
-                          state.email.value,
-                          state.host.value,
-                          state.password.value,
-                        ));
-                      }),
+                      StarlinkButton(
+                          text: "INICIAR SESIÓN",
+                          onPressed: () {
+                            loginBloc.add(LogIn(
+                              state.email.value == ""
+                                  ? "admin"
+                                  : state.email.value,
+                              state.host.value,
+                              state.password.value,
+                            ));
+                          }),
                     ],
                   ),
                 ],

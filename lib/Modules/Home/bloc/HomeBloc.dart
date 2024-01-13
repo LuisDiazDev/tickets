@@ -40,16 +40,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
     on<GeneratedTicket>(
       (event, emit) async {
-        if (state.currentUser == "" &&
-            sessionCubit.state.cfg?.bluetoothDevice != null &&
-            !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
+        if (state.currentUser == "" && (!sessionCubit.state.cfg!.disablePrint && sessionCubit.state.cfg?.bluetoothDevice != null &&
+            !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false))) {
           await sessionCubit.state.cfg?.bluetoothDevice?.connect(timeout: const Duration(seconds: 20));
         }
-        if (state.currentUser != "" ||
-            (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false)) {
-          sessionCubit.changeState(sessionCubit.state.copyWith(
-              configModel: sessionCubit.state.cfg!
-                  .copyWith(bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
+
+        if(!sessionCubit.state.cfg!.disablePrint){
+          if(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false){
+            sessionCubit.changeState(sessionCubit.state.copyWith(
+                configModel: sessionCubit.state.cfg!
+                    .copyWith(bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
+          }else{
+            alertCubit.showDialog(
+                "Error", "No se ha detectado ninguna impresora conectada");
+            NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+            return;
+          }
+        }
+
+
+
           final user = state.currentUser != "" ? state.currentUser : event.name;
           late Response r;
           try {
@@ -78,7 +88,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             alertCubit.showAlertInfo(
                 title: "Error", subtitle: "Ah ocurrido un problema");
           }
-          if (state.currentUser == "") {
+          if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
             PrinterService().printTicket(
                 user: event.name,
                 configModel: sessionCubit.state.cfg,
@@ -89,11 +99,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // if(!PrinterService.isProgress){
           //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
           // }
-        } else {
-          alertCubit.showDialog(
-              "Error", "No se ha detectado ninguna impresora conectada");
-          NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-        }
+
       },
     );
 
