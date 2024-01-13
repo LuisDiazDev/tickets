@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../Core/Values/Colors.dart';
+import '../../Data/Services/navigator_service.dart';
+import '../../Routes/Route.dart';
 import '../../Widgets/starlink/text_style.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
@@ -38,7 +40,7 @@ class _BuildLoginPage extends StatefulWidget {
 class _BuildLoginPageState extends State<_BuildLoginPage>
     with TickerProviderStateMixin {
   String email = "";
-
+  int _viewShowRoomCounter = 0;
   @override
   Widget build(BuildContext context) {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
@@ -51,10 +53,19 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  StarlinkText(
-                    'STARTICKERA',
-                    size: 16,
-                    // color: ,
+                  GestureDetector(
+                    onTap: () {
+                      // show the
+                      _viewShowRoomCounter++;
+                      if (_viewShowRoomCounter == 10) {
+                        NavigatorService.pushNamedAndRemoveUntil(Routes.showroom);
+                      }
+                    },
+                    child: StarlinkText(
+                      'STARTICKERA',
+                      size: 16,
+                      // color: ,
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
