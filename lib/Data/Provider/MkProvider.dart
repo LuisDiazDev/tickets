@@ -1,4 +1,5 @@
 import 'package:http/http.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../models/dhcp_server_model.dart';
 import '../../models/hotspot_model.dart';
@@ -203,4 +204,49 @@ class MkProvider {
       // "parent-queue": ""
     });
   }
+
+  Future<String?> findMikrotikInLocalNetwork(Stream<String> progressStream) async {
+    const int requestCount = 128;
+    String? localIp = await NetworkInfo().getWifiIP();
+    if (localIp == null) {
+      return null;
+    }
+    String ipRange = _getIpRange(localIp);
+    int current = _getLastIpSegment(localIp);
+    for (int i = 2; i < 255; i += requestCount) {
+      List<Future<Response>> promises = [];
+      for (int j = i; j < requestCount + i; j++) {
+        var ip = "$ipRange.$j";
+        promises.add(restApi.get(
+          host: ip,
+          url: "/ip/hotspot/user",
+          user: "",
+          pass: "",
+        ));
+      }
+
+      var responses = await Future.wait(promises);
+      for (int i = 0; i < responses.length; i++) {
+        if (responses[i].statusCode < 500) {
+          if (i == current) {
+            continue;
+          }
+          var body = responses[i].body;
+          return "$ipRange.$i";
+        }
+      }
+    }
+    return null;
+  }
+
+  int _getLastIpSegment(String ip) {
+    var split = ip.split(".");
+    return int.parse(split[split.length - 1]);
+  }
+
+  String _getIpRange(String ip) {
+    var split = ip.split(".");
+    return "${split[0]}.${split[1]}.${split[2]}";
+  }
+
 }

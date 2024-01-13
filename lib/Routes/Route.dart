@@ -1,3 +1,4 @@
+import 'package:StarTickera/Modules/Showroom/Showroom.dart';
 import 'package:flutter/material.dart';
 
 import '../../Modules/Home/HomePage.dart';
@@ -50,6 +51,12 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
           settings: RouteSettings(name: settings.name)
       );
       break;
+    case Routes.showroom:
+      route = MaterialPageRoute(
+          builder: (_) => const ShowRoomPage(),
+          settings: RouteSettings(name: settings.name)
+      );
+      break;
     default:
       route = MaterialPageRoute(
         builder: (_) => const InitialPage(),//Home page
@@ -68,6 +75,7 @@ abstract class Routes {
   static const settings = _Paths.settings;
   static const profiles = _Paths.profiles;
   static const tickets = _Paths.tickets;
+  static const showroom = _Paths.showroom;
 }
 
 abstract class _Paths {
@@ -77,4 +85,5 @@ abstract class _Paths {
   static const settings = '/settings';
   static const profiles = '/profiles';
   static const tickets = '/tickets';
+  static const showroom = '/showroom';
 }
