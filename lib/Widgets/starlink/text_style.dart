@@ -7,10 +7,11 @@ import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:flutter/material.dart';
 
 class StarlinkTextStyle  extends TextStyle{
-  StarlinkTextStyle({double size=16, Color color=StarlinkColors.white, bool isBold=true}) : super(
+  const StarlinkTextStyle({double size=16, Color color=StarlinkColors.white, bool isBold=true}) : super(
     fontFamily: isBold ? 'DDIN-Bold' : 'DDIN',
     fontSize: size,
     color: color,
+    overflow: TextOverflow.ellipsis,
     fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
   );
 }

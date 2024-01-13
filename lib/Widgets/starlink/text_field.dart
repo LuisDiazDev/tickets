@@ -42,7 +42,8 @@ class StarlinkTextField extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: TextField(
+                child: TextFormField(
+                  initialValue: initialValue,
                   maxLength: maxLength == 0 ? null : maxLength,
                   enabled: isEnabled,
                   onChanged: onChanged,

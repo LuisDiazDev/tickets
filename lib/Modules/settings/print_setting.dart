@@ -14,6 +14,7 @@ import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../Core/Values/Colors.dart';
+import '../../Widgets/starlink/checkbox.dart';
 import '../Session/SessionCubit.dart';
 import 'package:location/location.dart' as loc2;
 
@@ -23,13 +24,18 @@ const validBluetoothCharacteristics = [
   "49535343-8841-43f4-a8d4-ecbe34729bb3"
 ];
 
-class PrintSettings extends StatelessWidget {
+class PrintSettings extends StatefulWidget {
   const PrintSettings(
       {super.key, required this.sessionBloc, required this.alertCubit});
 
   final SessionCubit sessionBloc;
   final AlertCubit alertCubit;
 
+  @override
+  State<PrintSettings> createState() => _PrintSettingsState();
+}
+
+class _PrintSettingsState extends State<PrintSettings> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -84,35 +90,56 @@ class PrintSettings extends StatelessWidget {
   }
 
   Widget buildPrinterStateWidget(BuildContext context) {
-    if (sessionBloc.state.cfg!.bluetoothDevice == null) {
+    if (widget.sessionBloc.state.cfg!.bluetoothDevice == null) {
       return Column(
         children: [
-          Row(
-            children: [
-              TextButton(
-                onPressed: () async {
-                  await showBluetoothDevicesList(context);
-                },
-                child: StarlinkText("Conectar", color: StarlinkColors.red),
-              ),
-              const Gap(3),
-              const Icon(
-                EvaIcons.printer,
-                color: Colors.red,
-              ),
-            ],
+          StarlinkCheckBox(
+            title: 'Desactivar Impresiones',
+            initialState: widget.sessionBloc.state.cfg!.disablePrint,
+            onChanged: (check) {
+              setState(() {
+                widget.sessionBloc.changeState(widget.sessionBloc.state
+                    .copyWith(
+                        configModel: widget.sessionBloc.state.cfg!
+                            .copyWith(disablePrint: check)));
+              });
+            },
           ),
-          const StarlinkCard(
-            type: CardType.error,
-            title: "Impresora no conectada",
-            message:
-                "No se ha conectado ninguna impresora, por lo que no podrá imprimir tickets. De todas formas puede usar tickets virtuales o ver el ticket por pantalla.",
-          ),
+          Visibility(
+            visible: !widget.sessionBloc.state.cfg!.disablePrint,
+            child: Column(
+              children: [
+                const Gap(3),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        await showBluetoothDevicesList(context);
+                      },
+                      child:
+                          StarlinkText("Conectar", color: StarlinkColors.red),
+                    ),
+                    const Gap(3),
+                    const Icon(
+                      EvaIcons.printer,
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
+                const StarlinkCard(
+                  type: CardType.error,
+                  title: "Impresora no conectada",
+                  message:
+                      "No se ha conectado ninguna impresora, por lo que no podrá imprimir tickets. De todas formas puede usar tickets virtuales o ver el ticket por pantalla.",
+                ),
+              ],
+            ),
+          )
         ],
       );
     }
     return StreamBuilder<BluetoothConnectionState>(
-        stream: sessionBloc.state.cfg!.bluetoothDevice!.connectionState,
+        stream: widget.sessionBloc.state.cfg!.bluetoothDevice!.connectionState,
         builder: (context, AsyncSnapshot<BluetoothConnectionState> snapchat) {
           switch (snapchat.data) {
             case BluetoothConnectionState.connected:
@@ -140,68 +167,70 @@ class PrintSettings extends StatelessWidget {
   }
 
   Column buildPrinterDisconnectedStateWidget(BuildContext context) {
-    if (sessionBloc.state.cfg!.bluetoothDevice?.advName == ""){
-      sessionBloc.state.cfg!.bluetoothDevice?.connect(timeout: const Duration(seconds: 10)).then((value) async {
-        await sessionBloc.state.cfg!.bluetoothDevice!.readRssi();
+    if (widget.sessionBloc.state.cfg!.bluetoothDevice?.advName == "") {
+      widget.sessionBloc.state.cfg!.bluetoothDevice
+          ?.connect(timeout: const Duration(seconds: 10))
+          .then((value) async {
+        await widget.sessionBloc.state.cfg!.bluetoothDevice!.readRssi();
       });
     }
     return Column(
-              children: [
-                Row(
-                  children: [
-                    TextButton(
-                        onPressed: () async {
-                          await showBluetoothDevicesList(context);
-                        },
-                        child: StarlinkText(
-                          "Buscar otra impresora",
-                          color: StarlinkColors.yellow,
-                        )),
-                    const Gap(3),
-                    const Icon(
-                      EvaIcons.printer,
-                      color: Colors.yellow,
-                    )
-                  ],
-                ),
-                StarlinkCard(
-                  type: CardType.warning,
-                  title: "Impresora desconectada",
-                  message:
-                  "La impresora configurada (${sessionBloc.state.cfg!.bluetoothDevice!.advName}) está desconectada. Por favor, conéctela para poder imprimir tickets o configure otra.",
-                ),
-              ],
-            );
+      children: [
+        Row(
+          children: [
+            TextButton(
+                onPressed: () async {
+                  await showBluetoothDevicesList(context);
+                },
+                child: StarlinkText(
+                  "Buscar otra impresora",
+                  color: StarlinkColors.yellow,
+                )),
+            const Gap(3),
+            const Icon(
+              EvaIcons.printer,
+              color: Colors.yellow,
+            )
+          ],
+        ),
+        StarlinkCard(
+          type: CardType.warning,
+          title: "Impresora desconectada",
+          message:
+              "La impresora configurada (${widget.sessionBloc.state.cfg!.bluetoothDevice!.advName}) está desconectada. Por favor, conéctela para poder imprimir tickets o configure otra.",
+        ),
+      ],
+    );
   }
 
   Column buildPrinterConnectedStateWidget(BuildContext context) {
     return Column(
-              children: [
-                Row(
-                  children: [
-                    TextButton(
-                        onPressed: () async {
-                          await showBluetoothDevicesList(context);
-                        },
-                        child: StarlinkText(
-                          "Buscar mas impresoras",
-                          color: StarlinkColors.green,
-                        )),
-                    const Gap(3),
-                    const Icon(
-                      EvaIcons.printer,
-                      color: StarlinkColors.green,
-                    )
-                  ],
-                ),
-                StarlinkCard(
-                  type: CardType.success,
-                  title: "Impresora conectada",
-                  message:
-                      "La impresora está conectada y lista para imprimir tickets.\nModelo: ${sessionBloc.state.cfg!.bluetoothDevice!.advName}",
-                ),
-              ],
-            );
+      children: [
+        Row(
+          children: [
+            TextButton(
+                onPressed: () async {
+                  await showBluetoothDevicesList(context);
+                },
+                child: StarlinkText(
+                  "Buscar mas impresoras",
+                  color: StarlinkColors.green,
+                )),
+            const Gap(3),
+            const Icon(
+              EvaIcons.printer,
+              color: StarlinkColors.green,
+            )
+          ],
+        ),
+        StarlinkCard(
+          type: CardType.success,
+          title: "Impresora conectada",
+          message:
+              "La impresora está conectada y lista para imprimir tickets.\nModelo: ${widget.sessionBloc.state.cfg!.bluetoothDevice!.advName}",
+        ),
+      ],
+    );
   }
 
   Future<void> showBluetoothDevicesList(BuildContext context) async {
@@ -227,7 +256,7 @@ class PrintSettings extends StatelessWidget {
     if (wasApproved) {
       await showBluetoothDeviceListPopUp(context);
     } else {
-      alertCubit.showDialog(
+      widget.alertCubit.showDialog(
           "error", "recuerda mantener activo el bluetooth y el gps");
     }
   }
@@ -331,17 +360,16 @@ class PrintSettings extends StatelessWidget {
 
   void onBluetoothDeviceSelected(ScanResult bluetooth, context) async {
     await FlutterBluePlus.stopScan();
-    alertCubit.showAlertInfo(
+    widget.alertCubit.showAlertInfo(
         title: "Aviso",
         subtitle: "Conectando con el dispositivo ${bluetooth.device.advName}");
 
-    sessionBloc.changeState(sessionBloc.state.copyWith(
-        configModel: sessionBloc.state.cfg!
+    widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+        configModel: widget.sessionBloc.state.cfg!
             .copyWith(bluetoothDevice: bluetooth.device)));
-    sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
+    widget.sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
 
-    await bluetooth.device.connect(
-        timeout: const Duration(seconds: 20));
+    await bluetooth.device.connect(timeout: const Duration(seconds: 20));
     log("MTU: ${bluetooth.device.mtuNow}");
     for (var i = 0; i < 20; i++) {
       if (!bluetooth.device.isConnected) {
@@ -351,9 +379,9 @@ class PrintSettings extends StatelessWidget {
         break;
       }
     }
-    sessionBloc.changeState(sessionBloc.state.copyWith(
-        configModel: sessionBloc.state.cfg!
-            .copyWith(bluetoothDevice: sessionBloc.state.cfg?.bluetoothDevice)));
+    widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+        configModel: widget.sessionBloc.state.cfg!.copyWith(
+            bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice)));
     var service = await bluetooth.device.discoverServices();
     for (BluetoothService service in service) {
       if (!service.isPrimary) {
@@ -363,12 +391,12 @@ class PrintSettings extends StatelessWidget {
       for (String characteristic in validBluetoothCharacteristics) {
         for (BluetoothCharacteristic c in service.characteristics) {
           if (c.characteristicUuid.toString() == characteristic) {
-            sessionBloc.state.cfg!.bluetoothCharacteristic = c;
+            widget.sessionBloc.state.cfg!.bluetoothCharacteristic = c;
             log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
-            sessionBloc.changeState(sessionBloc.state.copyWith(
-                configModel: sessionBloc.state.cfg!
+            widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+                configModel: widget.sessionBloc.state.cfg!
                     .copyWith(bluetoothCharacteristic: c)));
-            alertCubit.showAlertInfo(
+            widget.alertCubit.showAlertInfo(
                 title: "Conectado",
                 subtitle:
                     "Conectado a la impresora ${bluetooth.device.advName}");
@@ -381,7 +409,7 @@ class PrintSettings extends StatelessWidget {
       }
     }
 
-    alertCubit.showAlertInfo(
+    widget.alertCubit.showAlertInfo(
         title: "Error",
         subtitle:
             "No se ha encontrado el servicio de impresion en este dispositivo");

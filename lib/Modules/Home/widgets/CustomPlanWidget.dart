@@ -25,20 +25,44 @@ class CustomPlanWidget extends StatelessWidget {
         color: StarlinkColors.blue.withOpacity(.4),
         child: Container(
           padding: const EdgeInsets.all(12.0),
-          width: MediaQuery.of(context).size.width-20,
+          width: MediaQuery.of(context).size.width - 20,
           height: 110,
           child: Stack(
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: SizedBox(
-                  width: 140,
-                  child: StarlinkText(
-                    profile.name ?? "",
-                    size: 16,
-                    isBold: true,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(
+                          minWidth: 40,
+                          maxWidth: 140,),
+                      child: StarlinkText(
+                        profile.name ?? "",
+                        size: 16,
+                        isBold: true,
+                      ),
                     ),
-                  ),
+                    Visibility(
+                      visible: profile.metadata?.dataLimit != 0,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                            minWidth: 40,
+                            maxWidth: 140,
+                            minHeight: 40,
+                            maxHeight: 60),
+                        child: StarlinkText(
+                          "Limite: ${profile.metadata?.dataLimit.toString()}Mbs",
+                          size: 16,
+                          isBold: true,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Align(
                 alignment: Alignment.topRight,

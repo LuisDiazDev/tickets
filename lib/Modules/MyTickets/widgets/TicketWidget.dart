@@ -86,7 +86,7 @@ class CustomTicketWidget extends StatelessWidget {
               price: price,
               shareF: () {
                 homeBloc.add(
-                    ShareQRImage(ticket.name ?? "", ticket.password ?? ""));
+                    ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
               },
               printF: () {
                 if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
@@ -193,7 +193,7 @@ class CustomTicketWidget extends StatelessWidget {
               constraints: const BoxConstraints(),
               onPressed: () {
                 homeBloc.add(
-                    ShareQRImage(ticket.name ?? "", ticket.password ?? ""));
+                    ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host ?? ""));
               },
               icon: const Icon(
                 EvaIcons.shareOutline,

@@ -46,14 +46,14 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
     on<ShareQRImage>((event, emit) async {
       final image = await QrPainter(
-        data: "https://host?user=${event.user}&=password=${event.password}",
+        data: "https://${event.host}/login?user=${event.user}&=password=${event.password}",
         version: QrVersions.auto,
         gapless: false,
       ).toImageData(200.0); // Generate QR code image data
 
       const filename = 'qr_code.png';
       final tempDir =
-          await getTemporaryDirectory(); // Get temporary directory to store the generated image
+          await getApplicationDocumentsDirectory(); // Get temporary directory to store the generated image
       final file = await File('${tempDir.path}/$filename')
           .create(); // Create a file to store the generated image
       var bytes = image!.buffer.asUint8List(); // Get the image bytes

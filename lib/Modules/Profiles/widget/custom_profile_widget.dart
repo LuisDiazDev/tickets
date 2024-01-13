@@ -39,13 +39,42 @@ class CustomProfile extends StatelessWidget {
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width*.2, maxWidth: MediaQuery.of(context).size.width*.6),
-                    child: StarlinkText(
-                      profile.name ?? "",
-                      size: 16,
-                      isBold: true,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          constraints: const BoxConstraints(
+                            minWidth: 40,
+                            maxWidth: 140,),
+                          child: StarlinkText(
+                            profile.name ?? "",
+                            size: 16,
+                            isBold: true,
+                          ),
+                        ),
+                        Visibility(
+                          visible: profile.metadata?.dataLimit != 0,
+                          child: Container(
+                            constraints: const BoxConstraints(
+                                minWidth: 40,
+                                maxWidth: 140,
+                                minHeight: 40,
+                                maxHeight: 60),
+                            child: StarlinkText(
+                              "Limite: ${profile.metadata?.dataLimit.toString()}Mbs",
+                              size: 16,
+                              isBold: true,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const Spacer(),

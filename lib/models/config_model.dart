@@ -14,16 +14,16 @@ class ConfigModel {
       port,
       dhcp;
 
-  bool limitSpeedInternet;
+  bool limitSpeedInternet, disablePrint;
   BluetoothDevice? bluetoothDevice;
   BluetoothCharacteristic? bluetoothCharacteristic;
   List<WifiDataModels> wifiCredentials;
 
   ConfigModel(
-      {
-        this.dnsNamed = "",
+      {this.dnsNamed = "",
       this.dhcp = "",
       this.ip = "...",
+      this.disablePrint = false,
       this.port = "3000",
       this.password = "1234",
       this.host = "192.168.20.5",
@@ -35,8 +35,7 @@ class ConfigModel {
       this.maxUpload = "1M",
       this.bluetoothDevice,
       this.bluetoothCharacteristic,
-      this.wifiCredentials = const []
-      });
+      this.wifiCredentials = const []});
 
   static Map settings = {
     "download": ["1", "3", "5", "10", "20", "30", "50", "100", "250"],
@@ -49,6 +48,7 @@ class ConfigModel {
   ConfigModel copyWith({
     String? dnsNamed,
     bool? limitSpeedInternet,
+    bool? disablePrint,
     String? password,
     String? host,
     String? user,
@@ -65,6 +65,7 @@ class ConfigModel {
   }) {
     return ConfigModel(
         dhcp: dhcp ?? this.dhcp,
+        disablePrint: disablePrint ?? this.disablePrint,
         dnsNamed: dnsNamed ?? this.dnsNamed,
         limitSpeedInternet: limitSpeedInternet ?? this.limitSpeedInternet,
         password: password ?? this.password,
@@ -76,13 +77,15 @@ class ConfigModel {
         pathLogo: pathLogo ?? this.pathLogo,
         maxDownload: maxDownload ?? this.maxDownload,
         maxUpload: maxUpload ?? this.maxUpload,
-        wifiCredentials: wifiCredentials?? this.wifiCredentials,
+        wifiCredentials: wifiCredentials ?? this.wifiCredentials,
         bluetoothDevice: bluetoothDevice ?? this.bluetoothDevice,
-        bluetoothCharacteristic: bluetoothCharacteristic ?? this.bluetoothCharacteristic);
+        bluetoothCharacteristic:
+            bluetoothCharacteristic ?? this.bluetoothCharacteristic);
   }
 
   factory ConfigModel.fromJson(Map<String, dynamic> json) => ConfigModel(
       limitSpeedInternet: json["limit-speed-internet"],
+      disablePrint: json["disablePrint"],
       password: json["password"],
       host: json["host"],
       user: json["user"],
@@ -94,27 +97,31 @@ class ConfigModel {
       port: json["port"],
       maxUpload: json["max-upload"],
       dnsNamed: json["dns-name"],
-      bluetoothDevice:
-          json["bt_service"] != null ? BluetoothDevice.fromId(json["bt_service"]) : null,
+      bluetoothDevice: json["bt_service"] != null
+          ? BluetoothDevice.fromId(json["bt_service"])
+          : null,
       bluetoothCharacteristic: json["bt_char"] != null
           ? bluetoothCharacteristicFromJson(json["bt_char"])
-          : null
-  );
+          : null);
 
-  static String bluetoothCharacteristicToJson(BluetoothCharacteristic? bluetoothCharacteristic) {
+  static String bluetoothCharacteristicToJson(
+      BluetoothCharacteristic? bluetoothCharacteristic) {
     if (bluetoothCharacteristic == null) {
       return "";
     }
     var m = <String, dynamic>{
       "remoteId": bluetoothCharacteristic.remoteId.toString(),
       "serviceUuid": bluetoothCharacteristic.serviceUuid.toString(),
-      "secondaryServiceUuid": bluetoothCharacteristic.secondaryServiceUuid.toString(),
-      "characteristicUuid": bluetoothCharacteristic.characteristicUuid.toString(),
+      "secondaryServiceUuid":
+          bluetoothCharacteristic.secondaryServiceUuid.toString(),
+      "characteristicUuid":
+          bluetoothCharacteristic.characteristicUuid.toString(),
     };
     return json.encode(m);
   }
 
-  static BluetoothCharacteristic bluetoothCharacteristicFromJson(String bluetoothCharacteristic) {
+  static BluetoothCharacteristic bluetoothCharacteristicFromJson(
+      String bluetoothCharacteristic) {
     var m = json.decode(bluetoothCharacteristic);
     return BluetoothCharacteristic(
       remoteId: DeviceIdentifier(m["remoteId"]),
@@ -128,10 +135,11 @@ class ConfigModel {
         "limit-speed-internet": limitSpeedInternet,
         "password": password,
         "host": host,
-        "ip":ip,
+        "ip": ip,
         "port": port,
+        "disablePrint":disablePrint,
         "user": user,
-        "dhcp":dhcp,
+        "dhcp": dhcp,
         "share-user": shareUser,
         "path-logo": pathLogo,
         "max-download": maxDownload,
@@ -141,30 +149,26 @@ class ConfigModel {
       };
 }
 
-class WifiDataModels{
+class WifiDataModels {
   String ssid;
   String pass;
 
-
-  WifiDataModels({this.pass="",this.ssid=""});
+  WifiDataModels({this.pass = "", this.ssid = ""});
 
   WifiDataModels copyWith({
     String? ssid,
     String? pass,
   }) {
-    return WifiDataModels(
-        ssid: ssid ?? this.ssid,
-        pass: pass ?? this.pass
-    );
+    return WifiDataModels(ssid: ssid ?? this.ssid, pass: pass ?? this.pass);
   }
 
   factory WifiDataModels.fromJson(Map<String, dynamic> json) => WifiDataModels(
-    ssid: json["ssid"],
-    pass: json["pass"],
-  );
+        ssid: json["ssid"],
+        pass: json["pass"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "ssid": ssid,
-    "pass":pass,
-  };
+        "ssid": ssid,
+        "pass": pass,
+      };
 }

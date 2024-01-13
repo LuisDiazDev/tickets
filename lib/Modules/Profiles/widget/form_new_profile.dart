@@ -33,7 +33,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
       currency = "\$",
       limitUpload = "1",
       limitDownload = "1",
-      limitData="0";
+      limitData = "0";
 
   bool limitSpeed = false;
   final _formKey = GlobalKey<FormState>();
@@ -99,8 +99,8 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         onChanged: (str) {
                           price = str ?? "1";
                         },
-                        keyboardType:
-                            const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         initialValue: price,
                         textHint: "Precio del plan",
                         // item: ConfigModel.settings["currency"] ?? [],
@@ -223,7 +223,8 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       price = "1S";
                     }
 
-                    profile.onLogin=getScript(durationT);
+                    profile.onLogin =
+                        '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
 
                     profile.sharedUsers = numberOfSharedUserPerTicket;
                     profile.rateLimit = limitSpeed
@@ -237,7 +238,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           prefix: price.replaceAll(RegExp(r"\D"), ""),
                           userLength: 5,
                           passwordLength: 5,
-                          dataLimit: int.tryParse(limitData)??0,
+                          dataLimit: int.tryParse(limitData) ?? 0,
                           price: double.parse(p),
                           usageTime: durationT,
                           durationType: DurationType.SaveTime,
@@ -252,7 +253,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           prefix: price.replaceAll(RegExp(r"\D"), ""),
                           userLength: 5,
                           passwordLength: 5,
-                          dataLimit: int.tryParse(limitData)??0,
+                          dataLimit: int.tryParse(limitData) ?? 0,
                           price: double.parse(p),
                           usageTime: durationT,
                           durationType: DurationType.SaveTime,
@@ -268,7 +269,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         prefix: price.replaceAll(RegExp(r"\D"), ""),
                         userLength: 5,
                         passwordLength: 5,
-                        dataLimit: int.tryParse(limitData)??0,
+                        dataLimit: int.tryParse(limitData) ?? 0,
                         price: double.parse(p),
                         usageTime: durationT,
                         durationType: DurationType.SaveTime,
@@ -316,5 +317,3 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
     }
   }
 }
-
-

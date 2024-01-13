@@ -8,7 +8,8 @@ class FetchData extends TicketsEvent {
 class ShareQRImage extends TicketsEvent {
   final String user;
   final String password;
-  ShareQRImage(this.user,this.password);
+  final String host;
+  ShareQRImage(this.user,this.password,this.host);
 }
 
 class GenerateTicket extends TicketsEvent{
