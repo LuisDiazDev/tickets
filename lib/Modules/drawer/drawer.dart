@@ -36,6 +36,13 @@ class DrawerCustom extends StatelessWidget {
             },
           ),
           TileDrawer(
+            icon: EvaIcons.bookOpen,
+            title: "Reportes",
+            onTap: (){
+              NavigatorService.pushNamedAndRemoveUntil(Routes.report);
+            },
+          ),
+          TileDrawer(
             icon: EvaIcons.pricetags,
             title: "services_drawer".tr,
             onTap: (){
@@ -54,11 +61,7 @@ class DrawerCustom extends StatelessWidget {
             title: "CERRAR SESIÓN",
             onTap: () async {
               final sessionCubit = BlocProvider.of<SessionCubit>(context);
-              sessionCubit.changeState(
-                sessionCubit.state.copyWith(
-                  sessionStatus: SessionStatus.finish
-                )
-              );
+              sessionCubit.exitSession();
             },
           ),
         ],

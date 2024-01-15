@@ -12,6 +12,7 @@ class ConfigModel {
       pathLogo,
       dnsNamed,
       port,
+      identity,
       dhcp;
 
   bool limitSpeedInternet, disablePrint;
@@ -22,6 +23,7 @@ class ConfigModel {
   ConfigModel(
       {this.dnsNamed = "",
       this.dhcp = "",
+      this.identity = "",
       this.ip = "...",
       this.disablePrint = false,
       this.port = "3000",
@@ -53,6 +55,7 @@ class ConfigModel {
     String? host,
     String? user,
     String? ip,
+    String? identity,
     String? dhcp,
     String? shareUser,
     String? pathLogo,
@@ -71,6 +74,7 @@ class ConfigModel {
         password: password ?? this.password,
         host: host ?? this.host,
         ip: ip ?? this.ip,
+        identity: identity ?? this.identity,
         port: port ?? this.port,
         user: user ?? this.user,
         shareUser: shareUser ?? this.shareUser,
@@ -91,6 +95,7 @@ class ConfigModel {
       user: json["user"],
       ip: json["ip"],
       dhcp: json["dhcp"],
+      identity: json["identity"],
       shareUser: json["share-user"],
       pathLogo: json["path-logo"],
       maxDownload: json["max-download"],
@@ -137,9 +142,10 @@ class ConfigModel {
         "host": host,
         "ip": ip,
         "port": port,
-        "disablePrint":disablePrint,
+        "disablePrint": disablePrint,
         "user": user,
         "dhcp": dhcp,
+        "identity":identity,
         "share-user": shareUser,
         "path-logo": pathLogo,
         "max-download": maxDownload,

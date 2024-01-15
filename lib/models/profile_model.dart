@@ -30,6 +30,7 @@ String profileModelToJson(List<ProfileModel> data) =>
 class ProfileModel {
   String? id;
   String? name = "";
+  String? fullName= "";
   String? addMacCookie;
   String? addressList;
   String? profileModelDefault;
@@ -49,6 +50,7 @@ class ProfileModel {
 
   ProfileModel({
     this.id,
+    this.fullName,
     this.name,
     this.addMacCookie,
     this.rateLimit,
@@ -86,6 +88,7 @@ class ProfileModel {
     }
     return ProfileModel(
       id: json[".id"],
+      fullName: json["name"],
       addMacCookie: json["add-mac-cookie"],
       addressList: json["address-list"],
       profileModelDefault: json["default"],

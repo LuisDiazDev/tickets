@@ -118,8 +118,14 @@ class SessionCubit extends HydratedCubit<SessionState> {
         emit(state.copyWith(
             configModel: state.cfg!
                 .copyWith(wifiCredentials: wDetails)));
+        var identity = interfaces
+            .firstWhere((element) => element.contains("system identity"));
+        var identitySplit = identity.split("=");
+        emit(state.copyWith(
+            configModel: state.cfg!
+                .copyWith(identity: identitySplit.last)));
+      }
 
-      } else {}
     } else {
       MkProvider provider = MkProvider();
       var r = await provider.exportData(file: "info.rsc");

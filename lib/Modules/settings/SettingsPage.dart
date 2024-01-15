@@ -73,6 +73,15 @@ class SettingsPage extends StatelessWidget {
                 title: "INFORMACIÓN DEL MIKROTIK",
               ),
               StarlinkTextField(
+                initialValue: sessionBloc.state.cfg?.identity ?? "",
+                onChanged: (str) {
+                  sessionBloc.changeState(sessionBloc.state.copyWith(
+                      configModel: sessionBloc.state.cfg!.copyWith(identity: str)));
+                },
+                title: "Identidad",
+                textHint: "Nombre del Mikrotik",
+              ),
+              StarlinkTextField(
                 initialValue: sessionBloc.state.cfg?.host ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(sessionBloc.state.copyWith(

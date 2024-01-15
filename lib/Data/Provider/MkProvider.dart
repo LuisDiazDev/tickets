@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
+import '../../models/active_user_models.dart';
 import '../../models/dhcp_server_model.dart';
 import '../../models/hotspot_model.dart';
 import '../../models/profile_hotspot_model.dart';
@@ -22,6 +25,21 @@ class UserAlreadyExist implements Exception {
 class MkProvider {
   final restApi = RestApiProvider();
 
+  Future<String> identity() async {
+    var response = await restApi.get(url: "/system/identity");
+
+    if (response.statusCode == 200) {
+      try {
+        var decode = jsonDecode(response.body)["name"] ?? "";
+        return decode;
+      } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+        return "";
+      }
+    }
+    return "";
+  }
+
   Future<List<TicketModel>> allTickets() async {
     var response = await restApi.get(url: "/ip/hotspot/user");
 
@@ -37,7 +55,20 @@ class MkProvider {
     return [];
   }
 
+  Future<List<ActiveModel>> allActiveTickets() async {
+    var response = await restApi.get(url: "/ip/hotspot/active");
 
+    if (response.statusCode == 200) {
+      try {
+        var decode = activeModelFromJson(response.body);
+        return decode;
+      } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+        return [];
+      }
+    }
+    return [];
+  }
 
   Future<List<Hotspot>> allHotspot() async {
     var response = await restApi.get(url: "/ip/hotspot");
@@ -160,6 +191,12 @@ class MkProvider {
   Future<Response> removeTicket(String id) async {
     // id = id.replaceAll("*", "");
     var result = await restApi.delete(url: "/ip/hotspot/user/$id");
+    return result;
+  }
+
+  Future<Response> disconnectTicket(String id) async {
+    // id = id.replaceAll("*", "");
+    var result = await restApi.delete(url: "/ip/hotspot/active/$id");
     return result;
   }
 

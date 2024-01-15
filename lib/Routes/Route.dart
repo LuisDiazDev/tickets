@@ -7,66 +7,66 @@ import '../../Modules/settings/SettingsPage.dart';
 import '../Modules/Initial/Initial.dart';
 import '../Modules/Login/LoginPage.dart';
 import '../Modules/Profiles/ProfilesPage.dart';
-
-
-
+import '../Modules/Reports/ReportPage.dart';
 
 Route Function(RouteSettings) get routes => (RouteSettings settings) {
-  Route route;
+      Route route;
 
-  switch (settings.name) {
-    case Routes.home:
-      route = MaterialPageRoute(
-        builder: (_) => const HomePage(),
-        settings: RouteSettings(name: settings.name),
-      );
-      break;
-    case Routes.login:
-      route = MaterialPageRoute(
-        builder: (_) => const LoginPage(),
-        settings: RouteSettings(name: settings.name),
-      );
-      break;
-    case Routes.settings:
-      route = MaterialPageRoute(
-        builder: (_) => const SettingsPage(),
-        settings: RouteSettings(name: settings.name),
-      );
-      break;
-    case Routes.profiles:
-      route = MaterialPageRoute(
-        builder: (_) => const ProfilePage(),
-        settings: RouteSettings(name: settings.name),
-      );
-      break;
-    case Routes.tickets:
-      route = MaterialPageRoute(
-        builder: (_) => const TicketsPage(),
-        settings: RouteSettings(name: settings.name)
-      );
-      break;
-    case Routes.initial:
-      route = MaterialPageRoute(
-          builder: (_) => const InitialPage(),
-          settings: RouteSettings(name: settings.name)
-      );
-      break;
-    case Routes.showroom:
-      route = MaterialPageRoute(
-          builder: (_) => const ShowRoomPage(),
-          settings: RouteSettings(name: settings.name)
-      );
-      break;
-    default:
-      route = MaterialPageRoute(
-        builder: (_) => const InitialPage(),//Home page
-        settings: RouteSettings(name: settings.name),
-      );
-      break;
-  }
+      switch (settings.name) {
+        case Routes.home:
+          route = MaterialPageRoute(
+            builder: (_) => const HomePage(),
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+        case Routes.login:
+          route = MaterialPageRoute(
+            builder: (_) => const LoginPage(),
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+        case Routes.settings:
+          route = MaterialPageRoute(
+            builder: (_) => const SettingsPage(),
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+        case Routes.profiles:
+          route = MaterialPageRoute(
+            builder: (_) => const ProfilePage(),
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+        case Routes.tickets:
+          route = MaterialPageRoute(
+              builder: (_) => const TicketsPage(),
+              settings: RouteSettings(name: settings.name));
+          break;
+        case Routes.initial:
+          route = MaterialPageRoute(
+              builder: (_) => const InitialPage(),
+              settings: RouteSettings(name: settings.name));
+          break;
+        case Routes.showroom:
+          route = MaterialPageRoute(
+              builder: (_) => const ShowRoomPage(),
+              settings: RouteSettings(name: settings.name));
+          break;
+        case Routes.report:
+          route = MaterialPageRoute(
+              builder: (_) => const ReportPage(),
+              settings: RouteSettings(name: settings.name));
+          break;
+        default:
+          route = MaterialPageRoute(
+            builder: (_) => const InitialPage(), //Home page
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+      }
 
-  return route;
-};
+      return route;
+    };
 
 abstract class Routes {
   static const login = _Paths.login;
@@ -76,6 +76,7 @@ abstract class Routes {
   static const profiles = _Paths.profiles;
   static const tickets = _Paths.tickets;
   static const showroom = _Paths.showroom;
+  static const report = _Paths.report;
 }
 
 abstract class _Paths {
@@ -86,4 +87,5 @@ abstract class _Paths {
   static const profiles = '/profiles';
   static const tickets = '/tickets';
   static const showroom = '/showroom';
+  static const report = '/report';
 }
