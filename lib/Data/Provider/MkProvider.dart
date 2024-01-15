@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
@@ -19,6 +23,13 @@ class UserAlreadyExist implements Exception {
   }
 }
 
+class FoundMikrotik {
+  final String ip;
+  final bool isConnected;
+
+  FoundMikrotik(this.ip, this.isConnected);
+}
+
 class MkProvider {
   final restApi = RestApiProvider();
 
@@ -36,8 +47,6 @@ class MkProvider {
     }
     return [];
   }
-
-
 
   Future<List<Hotspot>> allHotspot() async {
     var response = await restApi.get(url: "/ip/hotspot");
@@ -70,14 +79,10 @@ class MkProvider {
     return [];
   }
 
-  Future<Object> allDhcpServer({
-    String? user, String? pass, String? host
-  }) async {
-    var response = await restApi.get(url: "/ip/dhcp-server",
-      user: user,
-      pass: pass,
-      host: host
-    );
+  Future<Object> allDhcpServer(
+      {String? user, String? pass, String? host}) async {
+    var response = await restApi.get(
+        url: "/ip/dhcp-server", user: user, pass: pass, host: host);
 
     if (response.statusCode == 200) {
       try {
@@ -87,17 +92,15 @@ class MkProvider {
         // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
-    }else{
+    } else {
       // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
       return false;
     }
   }
 
-  Future<Response> exportData({String file="default"})async{
-    return await restApi.post(url: "/export", body: {
-      "file": file,
-      "show-sensitive":true
-    });
+  Future<Response> exportData({String file = "default"}) async {
+    return await restApi
+        .post(url: "/export", body: {"file": file, "show-sensitive": true});
   }
 
   Future<List<ProfileHotspotModel>> allProfilesHotspot() async {
@@ -111,14 +114,15 @@ class MkProvider {
         // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
-    }else{
+    } else {
       // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
     }
 
     return [];
   }
 
-  Future<Response> newTicket(String name, String profile,String duration,{int limitBytesTotal=0}) async {
+  Future<Response> newTicket(String name, String profile, String duration,
+      {int limitBytesTotal = 0}) async {
     var r = await restApi.post(url: "/ip/hotspot/user/add", body: {
       "server": "hotspot1",
       "name": name,
@@ -126,7 +130,8 @@ class MkProvider {
       "profile": profile,
       "disabled": "no",
       "limit-uptime": duration,
-      "limit-bytes-total": limitBytesTotal != 0 ? "${limitBytesTotal}M":limitBytesTotal,
+      "limit-bytes-total":
+          limitBytesTotal != 0 ? "${limitBytesTotal}M" : limitBytesTotal,
       "comment": "Creado desde StarTickera | ${getLatinDate()}"
     });
     if (r.statusCode == 200 || r.statusCode == 201) {
@@ -153,7 +158,7 @@ class MkProvider {
     return await restApi.post(url: "/system/backup/load", body: {
       "name": name,
       "password": pass,
-      "force-v6-to-v7-configuration-upgrade":true
+      "force-v6-to-v7-configuration-upgrade": true
     });
   }
 
@@ -167,7 +172,7 @@ class MkProvider {
     return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
   }
 
-  Future<Response> newProfile(ProfileModel profile,String duration) async {
+  Future<Response> newProfile(ProfileModel profile, String duration) async {
     if (profile.name == "") {
       throw Exception("El nombre no puede estar vacio");
     }
@@ -175,27 +180,29 @@ class MkProvider {
     var h = await allHotspot();
     profile.metadata!.hotspot = h[0].name; // TODO
     for (var i = 0; i < p.length; i++) {
-      if(p[i].name == profile.name){
+      if (p[i].name == profile.name) {
         profile.name = "${profile.name} (copy)";
-        return newProfile(profile,duration);
+        return newProfile(profile, duration);
       }
     }
     return await restApi.post(url: "/ip/hotspot/user/profile/add", body: {
-      "name": profile.metadata!.toMikrotiketNameString(profile.name??""), // TODO mover toMikrotiketNameString a esta clase
+      "name": profile.metadata!.toMikrotiketNameString(profile.name ?? ""),
+      // TODO mover toMikrotiketNameString a esta clase
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
       "shared-users": profile.sharedUsers,
       "status-autorefresh": "1m",
-      "mac-cookie-timeout":duration,
+      "mac-cookie-timeout": duration,
       "on-login": profile.onLogin,
-      "transparent-proxy":"yes"
+      "transparent-proxy": "yes"
       // "parent-queue": "",
     });
   }
 
   Future<Response> updateProfile(ProfileModel profile) async {
-    return await restApi.put(url: "/ip/hotspot/user/profile/${profile.id}", body: {
-      "name": profile.metadata!.toMikrotiketNameString(profile.name??""),
+    return await restApi
+        .put(url: "/ip/hotspot/user/profile/${profile.id}", body: {
+      "name": profile.metadata!.toMikrotiketNameString(profile.name ?? ""),
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
       "shared-users": profile.sharedUsers,
@@ -205,48 +212,50 @@ class MkProvider {
     });
   }
 
-  Future<String?> findMikrotikInLocalNetwork(Stream<String> progressStream) async {
-    const int requestCount = 128;
+  Future<List<FoundMikrotik?>> findMikrotiksInLocalNetwork(
+      ValueNotifier<int> count,
+      {int timeoutSecs = 5}) async {
     String? localIp = await NetworkInfo().getWifiIP();
     if (localIp == null) {
-      return null;
+      log("No se pudo obtener la ip local");
+      return [];
     }
+    List<FoundMikrotik?> results = [];
+    List<Future<Response>> promises = [];
     String ipRange = _getIpRange(localIp);
-    int current = _getLastIpSegment(localIp);
-    for (int i = 2; i < 255; i += requestCount) {
-      List<Future<Response>> promises = [];
-      for (int j = i; j < requestCount + i; j++) {
-        var ip = "$ipRange.$j";
-        promises.add(restApi.get(
-          host: ip,
-          url: "/ip/hotspot/user",
-          user: "",
-          pass: "",
-        ));
+    for (int i = 1; i < 255; i++) {
+      var ip = "$ipRange.$i";
+      var p = restApi.get(
+        host: ip,
+        url: "/system/routerboard",
+        timeoutSecs: timeoutSecs,
+      );
+      promises.add(p);
+    }
+    var responses = await Future.wait(promises);
+    var internalCount = 0;
+    for (var e in responses) {
+      internalCount++;
+      if (internalCount % 10 == 0 || internalCount == 255) {
+        count.value = internalCount;
       }
-
-      var responses = await Future.wait(promises);
-      for (int i = 0; i < responses.length; i++) {
-        if (responses[i].statusCode < 500) {
-          if (i == current) {
-            continue;
-          }
-          var body = responses[i].body;
-          return "$ipRange.$i";
+      if (e.statusCode < 500) {
+        var body = e.body;
+        // if the mikrotik is found, the body contains "Bad Request"
+        if (body.contains("Unauthorized") || body.contains("board-name")) {
+          count.value = 255;
+          var url = e.request!.url.host;
+          var isConnected = body.contains("board-name");
+          var m = FoundMikrotik(url, isConnected);
+          results.add(m);
         }
       }
     }
-    return null;
-  }
-
-  int _getLastIpSegment(String ip) {
-    var split = ip.split(".");
-    return int.parse(split[split.length - 1]);
+    return results;
   }
 
   String _getIpRange(String ip) {
     var split = ip.split(".");
     return "${split[0]}.${split[1]}.${split[2]}";
   }
-
 }

@@ -24,6 +24,7 @@ class StarlinkColors {
   static const Color midLightGray = Color(0xFF828282);
   static const Color gray = Color(0xFF3a3a3a);
   static const Color midDarkGray = Color(0xFF272727);
+  static const Color lowMidDarkGray = Color.fromARGB(255,32, 32, 32);
   static const Color darkGray = Color(0xFF171717);
   static const Color black = Color(0xFF000000);
   static const Color transparent = Color(0x00000000);

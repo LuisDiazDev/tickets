@@ -3,7 +3,7 @@ import '../../../../Core/utils/TextsInputs.dart';
 
 class LoginState extends Equatable {
 
-  final EmailInput email;
+  final TextInput user;
   final TextInput host;
   final TextInput password;
   final String? messageSuccessSignup;
@@ -11,7 +11,7 @@ class LoginState extends Equatable {
   final String initialHost;
 
   const LoginState({
-    this.email = const EmailInput.pure(),
+    this.user = const TextInput.pure(),
     this.password = const TextInput.pure(),
     this.messageSuccessSignup = '',
     this.isLoading = false,
@@ -21,7 +21,7 @@ class LoginState extends Equatable {
 
 
   LoginState copyWith({
-    EmailInput? email,
+    TextInput? user,
     TextInput? password,
     String? messageSuccessSignup,
     bool? isLoading,
@@ -29,7 +29,7 @@ class LoginState extends Equatable {
     TextInput? host,
   }) {
     return LoginState(
-      email: email ?? this.email,
+      user: user ?? this.user,
       host: host ?? this.host,
       initialHost: initialHost ?? this.initialHost,
       password: password ?? this.password,
@@ -40,7 +40,7 @@ class LoginState extends Equatable {
 
   @override
   List<Object?> get props => [
-    email,
+    user,
     password,
     messageSuccessSignup,
     isLoading,

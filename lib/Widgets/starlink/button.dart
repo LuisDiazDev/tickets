@@ -15,6 +15,7 @@ class StarlinkButton extends StatelessWidget {
   final bool isEnabled;
   final String text;
   final VoidCallback? onPressed;
+  final Icon? icon;
 
   const StarlinkButton({
     super.key,
@@ -22,6 +23,7 @@ class StarlinkButton extends StatelessWidget {
     this.onPressed,
     this.type=ButtonType.primary,
     this.isEnabled = true,
+    this.icon,
   });
 
   Color _getBackgroundColor(ButtonType style, bool isEnabled) {
@@ -93,6 +95,13 @@ class StarlinkButton extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ),
+          Visibility(
+            visible: icon != null,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: icon ?? Container()
             ),
           ),
         ],

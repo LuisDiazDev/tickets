@@ -34,17 +34,17 @@ class RestApiProvider {
   }
 
   Future<http.Response> get(
-      {String url = "", String? user, String? pass, String? host,double? timeoutSecs}) async {
+      {String url = "", String? user, String? pass, String? host,int? timeoutSecs}) async {
     String username = user ?? sessionCubit?.state.cfg?.user ?? "";
     String password = pass ?? sessionCubit?.state.cfg?.password ?? "";
     String basicAuth =
         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-
     try {
       return await http.get(
           Uri.parse('http://${host ?? sessionCubit?.state.cfg?.host}/rest$url'),
           //todo
-          headers: {'authorization': basicAuth});
+          headers: {'authorization': basicAuth},
+          ).timeout(Duration(seconds: timeoutSecs??5));
     } catch (e) {
       // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
       return http.Response(e.toString(), 500);
