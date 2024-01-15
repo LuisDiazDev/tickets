@@ -50,7 +50,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
       emit(state.copyWith(sessionStatus: SessionStatus.started));
 
-      _loadWifiSetting();
+      loadSetting();
     } else {
       var ip = await getIp();
       if (ip["connect"]) {
@@ -71,7 +71,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
             isAuthenticated: true,
             sessionStatus: SessionStatus.started));
 
-        _loadWifiSetting();
+        loadSetting();
       } else {
         emit(state.copyWith(
             sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
@@ -83,7 +83,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
     }
   }
 
-  void _loadWifiSetting() async {
+  void loadSetting() async {
     var exist = await FtpService.checkFile(remoteName: "info.rsc");
 
     if (exist) {
@@ -130,7 +130,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
       MkProvider provider = MkProvider();
       var r = await provider.exportData(file: "info.rsc");
       if (r.statusCode == 200 || r.statusCode == 201) {
-        _loadWifiSetting();
+        loadSetting();
       }
     }
   }

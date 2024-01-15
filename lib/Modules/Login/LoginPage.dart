@@ -46,7 +46,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
       backgroundColor: StarlinkColors.black,
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
-          String user = state.user.value;
+          String user = state.initialUser;
           String password = state.password.value;
           String host = state.initialHost;
           return SizedBox.expand(
@@ -110,7 +110,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             }
                             return null;
                           },
-                          initialValue: "admin",
+                          initialValue: user,
                           title: 'USUARIO',
                           textHint: 'USUARIO DEL MIKROTIK',
                         ),
@@ -136,7 +136,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                                 return;
                               }
                               loginBloc.add(LogIn(
-                                state.user.value,
+                                state.user.value == "" ? user : state.user.value,
                                 state.host.value,
                                 state.password.value,
                               ));

@@ -27,6 +27,7 @@ class _BuildActiveTicketsPage extends StatefulWidget {
 }
 
 class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActiveTicketsBloc, ActiveTicketState>(
@@ -109,7 +110,7 @@ class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
                     height: 4.0,
                   ),
                   Container(
-                      padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                      height: MediaQuery.of(context).size.height*.4,
                       child: // get devices
                           SingleChildScrollView(
                         child: Column(
@@ -118,7 +119,10 @@ class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
                                 color: StarlinkColors.white,
                                 child: ListTile(
                                       title: Text(e.user ?? ""),
-                                    ),
+                                      subtitle: Text("IP: ${e.address} \nMac: ${e.macAddress}"),
+                                      trailing: IconButton(onPressed: (){},icon: Icon(EvaIcons.trash2),),
+                                ),
+
                               ))
                               .toList(),
                         ),

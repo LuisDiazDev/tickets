@@ -9,6 +9,7 @@ class LoginState extends Equatable {
   final String? messageSuccessSignup;
   final bool? isLoading;
   final String initialHost;
+  final String initialUser;
 
   const LoginState({
     this.user = const TextInput.pure(),
@@ -16,6 +17,7 @@ class LoginState extends Equatable {
     this.messageSuccessSignup = '',
     this.isLoading = false,
     this.initialHost = "192.168.20.5",
+    this.initialUser = "admin",
     this.host = const TextInput.pure(),
   });
 

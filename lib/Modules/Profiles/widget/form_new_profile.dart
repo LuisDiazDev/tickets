@@ -43,27 +43,27 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
     super.initState();
     profile = widget.current ?? ProfileModel(name: "Nuevo plan");
     if (widget.current != null) {
-      // String currentPrice = profile.metadata?.price.toString() ?? "";
-      // initialCurrency = currentPrice.split(RegExp(r"[0-9]")).last;
-      // if (initialCurrency == "") {
-      //   initialCurrency = "S";
-      // }
-      //
-      // initialDurationUnit = profile.metadata!.usageTime.toString();
-      // var num = initialDurationUnit.replaceAll(RegExp(r"\D"), "");
-      // initialDurationUnit = initialDurationUnit.replaceAll(num, "");
-      // price = currentPrice.replaceAll(initialCurrency, "");
-      // durationT = num.toString();
-      // limitSpeed =
-      //     widget.current?.rateLimit != null && widget.current!.rateLimit != "";
-      // if (limitSpeed) {
-      //   var str = widget.current!.rateLimit!
-      //       .toLowerCase()
-      //       .replaceAll("m", "")
-      //       .split("/");
-      //   limitDownload = str.first;
-      //   limitUpload = str.last;
-      // }
+      String currentPrice = profile.metadata?.price.toString() ?? "";
+      initialCurrency = currentPrice.split(RegExp(r"[0-9]")).last;
+      if (initialCurrency == "") {
+        initialCurrency = "S";
+      }
+
+      initialDurationUnit = profile.metadata!.usageTime.toString();
+      var num = initialDurationUnit.replaceAll(RegExp(r"\D"), "");
+      initialDurationUnit = initialDurationUnit.replaceAll(num, "");
+      price = currentPrice.replaceAll(initialCurrency, "");
+      durationT = num.toString();
+      limitSpeed =
+          widget.current?.rateLimit != null && widget.current!.rateLimit != "";
+      if (limitSpeed) {
+        var str = widget.current!.rateLimit!
+            .toLowerCase()
+            .replaceAll("m", "")
+            .split("/");
+        limitDownload = str.first;
+        limitUpload = str.last;
+      }
     }
   }
 

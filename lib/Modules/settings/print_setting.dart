@@ -90,12 +90,12 @@ class _PrintSettingsState extends State<PrintSettings> {
   }
 
   Widget buildPrinterStateWidget(BuildContext context) {
-    if (widget.sessionBloc.state.cfg!.bluetoothDevice == null) {
+    if (widget.sessionBloc.state.cfg?.bluetoothDevice == null) {
       return Column(
         children: [
           StarlinkCheckBox(
             title: 'Desactivar Impresiones',
-            initialState: widget.sessionBloc.state.cfg!.disablePrint,
+            initialState: widget.sessionBloc.state.cfg?.disablePrint ?? false,
             onChanged: (check) {
               setState(() {
                 widget.sessionBloc.changeState(widget.sessionBloc.state
@@ -106,7 +106,7 @@ class _PrintSettingsState extends State<PrintSettings> {
             },
           ),
           Visibility(
-            visible: !widget.sessionBloc.state.cfg!.disablePrint,
+            visible: !(widget.sessionBloc.state.cfg?.disablePrint ?? true),
             child: Column(
               children: [
                 const Gap(3),
@@ -369,7 +369,7 @@ class _PrintSettingsState extends State<PrintSettings> {
             .copyWith(bluetoothDevice: bluetooth.device)));
     widget.sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
 
-    await bluetooth.device.connect(timeout: const Duration(seconds: 20));
+    await bluetooth.device.connect(timeout: const Duration(seconds: 30));
     log("MTU: ${bluetooth.device.mtuNow}");
     for (var i = 0; i < 20; i++) {
       if (!bluetooth.device.isConnected) {

@@ -3,6 +3,7 @@ import '../../../../Core/utils/TextsInputs.dart';
 import '../../../Core/utils/progress_dialog_utils.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../../Data/Services/ftp_service.dart';
+import '../../../models/config_model.dart';
 import '../../../models/dhcp_server_model.dart';
 import '../../Alerts/AlertCubit.dart';
 import '../../Session/SessionCubit.dart';
@@ -89,26 +90,41 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           if(r is !bool){
             r as List;
             DhcpServerModel dhcpServer = (r.first) ?? DhcpServerModel();
-            var r2 = await provider.allProfilesHotspot();
+
+            ConfigModel? cfg = sessionCubit.state.cfg;
+            cfg ??= ConfigModel();
+
             sessionCubit.changeState(sessionCubit.state.copyWith(
-              isAuthenticated: true,
-              sessionStatus: SessionStatus.started,
-              state: "logged",
-              configModel: sessionCubit.state.cfg!.copyWith(
-                host: host,
-                user: event.user,
-                password: event.password,
-                dhcp:dhcpServer.name,
-                dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
-              )
+                isAuthenticated: true,
+                sessionStatus: SessionStatus.started,
+                state: "logged",
+                configModel: cfg.copyWith(
+                    host: host,
+                    user: event.user,
+                    password: event.password,
+                    dhcp:dhcpServer.name,
+                )
               // sessionStatus: SessionStatus.started,
             ));
 
             FtpService.initService(
-              address: event.host,
-              user: event.user,
-              pass: event.password
+                address: host,
+                user: event.user,
+                pass: event.password
             );
+
+            var r2 = await provider.allProfilesHotspot();
+            sessionCubit.changeState(sessionCubit.state.copyWith(
+                isAuthenticated: true,
+                sessionStatus: SessionStatus.started,
+                state: "logged",
+                configModel: sessionCubit.state.cfg!.copyWith(
+                    dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
+                )
+              // sessionStatus: SessionStatus.started,
+            ));
+
+            sessionCubit.loadSetting();
 
             emit(const LoginState());
           }else{

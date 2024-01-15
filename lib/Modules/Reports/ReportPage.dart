@@ -1,6 +1,6 @@
 import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:StarTickera/Modules/Reports/widgets/LineChart.dart';
-import 'package:StarTickera/Modules/Reports/widgets/UserActive/MyTickesPage.dart';
+import 'package:StarTickera/Modules/Reports/widgets/UserActive/ActiveUsersWidget.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

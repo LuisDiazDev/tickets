@@ -73,47 +73,46 @@ class SettingsPage extends StatelessWidget {
                 title: "INFORMACIÓN DEL MIKROTIK",
               ),
               StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.identity ?? "",
+                initialValue: state.cfg?.identity ?? "",
                 onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel: sessionBloc.state.cfg!.copyWith(identity: str)));
+                  sessionBloc.changeState(state.copyWith(
+                      configModel: state.cfg!.copyWith(identity: str)));
                 },
                 title: "Identidad",
                 textHint: "Nombre del Mikrotik",
               ),
               StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.host ?? "",
+                initialValue: state.cfg?.host ?? "",
                 onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel: sessionBloc.state.cfg!.copyWith(host: str)));
+                  sessionBloc.changeState(state.copyWith(
+                      configModel: state.cfg!.copyWith(host: str)));
                 },
                 title: "Mikrotik",
                 textHint: "Dirección IP de tu Mikrotik",
               ),
               StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.user ?? "",
+                initialValue: state.cfg?.user ?? "",
                 onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel: sessionBloc.state.cfg!.copyWith(user: str)));
+                  sessionBloc.changeState(state.copyWith(
+                      configModel: state.cfg!.copyWith(user: str)));
                 },
                 title: "Usuario",
                 textHint: "Usuario de tu Mikrotik",
               ),
               StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.password ?? "",
+                initialValue: state.cfg?.password ?? "",
                 onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel:
-                          sessionBloc.state.cfg!.copyWith(password: str)));
+                  sessionBloc.changeState(state.copyWith(
+                      configModel: state.cfg!.copyWith(password: str)));
                 },
                 title: "Contraseña",
                 textHint: "Contraseña de tu Mikrotik",
               ),
               StarlinkTextField(
-                initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
+                initialValue: state.cfg?.dnsNamed ?? "",
                 onChanged: (str) {
-                  sessionBloc.changeState(sessionBloc.state.copyWith(
-                      configModel: sessionBloc.state.cfg!
+                  sessionBloc.changeState(state.copyWith(
+                      configModel: state.cfg!
                           .copyWith(dnsNamed: str ?? "")));
                 },
                 title: "Página Hotspot",
