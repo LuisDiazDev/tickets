@@ -46,9 +46,6 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
       backgroundColor: StarlinkColors.black,
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
-          String user = state.initialUser;
-          String password = state.password.value;
-          String host = state.initialHost;
           return SizedBox.expand(
             child: SingleChildScrollView(
               child: Form(
@@ -76,10 +73,9 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             StarlinkTextField(
                               // suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
                               onChanged: (h) {
-                                host = h;
                                 loginBloc.add(ChangeHost(h));
                               },
-                              initialValue: host,
+                              initialValue: state.host.value == "" ? state.initialHost : state.host.value,
                               title: 'IP DEL MIKROTIK',
                               textHint: 'IP DEL MIKROTIK',
                               keyboardType: TextInputType.number,
@@ -92,16 +88,13 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                                 onPressed: () async {
                                   var fhost = await IpSearch().showDialogSearch();
                                   if (fhost != null) {
-                                    loginBloc.add(ChangeInitialHost(fhost.ip));
                                     loginBloc.add(ChangeHost(fhost.ip));
-                                    host = fhost.ip;
                                   }
                                 }),
                           ],
                         ),
                         StarlinkTextField(
                           onChanged: (currentUser) {
-                            user = currentUser;
                             loginBloc.add(ChangeUser(currentUser));
                           },
                           validator: (value) {
@@ -110,14 +103,13 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             }
                             return null;
                           },
-                          initialValue: user,
+                          initialValue: state.user.value,
                           title: 'USUARIO',
                           textHint: 'USUARIO DEL MIKROTIK',
                         ),
                         StarlinkTextField(
                           onChanged: (currentPassword) {
-                            password = currentPassword;
-                            loginBloc.add(ChangePassword(password));
+                            loginBloc.add(ChangePassword(currentPassword));
                           },
                           validator: (value) {
                             if (value == "") {
@@ -125,21 +117,21 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             }
                             return null;
                           },
-                          initialValue: password,
+                          initialValue: state.password.value,
                           title: 'CONTRASEÑA',
                           textHint: 'CONTRASEÑA DEL MIKROTIK',
                         ),
                         StarlinkButton(
                             text: "INICIAR SESIÓN",
                             onPressed: () {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
+                              if (_formKey.currentState!.validate()) {
+                                loginBloc.add(LogIn(
+                                  state.user.value,
+                                  state.host.value,
+                                  state.password.value,
+                                ));
                               }
-                              loginBloc.add(LogIn(
-                                state.user.value == "" ? user : state.user.value,
-                                state.host.value,
-                                state.password.value,
-                              ));
+
                             }),
                       ],
                     ),

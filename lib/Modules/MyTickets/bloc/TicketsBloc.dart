@@ -20,8 +20,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       (event, emit) async {
         emit(state.copyWith(load: event.load));
         // Hacer en paralelo
-        var data = (await provider.allTickets())..sort((a,b)=>b.id!.compareTo(a.id!));
-        var profiles = await provider.allProfiles();
+        var data = (await provider.allTickets())..sort((a,b)=>b.id!.compareTo(a.id!));//todo: only users whit not client plans
+        var profiles = await provider.allProfiles();//todo: only profiles whit not client plans
         emit(state.copyWith(load: false, tickets: data, profiles: profiles));
       },
     );

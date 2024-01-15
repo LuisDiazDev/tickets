@@ -45,17 +45,8 @@ class StarlinkTextField extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFormField(
-                  validator: (value) {
-                    if (validator == null) {
-                      return null;
-                    }
-                    String? msg = validator!(value);
-                    if (msg == null) {
-                      return null;
-                    }
-                    errorText = msg;
-                    return null;
-                  },
+                  key: Key(initialValue.toString()),
+                  validator: validator,
                   initialValue: initialValue,
                   maxLength: maxLength == 0 ? null : maxLength,
                   enabled: isEnabled,
@@ -74,6 +65,9 @@ class StarlinkTextField extends StatelessWidget {
                       fontSize: 14.0,
                       // bold
                       fontFamily: 'DDIN-Bold',
+                    ),
+                    errorBorder:const OutlineInputBorder(
+                      borderSide: BorderSide(color: StarlinkColors.red),
                     ),
                     border: const OutlineInputBorder(),
                     fillColor: StarlinkColors.transparent,

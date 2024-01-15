@@ -280,7 +280,7 @@ class MkProvider {
       if (e.statusCode < 500) {
         var body = e.body;
         // if the mikrotik is found, the body contains "Bad Request"
-        if (body.contains("Unauthorized") || body.contains("board-name")) {
+        if (body.contains("Unauthorized") || body.contains("board-name") || body.contains("Bad Request")) {
           count.value = 255;
           var url = e.request!.url.host;
           var isConnected = body.contains("board-name");

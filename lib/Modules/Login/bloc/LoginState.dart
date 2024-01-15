@@ -12,7 +12,7 @@ class LoginState extends Equatable {
   final String initialUser;
 
   const LoginState({
-    this.user = const TextInput.pure(),
+    this.user = const TextInput.dirty(value: "admin"),
     this.password = const TextInput.pure(),
     this.messageSuccessSignup = '',
     this.isLoading = false,

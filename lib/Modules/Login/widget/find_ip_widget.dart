@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Widgets/starlink/button_card.dart';
@@ -26,6 +27,7 @@ class IpSearch {
           title: StarlinkText("BUSCANDO UN MIKROTIK"),
           backgroundColor: StarlinkColors.darkGray,          
           content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               ValueListenableBuilder<int>(
                 valueListenable: scannedIPCount,
@@ -38,9 +40,7 @@ class IpSearch {
                   );
                 },
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const Gap(20),
               FutureBuilder(
                 future: result,
                 builder: (context, snapshot) {
@@ -76,7 +76,7 @@ class IpSearch {
                   );
                 },
               ),
-              const Spacer(),
+              const Gap(50),
               StarlinkButton(
                 text: "VOLVER A BUSCAR",
                 onPressed: () {
