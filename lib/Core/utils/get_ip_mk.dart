@@ -28,7 +28,6 @@ Future<Map> _check(int current,String locate) async {
     List<Future<Response>> promises = [];
     for (int j = i; j < requestCount+i; j ++) {
       var ip = "192.168.$locate.$j";
-      log("$ip ->");
       promises.add(ticketProvider.restApi.get(
         host: ip,
         url: "/ip/hotspot/user",

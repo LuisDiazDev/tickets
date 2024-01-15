@@ -8,12 +8,13 @@ class StarlinkTextField extends StatelessWidget {
   final String title;
   final String textHint;
   final bool isEnabled;
-  final String errorText;
+  late String errorText;
   final TextInputType keyboardType;
   final int maxLength;
   final String textSuffix;
+  final String? Function(String?)? validator;
 
-  const StarlinkTextField({
+  StarlinkTextField({
     super.key,
     required this.initialValue,
     required this.onChanged,
@@ -24,6 +25,7 @@ class StarlinkTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.maxLength = 0,
     this.textSuffix = "",
+     this.validator,
   });
 
   @override
@@ -43,6 +45,17 @@ class StarlinkTextField extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFormField(
+                  validator: (value) {
+                    if (validator == null) {
+                      return null;
+                    }
+                    String? msg = validator!(value);
+                    if (msg == null) {
+                      return null;
+                    }
+                    errorText = msg;
+                    return null;
+                  },
                   initialValue: initialValue,
                   maxLength: maxLength == 0 ? null : maxLength,
                   enabled: isEnabled,

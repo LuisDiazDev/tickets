@@ -4,15 +4,15 @@ abstract class LoginEvent {}
 class SendLogin extends LoginEvent {}
 
 class LogIn extends LoginEvent {
-  final String email;
+  final String user;
   final String password;
   final String host;
-  LogIn(this.email, this.host, this.password);
+  LogIn(this.user, this.host, this.password);
 }
 
-class ChangeEmail extends LoginEvent {
-  final String email;
-  ChangeEmail(this.email);
+class ChangeUser extends LoginEvent {
+  final String user;
+  ChangeUser(this.user);
 }
 
 class ChangePassword extends LoginEvent {

@@ -6,7 +6,6 @@ import '../../Core/Values/Colors.dart';
 
 class StarlinkProgressCircle extends StatefulWidget {
   final int percent;
-
   const StarlinkProgressCircle({
     super.key,
     required this.percent,
@@ -67,12 +66,14 @@ class CircleProgressPainter extends CustomPainter {
     double radius = this.diameter / 2.0;
 
     canvas.drawCircle(center, radius, paint);
-    paint.color = StarlinkColors.white;
+
     var pi = 3.1415926;
     double arcAngle = 2.0 * pi * (percent / 100.0);
 
+    paint.color = StarlinkColors.white;
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2.0,
         arcAngle, false, paint);
+
     paint.color = StarlinkColors.darkGray;
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), arcAngle - pi / 2.0,
         2.0 * pi - arcAngle, false, paint);

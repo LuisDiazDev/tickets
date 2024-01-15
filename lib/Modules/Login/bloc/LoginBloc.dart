@@ -15,12 +15,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final SessionCubit sessionCubit;
 
   LoginBloc(this.alertCubit,this.sessionCubit) : super(const LoginState()){
-    on<ChangeEmail>(
+    on<ChangeUser>(
           (event, emit) {
-        final newEmail = EmailInput.dirty(value: event.email);
+        final newUser = TextInput.dirty(value: event.user);
         emit(
           state.copyWith(
-            email: newEmail,
+            user: newUser,
           ),
         );
       },
@@ -77,7 +77,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           MkProvider provider = MkProvider();
           var host = event.host == "" ? "192.168.20.5" : event.host;
           var r = await provider.allDhcpServer(
-            user: event.email,
+            user: event.user,
             pass: event.password,
             host: host
           );
@@ -96,7 +96,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               state: "logged",
               configModel: sessionCubit.state.cfg!.copyWith(
                 host: host,
-                user: event.email,
+                user: event.user,
                 password: event.password,
                 dhcp:dhcpServer.name,
                 dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
@@ -106,7 +106,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
             FtpService.initService(
               address: event.host,
-              user: event.email,
+              user: event.user,
               pass: event.password
             );
 
