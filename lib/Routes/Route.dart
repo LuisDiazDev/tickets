@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../../Modules/Home/HomePage.dart';
 import '../../Modules/MyTickets/MyTickesPage.dart';
 import '../../Modules/settings/SettingsPage.dart';
+import '../Modules/Clients/client_list.dart';
+import '../Modules/Clients/client_profiles.dart';
 import '../Modules/Initial/Initial.dart';
 import '../Modules/Login/LoginPage.dart';
 import '../Modules/Profiles/ProfilesPage.dart';
@@ -57,6 +59,16 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
               builder: (_) => const ReportPage(),
               settings: RouteSettings(name: settings.name));
           break;
+        case Routes.clientList:
+          route = MaterialPageRoute(
+              builder: (_) => const ListClientPage(),
+              settings: RouteSettings(name: settings.name));
+          break;
+        case Routes.clientProfile:
+          route = MaterialPageRoute(
+              builder: (_) => const ClientsProfilePage(),
+              settings: RouteSettings(name: settings.name));
+          break;
         default:
           route = MaterialPageRoute(
             builder: (_) => const InitialPage(), //Home page
@@ -77,6 +89,8 @@ abstract class Routes {
   static const tickets = _Paths.tickets;
   static const showroom = _Paths.showroom;
   static const report = _Paths.report;
+  static const clientList = _Paths.clientList;
+  static const clientProfile = _Paths.clientProfile;
 }
 
 abstract class _Paths {
@@ -88,4 +102,6 @@ abstract class _Paths {
   static const tickets = '/tickets';
   static const showroom = '/showroom';
   static const report = '/report';
+  static const clientList = '/client_list';
+  static const clientProfile = '/client_profile';
 }

@@ -45,6 +45,7 @@ dependencies:
   pdf: any
   open_file: any
   fl_chart: ^0.66.0
+  firebase_core: ^2.24.2
 
 dev_dependencies:
   flutter_test:

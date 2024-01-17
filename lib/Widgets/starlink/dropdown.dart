@@ -41,12 +41,16 @@ class StarlinkDropdown extends StatelessWidget {
             items: values.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(
-                  value,
-                  style: const TextStyle(
-                    color: StarlinkColors.white,
-                    fontFamily: 'DDIN-Bold',
-                  ), // Estilo de texto de los items
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.height*.28,
+                  child: Text(
+                    value,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                      color: StarlinkColors.white,
+                      fontFamily: 'DDIN-Bold',
+                    ), // Estilo de texto de los items
+                  ),
                 ),
               );
             }).toList(),

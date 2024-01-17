@@ -4,7 +4,7 @@ import '../../../../Core/utils/TextsInputs.dart';
 class LoginState extends Equatable {
 
   final TextInput user;
-  final TextInput host;
+  final IpInput host;
   final TextInput password;
   final String? messageSuccessSignup;
   final bool? isLoading;
@@ -18,7 +18,7 @@ class LoginState extends Equatable {
     this.isLoading = false,
     this.initialHost = "192.168.20.5",
     this.initialUser = "admin",
-    this.host = const TextInput.pure(),
+    this.host = const IpInput.dirty(value: "192.168.20.5"),
   });
 
 
@@ -28,7 +28,7 @@ class LoginState extends Equatable {
     String? messageSuccessSignup,
     bool? isLoading,
     String? initialHost,
-    TextInput? host,
+    IpInput? host,
   }) {
     return LoginState(
       user: user ?? this.user,

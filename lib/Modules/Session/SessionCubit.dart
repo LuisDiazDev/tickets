@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../Core/Values/Enums.dart';
@@ -26,8 +27,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
     emit(state.copyWith(configModel: cfg));
 
-    await Future.delayed(const Duration(seconds: 1));
-
     if (state.isAuthenticated!) {
       MkProvider provider = MkProvider();
       var profilesH = await provider.allProfilesHotspot();
@@ -49,8 +48,9 @@ class SessionCubit extends HydratedCubit<SessionState> {
           pass: state.cfg?.password ?? "");
 
       emit(state.copyWith(sessionStatus: SessionStatus.started));
-
       loadSetting();
+      // loginHotspot();
+
     } else {
       var ip = await getIp();
       if (ip["connect"]) {
@@ -72,6 +72,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
             sessionStatus: SessionStatus.started));
 
         loadSetting();
+        // loginHotspot();
+
       } else {
         emit(state.copyWith(
             sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
@@ -169,6 +171,22 @@ class SessionCubit extends HydratedCubit<SessionState> {
               "1. revise que el mikrotik este encendido"
               "2. chequee la direccion del mikrotik y que las credenciales sean correctas");
     }
+  }
+
+  Future loginHotspot() async {
+    var fileContents = await rootBundle.load('assets/login.html');
+    File file = await writeToFile(fileContents,"${(await getApplicationDocumentsDirectory()).path}/login.html");
+    bool upload  = await FtpService.uploadFile(file: file,remoteName:"hotspot/login.html" );
+    if(!upload){
+      print("error subiendo login");
+      return;
+    }
+  }
+
+  Future<File> writeToFile(ByteData data, String path) {
+    final buffer = data.buffer;
+    return File(path).writeAsBytes(
+        buffer.asUint8ClampedList());
   }
 
   Future backUp(AlertCubit alertCubit) async {

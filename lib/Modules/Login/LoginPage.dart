@@ -11,7 +11,6 @@ import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import 'bloc/LoginBloc.dart';
 import 'bloc/LoginEvents.dart';
-import 'bloc/LoginState.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -44,103 +43,101 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
     return SafeArea(
         child: Scaffold(
       backgroundColor: StarlinkColors.black,
-      body: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          return SizedBox.expand(
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
+      body: SizedBox.expand(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                buildTitle(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildTitle(),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .2,
+                    ),
+                    StarlinkText(
+                      'INICIAR SESIÓN',
+                      size: 32,
+                      // color: ,
+                    ),
+                    const SizedBox(width: double.infinity, height: 15),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * .2,
-                        ),
-                        StarlinkText(
-                          'INICIAR SESIÓN',
-                          size: 32,
-                          // color: ,
-                        ),
-                        const SizedBox(width: double.infinity, height: 15),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            StarlinkTextField(
-                              // suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
-                              onChanged: (h) {
-                                loginBloc.add(ChangeHost(h));
-                              },
-                              initialValue: state.host.value == "" ? state.initialHost : state.host.value,
-                              title: 'IP DEL MIKROTIK',
-                              textHint: 'IP DEL MIKROTIK',
-                              keyboardType: TextInputType.number,
-                              maxLength: 14,
-                              validator: validateIP,
-                            ),
-                            StarlinkButton(
-                                text: "BUSCAR UN MIKROTIK EN LA RED",
-                                type: ButtonType.secondary,
-                                onPressed: () async {
-                                  var fhost = await IpSearch().showDialogSearch();
-                                  if (fhost != null) {
-                                    loginBloc.add(ChangeHost(fhost.ip));
-                                  }
-                                }),
-                          ],
-                        ),
                         StarlinkTextField(
-                          onChanged: (currentUser) {
-                            loginBloc.add(ChangeUser(currentUser));
+                          // suffixIcon: state.host.value != "" ? state.host.isValid ? const Icon(Icons.check,color: Colors.green,) : const Icon(Icons.error,color: Colors.red,) : null,
+                          onChanged: (h) {
+                            loginBloc.add(ChangeHost(h));
                           },
-                          validator: (value) {
-                            if (value == "") {
-                              return "Ingrese un usuario";
-                            }
-                            return null;
-                          },
-                          initialValue: state.user.value,
-                          title: 'USUARIO',
-                          textHint: 'USUARIO DEL MIKROTIK',
-                        ),
-                        StarlinkTextField(
-                          onChanged: (currentPassword) {
-                            loginBloc.add(ChangePassword(currentPassword));
-                          },
-                          validator: (value) {
-                            if (value == "") {
-                              return "Ingrese una contraseña";
-                            }
-                            return null;
-                          },
-                          initialValue: state.password.value,
-                          title: 'CONTRASEÑA',
-                          textHint: 'CONTRASEÑA DEL MIKROTIK',
+                          initialValue: loginBloc.state.host.value == "" ? loginBloc.state.initialHost : loginBloc.state.host.value,
+                          title: 'IP DEL MIKROTIK',
+                          textHint: 'IP DEL MIKROTIK',
+                          keyboardType: TextInputType.number,
+                          maxLength: 14,
+                          validator: validateIP,
                         ),
                         StarlinkButton(
-                            text: "INICIAR SESIÓN",
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                loginBloc.add(LogIn(
-                                  state.user.value,
-                                  state.host.value,
-                                  state.password.value,
-                                ));
+                            text: "BUSCAR UN MIKROTIK EN LA RED",
+                            type: ButtonType.secondary,
+                            onPressed: () async {
+                              var fhost = await IpSearch().showDialogSearch();
+                              if (fhost != null) {
+                                setState(() {
+                                  loginBloc.add(ChangeHost(fhost.ip));
+                                });
                               }
-
                             }),
                       ],
                     ),
+                    StarlinkTextField(
+                      onChanged: (currentUser) {
+                        loginBloc.add(ChangeUser(currentUser));
+                      },
+                      validator: (value) {
+                        if (value == "") {
+                          return "Ingrese un usuario";
+                        }
+                        return null;
+                      },
+                      initialValue: loginBloc.state.user.value,
+                      title: 'USUARIO',
+                      textHint: 'USUARIO DEL MIKROTIK',
+                    ),
+                    StarlinkTextField(
+                      onChanged: (currentPassword) {
+                        loginBloc.add(ChangePassword(currentPassword));
+                      },
+                      validator: (value) {
+                        if (value == "") {
+                          return "Ingrese una contraseña";
+                        }
+                        return null;
+                      },
+                      initialValue: loginBloc.state.password.value,
+                      title: 'CONTRASEÑA',
+                      textHint: 'CONTRASEÑA DEL MIKROTIK',
+                    ),
+                    StarlinkButton(
+                        text: "INICIAR SESIÓN",
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            loginBloc.add(LogIn(
+                              loginBloc.state.user.value,
+                              loginBloc.state.host.value,
+                              loginBloc.state.password.value,
+                            ));
+                          }
+
+                        }),
                   ],
                 ),
-              ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     ));
   }

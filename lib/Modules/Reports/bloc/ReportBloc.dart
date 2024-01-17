@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:StarTickera/models/profile_model.dart';
+import 'package:StarTickera/models/ticket_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -20,21 +21,36 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     on<FetchData>(
       (event, emit) async {
         emit(state.copyWith(load: event.load));
-        // Hacer en paralelo
-        var data = (await provider.allTickets())..sort((a,b)=>b.id!.compareTo(a.id!));
+
+        var data = await provider.allTickets();
         var profiles = await provider.allProfiles();
-        emit(state.copyWith(load: false, tickets: data, profiles: profiles));
+
+        DateTime now = DateTime.now();
+        List<TicketModel> tod = [];
+
+        for (var t in data) {
+          if (t.getCreationDate() == "") {
+            continue;
+          }
+          DateTime tDate = DateTime.parse(t.getCreationDate());
+          if (tDate.day == now.day &&
+              tDate.year == now.year &&
+              tDate.month == now.month) {
+            tod.add(t);
+          }
+        }
+
+        emit(state.copyWith(load: false, tickets: tod, profiles: profiles));
       },
     );
 
     on<GenerateTicket>(
       (event, emit) async {
-
         var cant = double.tryParse(event.cant) ?? 1;
 
-        for (int i = 0; i < cant; i++){
-          var name =  generatePassword();
-          await provider.newTicket(name, event.profile,event.duration);
+        for (int i = 0; i < cant; i++) {
+          var name = generatePassword();
+          await provider.newTicket(name, event.profile, event.duration);
 
           //generated
           add(FetchData());
@@ -47,7 +63,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
 
     on<ShareQRImage>((event, emit) async {
       final image = await QrPainter(
-        data: "https://${event.host}/login?user=${event.user}&=password=${event.password}",
+        data:
+            "https://${event.host}/login?user=${event.user}&=password=${event.password}",
         version: QrVersions.auto,
         gapless: false,
       ).toImageData(200.0); // Generate QR code image data
@@ -64,28 +81,28 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
               "${event.user} ${event.password}"); // Share the generated image using the share_plus package
     });
 
-    on<DeletedTicket>((event,emit)async{
+    on<DeletedTicket>((event, emit) async {
       var r = await provider.removeTicket(event.id);
-      if(r.statusCode <= 205 ){
+      if (r.statusCode <= 205) {
         add(FetchData(load: false));
         alertCubit.showDialog("", "Se ha eliminado un ticket");
-      } else{
+      } else {
         add(FetchData(load: false));
         alertCubit.showDialog("error", r.body);
       }
-
     });
-
   }
 
-  getTotal(){
+  getTotal() {
     double total = 0;
-    for (var t in state.tickets){
-      if(t.profile == "default"){
+    for (var t in state.tickets) {
+      if (t.profile == "default") {
         continue;
       }
-      ProfileModel p = state.profiles.firstWhere((pro) => pro.fullName == t.profile,orElse:()=> ProfileModel(id: "-1"));
-      if(p.id != "-1"){
+      ProfileModel p = state.profiles.firstWhere(
+          (pro) => pro.fullName == t.profile,
+          orElse: () => ProfileModel(id: "-1"));
+      if (p.id != "-1") {
         total += p.metadata?.price ?? 0;
       }
     }

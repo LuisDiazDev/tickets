@@ -25,7 +25,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FetchData>(
       (event, emit) async {
         emit(state.copyWith(load: true));
-        var profiles = await provider.allProfiles();
+        var profiles = (await provider.allProfiles())
+                .where((element) => element.metadata!.type! == "1").toList();
         emit(state.copyWith(load: false, profiles: profiles));
       },
     );
@@ -40,17 +41,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
     on<GeneratedTicket>(
       (event, emit) async {
-        if (state.currentUser == "" && (!sessionCubit.state.cfg!.disablePrint && sessionCubit.state.cfg?.bluetoothDevice != null &&
-            !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false))) {
-          await sessionCubit.state.cfg?.bluetoothDevice?.connect(timeout: const Duration(seconds: 20));
+        if (state.currentUser == "" &&
+            (!sessionCubit.state.cfg!.disablePrint &&
+                sessionCubit.state.cfg?.bluetoothDevice != null &&
+                !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ??
+                    false))) {
+          await sessionCubit.state.cfg?.bluetoothDevice
+              ?.connect(timeout: const Duration(seconds: 20));
         }
 
-        if(!sessionCubit.state.cfg!.disablePrint){
-          if(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false){
+        if (!sessionCubit.state.cfg!.disablePrint) {
+          if (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false) {
             sessionCubit.changeState(sessionCubit.state.copyWith(
-                configModel: sessionCubit.state.cfg!
-                    .copyWith(bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
-          }else{
+                configModel: sessionCubit.state.cfg!.copyWith(
+                    bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
+          } else {
             alertCubit.showDialog(
                 "Error", "No se ha detectado ninguna impresora conectada");
             NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
@@ -58,48 +63,47 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         }
 
-
-
-          final user = state.currentUser != "" ? state.currentUser : event.name;
-          late Response r;
-          try {
-            r = await provider.newTicket(user, event.profile, event.duration,limitBytesTotal: event.limitMb);
-          } on UserAlreadyExist {
-            alertCubit.showDialog("El usuario $user ya existe", "Posiblemente el usuario ya este conectado");
-            return;
-          } catch (e) {
-            alertCubit.showDialog("Error", "Ha ocurrido un error");
-            return;
-          }
-          if (r.statusCode == 200 || r.statusCode == 201) {
-            // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
-            TicketDialogUtils.showNewTicketDetailDialog(
-                configModel: sessionCubit.state.cfg!,
-                user: state.currentUser != "" ? state.currentUser : event.name,
-                price: event.price,
-                duration: formatDuration(event.duration));
-            if (state.currentUser == "") {
-              alertCubit.showAlertInfo(
-                title: "Imprimiendo",
-                subtitle: "Espere un momento",
-              );
-            }
-          } else {
+        final user = state.currentUser != "" ? state.currentUser : event.name;
+        late Response r;
+        try {
+          r = await provider.newTicket(user, event.profile, event.duration,
+              limitBytesTotal: event.limitMb);
+        } on UserAlreadyExist {
+          alertCubit.showDialog("El usuario $user ya existe",
+              "Posiblemente el usuario ya este conectado");
+          return;
+        } catch (e) {
+          alertCubit.showDialog("Error", "Ha ocurrido un error");
+          return;
+        }
+        if (r.statusCode == 200 || r.statusCode == 201) {
+          // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
+          TicketDialogUtils.showNewTicketDetailDialog(
+              configModel: sessionCubit.state.cfg!,
+              user: state.currentUser != "" ? state.currentUser : event.name,
+              price: event.price,
+              duration: formatDuration(event.duration));
+          if (state.currentUser == "") {
             alertCubit.showAlertInfo(
-                title: "Error", subtitle: "Ah ocurrido un problema");
+              title: "Imprimiendo",
+              subtitle: "Espere un momento",
+            );
           }
-          if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
-            PrinterService().printTicket(
-                user: event.name,
-                configModel: sessionCubit.state.cfg,
-                price: event.price,
-                duration: event.duration);
-          }
-          emit(state.copyWith(currentUser: ""));
-          // if(!PrinterService.isProgress){
-          //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
-          // }
-
+        } else {
+          alertCubit.showAlertInfo(
+              title: "Error", subtitle: "Ah ocurrido un problema");
+        }
+        if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
+          PrinterService().printTicket(
+              user: event.name,
+              configModel: sessionCubit.state.cfg,
+              price: event.price,
+              duration: event.duration);
+        }
+        emit(state.copyWith(currentUser: ""));
+        // if(!PrinterService.isProgress){
+        //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
+        // }
       },
     );
 

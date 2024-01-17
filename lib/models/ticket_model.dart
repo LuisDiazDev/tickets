@@ -19,6 +19,7 @@ class TicketModel {
   String? uptime;
   String? password;
   String? profile;
+  String? email;
 
   TicketModel({
     this.id,
@@ -35,6 +36,7 @@ class TicketModel {
     this.uptime,
     this.password,
     this.profile,
+    this.email,
   });
 
   String getCreationDate(){
@@ -55,6 +57,7 @@ class TicketModel {
     disabled: json["disabled"],
     ticketModelDynamic: json["dynamic"],
     name: json["name"],
+    email: json["email"],
     packetsIn: json["packets-in"],
     packetsOut: json["packets-out"],
     uptime: json["uptime"],
@@ -76,6 +79,7 @@ class TicketModel {
 
   Map<String, dynamic> toJson() => {
     ".id": id,
+    "email":email,
     "bytes-in": bytesIn,
     "bytes-out": bytesOut,
     "limit-uptime":limitUptime,

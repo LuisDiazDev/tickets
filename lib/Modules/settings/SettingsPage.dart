@@ -57,7 +57,7 @@ class SettingsPage extends StatelessWidget {
                 onPressed: () async {
                   ProgressDialogUtils.showProgressDialog();
                   generateTickets(10);
-                  sessionBloc.backUp(alertBloc);
+                  // sessionBloc.backUp(alertBloc);
                 },
               ),
               /////////////////////////////
@@ -112,8 +112,7 @@ class SettingsPage extends StatelessWidget {
                 initialValue: state.cfg?.dnsNamed ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!
-                          .copyWith(dnsNamed: str ?? "")));
+                      configModel: state.cfg!.copyWith(dnsNamed: str ?? "")));
                 },
                 title: "Página Hotspot",
                 textHint: "Ejemplo: wifi.com",
@@ -127,14 +126,24 @@ class SettingsPage extends StatelessWidget {
               ),
               const Gap(16),
               StarlinkButton(
-                text: "RESTABLECER MIKROTIK",
+                text: "SUBIR LOGIN.HTML",
                 type: ButtonType.destructive,
                 onPressed: () async {
                   ProgressDialogUtils.showProgressDialog();
-                  sessionBloc.backUp(alertBloc);
+                  await sessionBloc.loginHotspot();
+                  ProgressDialogUtils.hideProgressDialog();
                 },
               ),
               const Gap(16),
+              // StarlinkButton(
+              //   text: "RESTABLECER MIKROTIK",
+              //   type: ButtonType.destructive,
+              //   onPressed: () async {
+              //     ProgressDialogUtils.showProgressDialog();
+              //     sessionBloc.backUp(alertBloc);
+              //   },
+              // ),
+              // const Gap(16),
             ],
           )),
         ),

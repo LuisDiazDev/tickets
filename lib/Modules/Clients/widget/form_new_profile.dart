@@ -1,3 +1,4 @@
+import 'package:StarTickera/Modules/Clients/bloc/ClientsBloc.dart';
 import 'package:StarTickera/models/profile_metadata_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -8,22 +9,21 @@ import '../../../Widgets/starlink/dropdown.dart';
 import '../../../Widgets/starlink/section_title.dart';
 import '../../../Widgets/starlink/text_field.dart';
 import '../../../models/profile_model.dart';
-import '../bloc/ProfileBloc.dart';
-import '../bloc/ProfileEvents.dart';
+import '../bloc/ClientsEvents.dart';
 
-class FormNewProfileWidget extends StatefulWidget {
+class FormNewProfileClientWidget extends StatefulWidget {
   final ProfileModel? current;
-  final ProfileBloc bloc;
+  final ClientsBloc bloc;
   final bool newProfile;
 
-  const FormNewProfileWidget(
+  const FormNewProfileClientWidget(
       {super.key, this.current, required this.bloc, this.newProfile = false});
 
   @override
-  State<FormNewProfileWidget> createState() => _FormNewProfileWidgetState();
+  State<FormNewProfileClientWidget> createState() => _FormNewProfileClientWidgetState();
 }
 
-class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
+class _FormNewProfileClientWidgetState extends State<FormNewProfileClientWidget> {
   late ProfileModel profile;
   String numberOfSharedUserPerTicket = "1",
       initialDurationUnit = "d",
@@ -224,7 +224,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                     }
 
                     profile.onLogin =
-                        '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
+                        '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user disable [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
 
                     profile.sharedUsers = numberOfSharedUserPerTicket;
                     profile.rateLimit = limitSpeed
@@ -235,7 +235,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         var p = price.substring(0, price.length - 1);
                         profile.metadata = ProfileMetadata(
                           hotspot: "",
-                          type: "1",
+                          type: "2",
                           prefix: price.replaceAll(RegExp(r"\D"), ""),
                           userLength: 5,
                           passwordLength: 5,
@@ -251,7 +251,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         var p = price.substring(0, price.length - 1);
                         profile.metadata = ProfileMetadata(
                           hotspot: "",
-                          type: "1",
+                          type: "2",
                           prefix: price.replaceAll(RegExp(r"\D"), ""),
                           userLength: 5,
                           passwordLength: 5,
@@ -268,7 +268,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       var p = price.substring(0, price.length - 1);
                       profile.metadata = ProfileMetadata(
                         hotspot: "",
-                        type: "1",
+                        type: "2",
                         prefix: price.replaceAll(RegExp(r"\D"), ""),
                         userLength: 5,
                         passwordLength: 5,

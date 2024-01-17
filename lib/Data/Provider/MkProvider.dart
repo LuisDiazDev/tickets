@@ -210,6 +210,12 @@ class MkProvider {
     return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
   }
 
+  Future<Response> resetClient(String id) async {
+    return await restApi.post(url: "/ip/hotspot/user/reset-counters",body: {
+      ".id":id
+    });
+  }
+
   Future<Response> newProfile(ProfileModel profile, String duration) async {
     if (profile.name == "") {
       throw Exception("El nombre no puede estar vacio");
@@ -248,6 +254,12 @@ class MkProvider {
       "on-login": profile.onLogin,
       // "parent-queue": ""
     });
+  }
+
+  Future<Response> reactiveUserHotspot(TicketModel t) async {
+    t.disabled = "false";
+    return await restApi
+        .put(url: "/ip/hotspot/user/${t.id}", body: t.toJson());
   }
 
   Future<List<FoundMikrotik?>> findMikrotiksInLocalNetwork(

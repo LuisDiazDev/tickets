@@ -71,9 +71,14 @@ class CustomTicketWidget extends StatelessWidget {
     var hour = "";
     var date = "";
     if (dateSP?.length == 2) {
-      var dateSP2 = dateSP![1].split(" ");
-      date = dateSP2[1];
-      hour = dateSP2[2];
+      try{
+        var dateSP2 = dateSP![1].split(" ");
+        date = dateSP2[1];
+        hour = dateSP2[2];
+      }catch (e){
+        date = "";
+        hour = "";
+      }
     }
     return Padding(
       padding: const EdgeInsets.all(8.0),

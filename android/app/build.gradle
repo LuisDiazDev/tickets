@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.tickets"
+        applicationId "StarTickera.com.ve"
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

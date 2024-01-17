@@ -26,6 +26,7 @@ class ProfileMetadata {
   bool isNumericUser;
   bool isNumericPassword;
   String? onLogin;
+  String? type;
 
   ProfileMetadata({
     required this.hotspot,
@@ -38,6 +39,7 @@ class ProfileMetadata {
     required this.durationType,
     required this.isNumericUser,
     required this.isNumericPassword,
+    required this.type
   });
 
   // Parsea un string con el formato de un perfil de mikrotiket
@@ -58,6 +60,7 @@ class ProfileMetadata {
   // nu: Usuario numérico | si es true entonces el password solo tendrá números
   // np: Contraseña numérica | si es true entonces las contraseñas solo tendrán números
   // tp: Tipo de perfil | 1 si es usuario/pass o 2 si es pin
+
   static ParseResult parseFromMikrotiketNameString(String profileStr) {
     Map<String, String> map = {};
     String startMark = "profile_";
@@ -90,6 +93,7 @@ class ProfileMetadata {
     DurationType durationType = DurationType.RunningTime;
     bool isNumericUser = false;
     bool isNumericPassword = false;
+    String type = "1";
 
     if (map.containsKey("se")) {
       hotspot = map["se"] ?? "";
@@ -153,6 +157,12 @@ class ProfileMetadata {
       warnings.add("No se ha especificado si la contraseña es numérica");
     }
 
+    if (map.containsKey("tp")) {
+      type = map["tp"] ?? "";
+    } else {
+      warnings.add("No se ha especificado el hotspot");
+    }
+
     // String onLogin =
     //     '; {put (",rem,$price,$usageTime,$price,,Enable,Enable,"); :local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$usageTime on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
     var name = map["name"] ?? "";
@@ -163,6 +173,7 @@ class ProfileMetadata {
         ProfileMetadata(
           hotspot: hotspot,
           price: price,
+          type: type,
           prefix: prefix,
           userLength: userLength,
           passwordLength: passwordLength,
@@ -190,8 +201,8 @@ class ProfileMetadata {
     String durationType = "kt:${this.durationType == DurationType.SaveTime}";
     String isNumericUser = "nu:${this.isNumericUser}";
     String isNumericPassword = "np:${this.isNumericPassword}";
-
-    return "$name-$hotspot-$price-$prefix-$userLength-$passwordLength-$usageTime-$dataLimit-$durationType-$isNumericUser-$isNumericPassword-tp:1";
+    String type = "tp:${this.type}";
+    return "$name-$hotspot-$price-$prefix-$userLength-$passwordLength-$usageTime-$dataLimit-$durationType-$isNumericUser-$isNumericPassword-$type";
   }
 
   static String parseMkDateToDate(String formatoFecha) {
@@ -232,7 +243,7 @@ class ProfileMetadata {
     RegExp exp = RegExp(r'(\d+)([dhm])');
     Match match = exp.firstMatch(valor) as Match;
 
-    int cantidad = int.parse(match.group(1)!);
+    int cantidad = int.tryParse(match.group(1)!) ?? 0;
     String unidad = match.group(2)!;
 
     int dias = 0, horas = 0, minutos = 0;

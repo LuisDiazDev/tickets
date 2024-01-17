@@ -38,7 +38,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
     on<ChangeHost>(
           (event, emit) {
-        final newHost = TextInput.dirty(value: event.host);
+        final newHost = IpInput.dirty(value: event.host);
         emit(
           state.copyWith(
             host: newHost,
@@ -48,7 +48,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
     on<ChangeInitialHost>(
           (event, emit) {
-        final newHost = TextInput.dirty(value: event.host);
+        final newHost = IpInput.dirty(value: event.host);
         if(newHost.value == "..."){
           alertCubit.showAlertInfo(
             title: "Error",

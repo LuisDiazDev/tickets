@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../Core/Values/Enums.dart';
 import '../../Data/Services/navigator_service.dart';
 import '../../Routes/Route.dart';
+import '../../Widgets/starlink/text_style.dart';
 import '../Session/SessionCubit.dart';
 import 'widget/header_drawer.dart';
 import 'widget/tiled_drawer.dart';
@@ -18,7 +19,7 @@ class DrawerCustom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: StarlinkColors.black,
-      child: Column(
+      child: ListView(
         children: [
           const HeaderDrawer(),
           TileDrawer(
@@ -34,6 +35,32 @@ class DrawerCustom extends StatelessWidget {
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
             },
+          ),
+          ExpansionTile(
+              leading: Icon(EvaIcons.peopleOutline, color: StarlinkColors.white),
+              title: StarlinkText(
+                "Clientes",
+                size: 22,
+                isBold: true,
+              ),
+              collapsedIconColor: StarlinkColors.white,
+              iconColor:  StarlinkColors.white,
+            children: [
+              TileDrawer(
+                icon: EvaIcons.personAddOutline,
+                title: "Lista de Clientes",
+                onTap: (){
+                  NavigatorService.pushNamedAndRemoveUntil(Routes.clientList);
+                },
+              ),
+              TileDrawer(
+                icon: EvaIcons.pricetagsOutline,
+                title: "Planes Clientes",
+                onTap: (){
+                  NavigatorService.pushNamedAndRemoveUntil(Routes.clientProfile);
+                },
+              ),
+            ],
           ),
           TileDrawer(
             icon: EvaIcons.bookOpen,

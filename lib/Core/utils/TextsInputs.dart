@@ -26,3 +26,38 @@ class MobileInput extends FormzInput<String, TextInputError> {
         : TextInputError.empty;
   }
 }
+
+class IpInput extends FormzInput<String, TextInputError> {
+  const IpInput.pure() : super.pure('');
+
+  const IpInput.dirty({String value = ''}) : super.dirty(value);
+
+  @override
+  TextInputError? validator(String value) {
+    if (value == "") {
+      return TextInputError.empty;
+    }
+    if (value.length < 7) {
+      return TextInputError.empty;
+    }
+    var sp = value.split(".");
+    if (sp.length != 4) {
+      return TextInputError.empty;
+    }
+    for (var i = 0; i < sp.length; i++) {
+      var octeto = sp[i];
+      if (octeto == "") {
+        return TextInputError.empty;
+      }
+      if (int.tryParse(octeto) == null) {
+        return TextInputError.empty;
+      }
+      if (int.parse(octeto) > 255) {
+        return TextInputError.empty;
+      }
+    }
+    return null;
+  }
+}
+
+

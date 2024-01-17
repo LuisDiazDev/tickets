@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:StarTickera/models/ticket_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/rand.dart';
 import '../../../Data/Provider/MkProvider.dart';
+import '../../../models/profile_model.dart';
 import '../../Alerts/AlertCubit.dart';
 import 'TicketsEvents.dart';
 import 'TicketsState.dart';
@@ -20,9 +22,19 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       (event, emit) async {
         emit(state.copyWith(load: event.load));
         // Hacer en paralelo
-        var data = (await provider.allTickets())..sort((a,b)=>b.id!.compareTo(a.id!));//todo: only users whit not client plans
-        var profiles = await provider.allProfiles();//todo: only profiles whit not client plans
-        emit(state.copyWith(load: false, tickets: data, profiles: profiles));
+        var data = await provider.allTickets();//todo: only users whit not client plans
+        var profiles = (await provider.allProfiles()).where((element) => element.metadata!.type! == "1").toList();
+
+        List<TicketModel> tickets = [];
+
+        for (var p in profiles){
+          var ts = data.where((t) => t.profile == p.fullName);
+          tickets.addAll(ts);
+        }
+
+        tickets.sort((a,b)=>b.id!.compareTo(a.id!));
+
+        emit(state.copyWith(load: false, tickets: tickets, profiles: profiles));
       },
     );
 
