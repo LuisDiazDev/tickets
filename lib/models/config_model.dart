@@ -103,11 +103,11 @@ class ConfigModel {
       maxUpload: json["max-upload"],
       dnsNamed: json["dns-name"],
       bluetoothDevice: json["bt_service"] != null
-          ? BluetoothDevice.fromId(json["bt_service"])
-          : null,
+          ? json["bt_service"] != "" ? BluetoothDevice.fromId(json["bt_service"])
+          : null : null,
       bluetoothCharacteristic: json["bt_char"] != null
-          ? bluetoothCharacteristicFromJson(json["bt_char"])
-          : null);
+          ? json["bt_char"] != "" ? bluetoothCharacteristicFromJson(json["bt_char"])
+          : null : null);
 
   static String bluetoothCharacteristicToJson(
       BluetoothCharacteristic? bluetoothCharacteristic) {

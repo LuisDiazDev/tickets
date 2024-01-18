@@ -24,6 +24,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       : super(const HomeState()) {
     on<FetchData>(
       (event, emit) async {
+
+        // if(sessionCubit.state.cfg!.password == "1234"){
+        //   alertCubit.showAlertInfo(
+        //     title: "Recomendacion",
+        //     subtitle: "su contraseña esta por defecto, cambiarla en la configuracion",
+        //   );
+        // }
+
         emit(state.copyWith(load: true));
         var profiles = (await provider.allProfiles())
                 .where((element) => element.metadata!.type! == "1").toList();

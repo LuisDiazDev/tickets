@@ -1,7 +1,7 @@
 part of 'SessionCubit.dart';
 
 class SessionState extends Equatable {
-  final bool? isAuthenticated;
+  final bool isAuthenticated;
   final String? state;
   final String? ip;
   final bool? wifi;
@@ -34,7 +34,7 @@ class SessionState extends Equatable {
           cfg: configModel ?? cfg);
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
-      isAuthenticated: json['isAuthenticated'] as bool?,
+      isAuthenticated: json['isAuthenticated'],
       wifi: json['wifi'] as bool?,
       state: json['state'] as String?,
       ip: json['ip'] as String?,

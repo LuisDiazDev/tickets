@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Modules/settings/widgets/form_new_password.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/section_title.dart';
 import 'package:flutter/material.dart';
@@ -108,6 +109,23 @@ class SettingsPage extends StatelessWidget {
                 title: "Contraseña",
                 textHint: "Contraseña de tu Mikrotik",
               ),
+              StarlinkButton(
+                text: "CAMBIAR CONTRASEÑA",
+                onPressed: () async {
+                  return showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: StarlinkColors.black,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(16.0))),
+                          contentPadding: const EdgeInsets.only(top: 10.0),
+                          content: FormNewPassWord(session:sessionBloc),
+                        );
+                      });
+                },
+              ),
+              const Gap(8),
               StarlinkTextField(
                 initialValue: state.cfg?.dnsNamed ?? "",
                 onChanged: (str) {

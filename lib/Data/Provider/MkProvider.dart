@@ -194,6 +194,14 @@ class MkProvider {
     });
   }
 
+  Future<Response> changePass(String oldPass, String newPass, String verifyPass) async {
+    return await restApi.post(url: "/password", body: {
+      "new-password": newPass,
+      "confirm-new-password": verifyPass,
+      "old-password": oldPass
+    });
+  }
+
   Future<Response> removeTicket(String id) async {
     // id = id.replaceAll("*", "");
     var result = await restApi.delete(url: "/ip/hotspot/user/$id");
@@ -261,6 +269,8 @@ class MkProvider {
     return await restApi
         .put(url: "/ip/hotspot/user/${t.id}", body: t.toJson());
   }
+
+
 
   Future<List<FoundMikrotik?>> findMikrotiksInLocalNetwork(
       ValueNotifier<int> count,

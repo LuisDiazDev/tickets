@@ -10,7 +10,6 @@ import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/MkProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
 import '../../Data/Services/ftp_service.dart';
-import '../../Data/Services/printer_service.dart';
 import '../../models/config_model.dart';
 import '../Alerts/AlertCubit.dart';
 
@@ -23,11 +22,14 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future<void> verify() async {
     ConfigModel? cfg = state.cfg;
+    var isAuthenticated = state.isAuthenticated;
     cfg ??= ConfigModel();
 
-    emit(state.copyWith(configModel: cfg));
+    changeState(state.copyWith(
+      configModel: cfg
+    ));
 
-    if (state.isAuthenticated!) {
+    if (isAuthenticated) {
       MkProvider provider = MkProvider();
       var profilesH = await provider.allProfilesHotspot();
       if (profilesH.isNotEmpty) {
@@ -40,6 +42,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
             sessionStatus: SessionStatus.finish,
             isAuthenticated: false,
             configModel: ConfigModel()));
+        return;
       }
 
       FtpService.initService(
@@ -107,9 +110,9 @@ class SessionCubit extends HydratedCubit<SessionState> {
             try {
               wDetails.add(WifiDataModels(
                 ssid: details.firstWhere((element) => element.contains("ssid"))
-                    .replaceAll(".ssid=", "") ?? "",
+                    .replaceAll(".ssid=", "").replaceAll("\n", "") ?? "",
                 pass: details.firstWhere((element) => element.contains("pass"))
-                    .replaceAll(".passphrase=", "") ?? "",
+                    .replaceAll(".passphrase=", "").replaceAll("\n", "") ?? "",
               ));
             } catch (e) {
               print(e);
@@ -125,7 +128,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
         var identitySplit = identity.split("=");
         emit(state.copyWith(
             configModel: state.cfg!
-                .copyWith(identity: identitySplit.last)));
+                .copyWith(identity: identitySplit.last.replaceAll("\n", "").replaceAll("\r", ""))));
       }
 
     } else {

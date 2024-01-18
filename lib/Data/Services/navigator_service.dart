@@ -10,7 +10,9 @@ class NavigatorService {
   }
 
   static void goBack() {
-    return navigatorKey.currentState?.pop();
+    if(navigatorKey.currentState!.canPop()){
+      navigatorKey.currentState?.pop();
+    }
   }
 
   static Future<dynamic> pushNamedAndRemoveUntil(String routeName,

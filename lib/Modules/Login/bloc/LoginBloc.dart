@@ -115,9 +115,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
             var r2 = await provider.allProfilesHotspot();
             sessionCubit.changeState(sessionCubit.state.copyWith(
-                isAuthenticated: true,
-                sessionStatus: SessionStatus.started,
-                state: "logged",
                 configModel: sessionCubit.state.cfg!.copyWith(
                     dnsNamed: r2.length > 1 ? r2.last.dnsName : "wifi.com"
                 )
