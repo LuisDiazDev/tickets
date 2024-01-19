@@ -100,7 +100,7 @@ class CustomTicketWidget extends StatelessWidget {
         onTap: () {
           TicketDialogUtils.showNewTicketDetailDialog(
               configModel: session.state.cfg!,
-              user: ticket.name!,
+              user: ticket.name!.toUpperCase(),
               duration: duration,
               price: price,
               shareF: () {
@@ -247,7 +247,7 @@ class CustomTicketWidget extends StatelessWidget {
               child: Row(
                 children: [
                   StarlinkText(
-                    ticket.name ?? "",
+                    ticket.name?.toLowerCase() ?? "",
                     size: 16,
                     isBold: true,
                   ),

@@ -119,7 +119,7 @@ class _FormClientWidgetState extends State<FormClientWidget> {
                   widget.bloc.add(GenerateClient(
                       p.metadata!.toMikrotiketNameString(
                           p.name ?? ""),
-                      client.name!,
+                      client.name!.toLowerCase(),
                       duration,
                       price.toString(),
                       limitMb: limit

@@ -74,7 +74,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final user = state.currentUser != "" ? state.currentUser : event.name;
         late Response r;
         try {
-          r = await provider.newTicket(user, event.profile, event.duration,
+          r = await provider.newTicket(user.toLowerCase(), event.profile, event.duration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
           alertCubit.showDialog("El usuario $user ya existe",
@@ -103,7 +103,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
           PrinterService().printTicket(
-              user: event.name,
+              user: event.name.toUpperCase(),
               configModel: sessionCubit.state.cfg,
               price: event.price,
               duration: event.duration);
