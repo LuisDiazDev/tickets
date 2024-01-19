@@ -7,11 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:gap/gap.dart';
 import '../../../Core/Values/Colors.dart';
+import '../../../Data/Provider/MkProvider.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Routes/Route.dart';
 import '../../../Widgets/qr_dialog.dart';
 import '../../../Widgets/starlink/text_style.dart';
+import '../../../models/scheduler_model.dart';
 import '../../../models/ticket_model.dart';
 import '../bloc/TicketsBloc.dart';
 import '../bloc/TicketsEvents.dart';
@@ -24,6 +26,17 @@ class CustomTicketWidget extends StatelessWidget {
 
   bool valid() =>
       ticket.limitUptime == null || ticket.limitUptime != ticket.uptime;
+
+  Future<SchedulerModel?> getTaskData()async{
+    SchedulerModel? current;
+    var task =await MkProvider().allScheduler();
+    for (var t in task){
+      if(t.name == ticket.name){
+        return t;
+      }
+    }
+    return current;
+  }
 
   Widget buildDataUsageBadgedWidget(TicketsBloc ticketsBloc) {
     return Visibility(
@@ -80,6 +93,7 @@ class CustomTicketWidget extends StatelessWidget {
         hour = "";
       }
     }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(

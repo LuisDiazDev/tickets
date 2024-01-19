@@ -1,3 +1,5 @@
+import 'package:StarTickera/Data/Provider/MkProvider.dart';
+import 'package:StarTickera/models/scheduler_model.dart';
 import 'package:StarTickera/models/ticket_model.dart';
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -7,15 +9,26 @@ export '/core/utils/size_utils.dart';
 
 class CustomClient extends StatelessWidget {
   final TicketModel client;
+  final SchedulerModel? task;
   final Function()? onTap;
   final Function()? copyTap;
 
   const CustomClient(
-      {super.key, required this.client, this.onTap, this.copyTap});
+      {super.key, required this.client, this.onTap, this.copyTap,this.task});
+
+  Future<SchedulerModel?> getTaskData()async{
+    SchedulerModel? current;
+    var task =await MkProvider().allScheduler();
+    for (var t in task){
+      if(t.name == client.name){
+        return t;
+      }
+    }
+    return current;
+  }
 
   @override
   Widget build(BuildContext context) {
-
    return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -23,8 +36,10 @@ class CustomClient extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
           width: MediaQuery.of(context).size.width - 20,
-          height: 100,
+          // height: 100,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -103,15 +118,43 @@ class CustomClient extends StatelessWidget {
                   )
                 ],
               ),
-              const Spacer(), // Duration
-              Visibility(
-                visible: client.email != null && client.email != "",
-                child: StarlinkText(
-                  "${client.email}",
-                  isBold: true,
-                  size: 18,
-                ),
-              ),
+              // const Spacer(), // Duration
+              FutureBuilder(future: getTaskData(),
+                  initialData: null,
+                  builder: (context, snapData){
+                    if(snapData.data == null){
+                      return Container();
+                    }else{
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            constraints: const BoxConstraints(
+                              minWidth: 120,
+                              maxWidth: 180,),
+                            child: StarlinkText(
+                              "Activado: ${snapData.data?.startDate.toString().substring(0,10)}",
+                              size: 12,
+                              isBold: true,
+                            ),
+                          ),
+                          Container(
+                            constraints: const BoxConstraints(
+                              minWidth: 40,
+                              maxWidth: 180,),
+                            child: StarlinkText(
+                              "Vence: ${snapData.data?.nextRun.toString().substring(0,16)}",
+                              size: 12,
+                              isBold: true,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  }
+              )
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:StarTickera/models/scheduler_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -56,6 +57,21 @@ class MkProvider {
     if (response.statusCode == 200) {
       try {
         var decode = ticketModelFromJson(response.body);
+        return decode;
+      } catch (e) {
+        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+        return [];
+      }
+    }
+    return [];
+  }
+
+  Future<List<SchedulerModel>> allScheduler() async {
+    var response = await restApi.get(url: "/system/scheduler");
+
+    if (response.statusCode == 200) {
+      try {
+        var decode = schedulerModelFromJson(response.body);
         return decode;
       } catch (e) {
         // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());

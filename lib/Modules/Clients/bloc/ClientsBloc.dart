@@ -1,3 +1,4 @@
+import 'package:StarTickera/models/scheduler_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import '../../../Core/utils/format.dart';
@@ -38,6 +39,7 @@ class ClientsBloc extends Bloc<ClientsEvent, ClientsState> {
         emit(state.copyWith(load: false, clients: clients, profiles: profiles));
       },
     );
+
 
 
     on<NewProfile>(
@@ -153,4 +155,6 @@ class ClientsBloc extends Bloc<ClientsEvent, ClientsState> {
   init() {
     add(FetchData());
   }
+
 }
+
