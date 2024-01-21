@@ -176,7 +176,7 @@ class MkProvider {
       "name": name,
       "password": name,
       "profile": profile,
-      "disabled": "no",
+      "disabled": "false",
       "limit-uptime": duration,
       "limit-bytes-total":
           limitBytesTotal != 0 ? "${limitBytesTotal}M" : limitBytesTotal,
@@ -283,7 +283,15 @@ class MkProvider {
   Future<Response> reactiveUserHotspot(TicketModel t) async {
     t.disabled = "false";
     return await restApi
-        .put(url: "/ip/hotspot/user/${t.id}", body: t.toJson());
+        .put(url: "/ip/hotspot/user/${t.id}", body: {
+          "disabled":"false",
+          "name":t.name,
+          ".id":t.id,
+          "profile":t.profile,
+          "comment":t.comment,
+          "password": t.password,
+          "limit-uptime": t.limitUptime,
+    });
   }
 
 

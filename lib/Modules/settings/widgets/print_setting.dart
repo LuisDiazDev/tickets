@@ -6,16 +6,16 @@ import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
 import 'package:StarTickera/Widgets/starlink/card.dart';
 import 'package:StarTickera/Widgets/starlink/section_title.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../Core/Values/Colors.dart';
-import '../../Widgets/starlink/checkbox.dart';
-import '../Session/SessionCubit.dart';
+import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/checkbox.dart';
+import '../../Session/SessionCubit.dart';
 import 'package:location/location.dart' as loc2;
 
 const validBluetoothCharacteristics = [
@@ -36,6 +36,9 @@ class PrintSettings extends StatefulWidget {
 }
 
 class _PrintSettingsState extends State<PrintSettings> {
+
+  bool _connect = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -105,6 +108,7 @@ class _PrintSettingsState extends State<PrintSettings> {
               });
             },
           ),
+
           Visibility(
             visible: !(widget.sessionBloc.state.cfg?.disablePrint ?? true),
             child: Column(
@@ -138,6 +142,16 @@ class _PrintSettingsState extends State<PrintSettings> {
         ],
       );
     }
+
+    if(_connect){
+      return const StarlinkCard(
+        type: CardType.load,
+        title: "Conectando con la impresora",
+        message:
+        "En algunos dispositivos puede tardar desde 1 a 30 segundos. Espere un momento",
+      );
+    }
+
     return StreamBuilder<BluetoothConnectionState>(
         stream: widget.sessionBloc.state.cfg!.bluetoothDevice!.connectionState,
         builder: (context, AsyncSnapshot<BluetoothConnectionState> snapchat) {
@@ -359,61 +373,78 @@ class _PrintSettingsState extends State<PrintSettings> {
   }
 
   void onBluetoothDeviceSelected(ScanResult bluetooth, context) async {
-    await FlutterBluePlus.stopScan();
-    widget.alertCubit.showAlertInfo(
-        title: "Aviso",
-        subtitle: "Conectando con el dispositivo ${bluetooth.device.advName}");
-
-    widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-        configModel: widget.sessionBloc.state.cfg!
-            .copyWith(bluetoothDevice: bluetooth.device)));
-    widget.sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
-
-    await bluetooth.device.connect(timeout: const Duration(seconds: 30));
-    log("MTU: ${bluetooth.device.mtuNow}");
-    for (var i = 0; i < 20; i++) {
-      if (!bluetooth.device.isConnected) {
-        log("Esperando a que se conecte la impresora... ${i + 1}");
-        await Future.delayed(const Duration(seconds: 1));
-      } else {
-        break;
+    try{
+      await FlutterBluePlus.stopScan();
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
       }
-    }
-    widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-        configModel: widget.sessionBloc.state.cfg!.copyWith(
-            bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice)));
-    var service = await bluetooth.device.discoverServices();
-    for (BluetoothService service in service) {
-      if (!service.isPrimary) {
-        continue;
-      }
+      setState(() {
+        _connect = !_connect;
+      });
+      widget.alertCubit.showAlertInfo(
+          title: "Aviso",
+          subtitle: "Conectando con el dispositivo ${bluetooth.device.advName}");
 
-      for (String characteristic in validBluetoothCharacteristics) {
-        for (BluetoothCharacteristic c in service.characteristics) {
-          if (c.characteristicUuid.toString() == characteristic) {
-            widget.sessionBloc.state.cfg!.bluetoothCharacteristic = c;
-            log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
-            widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-                configModel: widget.sessionBloc.state.cfg!
-                    .copyWith(bluetoothCharacteristic: c)));
-            widget.alertCubit.showAlertInfo(
-                title: "Conectado",
-                subtitle:
-                    "Conectado a la impresora ${bluetooth.device.advName}");
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+      widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+          configModel: widget.sessionBloc.state.cfg!
+              .copyWith(bluetoothDevice: bluetooth.device)));
+      widget.sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
+
+      await bluetooth.device.connect(timeout: const Duration(seconds: 30));
+      log("MTU: ${bluetooth.device.mtuNow}");
+      for (var i = 0; i < 20; i++) {
+        if (!bluetooth.device.isConnected) {
+          log("Esperando a que se conecte la impresora... ${i + 1}");
+          await Future.delayed(const Duration(seconds: 1));
+        } else {
+          break;
+        }
+      }
+      widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+          configModel: widget.sessionBloc.state.cfg!.copyWith(
+              bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice)));
+      var service = await bluetooth.device.discoverServices();
+      for (BluetoothService service in service) {
+        if (!service.isPrimary) {
+          continue;
+        }
+
+        for (String characteristic in validBluetoothCharacteristics) {
+          for (BluetoothCharacteristic c in service.characteristics) {
+            if (c.characteristicUuid.toString() == characteristic) {
+              widget.sessionBloc.state.cfg!.bluetoothCharacteristic = c;
+              log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
+              widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+                  configModel: widget.sessionBloc.state.cfg!
+                      .copyWith(bluetoothCharacteristic: c)));
+              widget.alertCubit.showAlertInfo(
+                  title: "Conectado",
+                  subtitle:
+                  "Conectado a la impresora ${bluetooth.device.advName}");
+              setState(() {
+                _connect=!_connect;
+              });
+              return;
             }
-            return;
           }
         }
       }
+
+      widget.alertCubit.showAlertInfo(
+          title: "Error",
+          subtitle:
+          "No se ha encontrado el servicio de impresion en este dispositivo");
+    }catch(e){
+      widget.alertCubit.showAlertInfo(
+          title: "Error",
+          subtitle:
+          "Ah ocurrido un error intentando conectar, intentelo de nuevo...");
+    }finally{
+      setState(() {
+        _connect = false;
+      });
     }
 
-    widget.alertCubit.showAlertInfo(
-        title: "Error",
-        subtitle:
-            "No se ha encontrado el servicio de impresion en este dispositivo");
-    Navigator.pop(context);
   }
 
   Future<BluetoothCharacteristic> findPrintBTCharacteristic(

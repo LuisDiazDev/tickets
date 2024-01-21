@@ -1,4 +1,5 @@
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Modules/Home/widgets/bt_state_widget.dart';
 import 'package:StarTickera/Modules/Home/widgets/scann_qr_button.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,11 @@ class _BuildHomePageState extends State<_BuildHomePage>
         backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-          title: "VENTA DE TICKETS",
+          title: "VENTA TICKETS",
+          action:home.sessionCubit.state.cfg!.bluetoothDevice != null ?  BtStateWidget(
+            bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice!,
+            sessionBloc: home.sessionCubit,
+          ):null
         ),
         body: Container(
           margin: const EdgeInsets.all(12),

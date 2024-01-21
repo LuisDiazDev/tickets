@@ -11,6 +11,7 @@ import 'Core/localization/app_localization.dart';
 import 'Data/Services/navigator_service.dart';
 import 'Data/Services/printer_service.dart';
 import 'Data/Provider/restApiProvider.dart';
+import 'Data/database/databse_firebase.dart';
 import 'Modules/Alerts/AlertCubit.dart';
 import 'Modules/Session/SessionCubit.dart';
 import 'Routes/Route.dart';
@@ -50,11 +51,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     final restApiProvider = RestApiProvider();
+    final database = DatabaseFirebase();
     PrinterService();
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
 
     restApiProvider.init(alertCubit, sessionCubit);
+    database.init(alertCubit, sessionCubit);
 
     subscription = Connectivity()
         .onConnectivityChanged

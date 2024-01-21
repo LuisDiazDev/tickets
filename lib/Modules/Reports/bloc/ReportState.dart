@@ -8,12 +8,12 @@ class ReportState extends Equatable {
 
   final bool load;
   final bool isError;
-  final List<TicketModel> tickets;
+  final List sellers;
   final List<ProfileModel> profiles;
 
   const ReportState({
     this.load = false,
-    this.tickets =const [],
+    this.sellers =const [],
     this.profiles =const [],
     this.isError = false,
   });
@@ -21,14 +21,14 @@ class ReportState extends Equatable {
 
   ReportState copyWith({
     bool? load,
-    List<TicketModel>? tickets,
+    List? sellers,
     List<ProfileModel>? profiles,
     bool? isError,
   }) {
     return ReportState(
       load: load ?? this.load,
       profiles: profiles ?? this.profiles,
-      tickets: tickets ?? this.tickets,
+      sellers: sellers ?? this.sellers,
       isError: isError ?? this.isError,
     );
   }
@@ -36,7 +36,7 @@ class ReportState extends Equatable {
   @override
   List<Object?> get props => [
     load,
-    tickets,
+    sellers,
     isError,
     profiles
   ];

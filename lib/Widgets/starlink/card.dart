@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Define un enum con los tipos de tarjetas
-enum CardType { error, warning, info, success }
+enum CardType { error, warning, info, success,load }
 
 // Define un mapa para los colores asociados a cada tipo de tarjeta
 const Map<CardType, Color> _cardColor = {
@@ -9,6 +9,7 @@ const Map<CardType, Color> _cardColor = {
   CardType.warning: Colors.orange,
   CardType.info: Colors.blue,
   CardType.success: Colors.green,
+  CardType.load:Colors.cyan
 };
 
 // Define un mapa para los iconos asociados a cada tipo de tarjeta
@@ -17,6 +18,7 @@ const Map<CardType, IconData> _cardIcon = {
   CardType.warning: Icons.warning_amber_outlined,
   CardType.info: Icons.info_outline,
   CardType.success: Icons.check_circle_outline,
+  CardType.load: Icons.connecting_airports,
 };
 
 // Crea un widget personalizado para tu tarjeta

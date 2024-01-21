@@ -31,7 +31,7 @@ class PrinterService {
     // }
 
     isProgress = true;
-    if (configModel!.pathLogo != "") {
+    if (configModel!.nameLocal != "") {
       // TODO: Add path logo
       // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
     }
@@ -78,6 +78,18 @@ class PrinterService {
     //     'http://${configModel.dnsNamed}/login?user=$user&password=$user',
     //     size: const QRSize(8));
     // bytes += generator.feed(1);
+    if(configModel?.nameLocal != "" || configModel?.contact != ""){
+      var strContact = "";
+      if(configModel?.nameLocal != "" && configModel?.contact != ""){
+        strContact = "${configModel?.nameLocal} - ${configModel?.contact}";
+      }else if(configModel?.nameLocal == "" && configModel?.contact != ""){
+        strContact = "${configModel?.contact}";
+      }else if(configModel?.nameLocal != "" && configModel?.contact == ""){
+        strContact = "${configModel?.nameLocal}";
+      }
+      bytes += generator.text(strContact, styles: styles);
+      bytes += generator.feed(1);
+    }
     bytes += generator.text('Clave: $spacedPassword',
         styles: const PosStyles(
             align: PosAlign.left,

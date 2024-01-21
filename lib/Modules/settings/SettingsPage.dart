@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:StarTickera/Data/Services/navigator_service.dart';
+import 'package:StarTickera/Data/database/databse_firebase.dart';
 import 'package:StarTickera/Modules/settings/widgets/form_new_password.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/section_title.dart';
@@ -17,13 +19,30 @@ import '../../Widgets/starlink/text_field.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
-import 'print_setting.dart';
+import 'widgets/print_setting.dart';
 
 import 'dart:convert';
 import 'dart:typed_data';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+
+  String _contact ="",_name="";
+
+  @override
+  void initState() {
+    final sessionBloc = BlocProvider.of<SessionCubit>(context);
+    // TODO: implement initState
+    _name = sessionBloc.state.cfg?.nameLocal ?? "";
+    _contact = sessionBloc.state.cfg?.contact ?? "";
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +53,22 @@ class SettingsPage extends StatelessWidget {
       return Scaffold(
         backgroundColor: StarlinkColors.black.withOpacity(.9),
         drawer: const DrawerCustom(),
-        appBar: customAppBar(title: "title_configuration".tr),
+        appBar: customAppBar(
+            title: "title_configuration".tr,
+          saved: ()async{
+            DatabaseFirebase databaseFirebase = DatabaseFirebase();
+            if(state.cfg?.nameLocal != _name){
+              databaseFirebase.updateName(_name ?? "");
+              sessionBloc.changeState(state.copyWith(
+                  configModel: state.cfg!.copyWith(nameLocal: _name ?? "")));
+            }
+            if(state.cfg?.contact != _contact){
+              databaseFirebase.updateContact(_contact ?? "");
+              sessionBloc.changeState(state.copyWith(
+                  configModel: state.cfg!.copyWith(contact: _contact ?? "")));
+            }
+          }
+        ),
         body: Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
@@ -134,6 +168,24 @@ class SettingsPage extends StatelessWidget {
                 },
                 title: "Página Hotspot",
                 textHint: "Ejemplo: wifi.com",
+              ),
+              const Gap(8),
+              StarlinkTextField(
+                initialValue: state.cfg?.nameLocal ?? "",
+                onChanged: (str) {
+                  _name = str;
+                },
+                title: "Nombre del local",
+                textHint: "Ejemplo: mi tienda",
+              ),
+              const Gap(8),
+              StarlinkTextField(
+                initialValue: state.cfg?.contact ?? "",
+                onChanged: (str) {
+                  _contact = str;
+                },
+                title: "Numero de contacto",
+                textHint: "Tlf: 04.........",
               ),
               const Gap(8),
               StarlinkButton(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../Core/Values/Colors.dart';
 
-AppBar customAppBar({String title="",Widget? action}){
+AppBar customAppBar({String title="",Widget? action,Function()? saved}){
   return AppBar(
     title: Text(title),
     actions: [
@@ -18,7 +18,10 @@ AppBar customAppBar({String title="",Widget? action}){
             color: StarlinkColors.white,
             size: 30,
           ),
-          onPressed: () {
+          onPressed: ()async {
+            if(saved!=null){
+              await saved();
+            }
             Scaffold.of(context).openDrawer();
           },
           tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,

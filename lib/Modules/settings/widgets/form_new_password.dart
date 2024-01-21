@@ -1,4 +1,5 @@
 import 'package:StarTickera/Data/Provider/MkProvider.dart';
+import 'package:StarTickera/Data/Services/ftp_service.dart';
 import 'package:StarTickera/Data/Services/navigator_service.dart';
 import 'package:StarTickera/Modules/Session/SessionCubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,7 +77,11 @@ class _FormNewPassWordState extends State<FormNewPassWord> {
                       if(r.statusCode <= 205){
                         widget.session.changeState( widget.session.state.copyWith(
                             configModel:  widget.session.state.cfg!.copyWith(password: _newPass)));
-
+                        FtpService.initService(
+                            address: widget.session.state.cfg!.host,
+                            user: widget.session.state.cfg!.user,
+                            pass: _newPass,
+                        );
                       }
                       NavigatorService.goBack();
                     }

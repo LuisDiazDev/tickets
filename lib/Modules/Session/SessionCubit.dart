@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:StarTickera/Data/database/databse_firebase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../Core/Values/Enums.dart';
+import '../../Core/utils/get_device_details.dart';
 import '../../Core/utils/get_ip_mk.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/MkProvider.dart';
@@ -20,14 +22,39 @@ class SessionCubit extends HydratedCubit<SessionState> {
     RestApiProvider().sessionCubit = this;
   }
 
+  Future checkSerial() async {
+    final database = DatabaseFirebase();
+
+    if (await database.checkUUID()) {
+
+      var phone = await database.getContact();
+      var name = await database.getName();
+
+      emit(state.copyWith(
+        active: true,
+        configModel: state.cfg!.copyWith(
+          contact: phone,
+          nameLocal: name
+        )
+      ));
+    } else {
+      await database.updateLicense("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+      emit(state.copyWith(active: false));
+    }
+  }
+
   Future<void> verify() async {
     ConfigModel? cfg = state.cfg;
     var isAuthenticated = state.isAuthenticated;
-    cfg ??= ConfigModel();
 
-    changeState(state.copyWith(
-      configModel: cfg
-    ));
+    var deviceDetails = await getDeviceDetails();
+    var uuid = deviceDetails.last?.replaceAll(".", "-") ??
+        ""; //uuid: "TP1A.220624.014"
+
+    cfg ??= ConfigModel();
+    changeState(state.copyWith(configModel: cfg,uuid: uuid));
+
+    checkSerial();
 
     if (isAuthenticated) {
       MkProvider provider = MkProvider();
@@ -53,7 +80,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
       emit(state.copyWith(sessionStatus: SessionStatus.started));
       loadSetting();
       // loginHotspot();
-
     } else {
       var ip = await getIp();
       if (ip["connect"]) {
@@ -76,7 +102,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
         loadSetting();
         // loginHotspot();
-
       } else {
         emit(state.copyWith(
             sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
@@ -106,31 +131,36 @@ class SessionCubit extends HydratedCubit<SessionState> {
         var wifiInterfaceDetails = wifiInterface.split("add");
         for (var interfaceW in wifiInterfaceDetails) {
           var details = interfaceW.split(" ");
-          if(!interfaceW.contains("interface")){
+          if (!interfaceW.contains("interface")) {
             try {
               wDetails.add(WifiDataModels(
-                ssid: details.firstWhere((element) => element.contains("ssid"))
-                    .replaceAll(".ssid=", "").replaceAll("\n", "") ?? "",
-                pass: details.firstWhere((element) => element.contains("pass"))
-                    .replaceAll(".passphrase=", "").replaceAll("\n", "") ?? "",
+                ssid: details
+                        .firstWhere((element) => element.contains("ssid"))
+                        .replaceAll(".ssid=", "")
+                        .replaceAll("\n", "") ??
+                    "",
+                pass: details
+                        .firstWhere((element) => element.contains("pass"))
+                        .replaceAll(".passphrase=", "")
+                        .replaceAll("\n", "") ??
+                    "",
               ));
             } catch (e) {
               print(e);
             }
           }
-
         }
         emit(state.copyWith(
-            configModel: state.cfg!
-                .copyWith(wifiCredentials: wDetails)));
+            configModel: state.cfg!.copyWith(wifiCredentials: wDetails)));
         var identity = interfaces
             .firstWhere((element) => element.contains("system identity"));
         var identitySplit = identity.split("=");
         emit(state.copyWith(
-            configModel: state.cfg!
-                .copyWith(identity: identitySplit.last.replaceAll("\n", "").replaceAll("\r", ""))));
+            configModel: state.cfg!.copyWith(
+                identity: identitySplit.last
+                    .replaceAll("\n", "")
+                    .replaceAll("\r", ""))));
       }
-
     } else {
       MkProvider provider = MkProvider();
       var r = await provider.exportData(file: "info.rsc");
@@ -139,7 +169,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
       }
     }
   }
-
 
   void exitSession() {
     emit(const SessionState(sessionStatus: SessionStatus.finish));
@@ -178,9 +207,11 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future loginHotspot() async {
     var fileContents = await rootBundle.load('assets/login.html');
-    File file = await writeToFile(fileContents,"${(await getApplicationDocumentsDirectory()).path}/login.html");
-    bool upload  = await FtpService.uploadFile(file: file,remoteName:"hotspot/login.html" );
-    if(!upload){
+    File file = await writeToFile(fileContents,
+        "${(await getApplicationDocumentsDirectory()).path}/login.html");
+    bool upload = await FtpService.uploadFile(
+        file: file, remoteName: "hotspot/login.html");
+    if (!upload) {
       print("error subiendo login");
       return;
     }
@@ -188,8 +219,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future<File> writeToFile(ByteData data, String path) {
     final buffer = data.buffer;
-    return File(path).writeAsBytes(
-        buffer.asUint8ClampedList());
+    return File(path).writeAsBytes(buffer.asUint8ClampedList());
   }
 
   Future backUp(AlertCubit alertCubit) async {

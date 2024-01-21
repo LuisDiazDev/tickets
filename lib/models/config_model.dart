@@ -9,7 +9,8 @@ class ConfigModel {
       maxUpload,
       maxDownload,
       shareUser,
-      pathLogo,
+      nameLocal,
+      contact,
       dnsNamed,
       port,
       identity,
@@ -25,13 +26,14 @@ class ConfigModel {
       this.dhcp = "",
       this.identity = "",
       this.ip = "...",
+      this.contact = "",
       this.disablePrint = false,
       this.port = "3000",
       this.password = "1234",
       this.host = "192.168.20.5",
       this.user = "tickets",
       this.shareUser = "1",
-      this.pathLogo = "",
+      this.nameLocal = "",
       this.limitSpeedInternet = false,
       this.maxDownload = "1M",
       this.maxUpload = "1M",
@@ -54,11 +56,12 @@ class ConfigModel {
     String? password,
     String? host,
     String? user,
+    String? contact,
     String? ip,
     String? identity,
     String? dhcp,
     String? shareUser,
-    String? pathLogo,
+    String? nameLocal,
     String? maxDownload,
     String? maxUpload,
     String? port,
@@ -77,8 +80,9 @@ class ConfigModel {
         identity: identity ?? this.identity,
         port: port ?? this.port,
         user: user ?? this.user,
+        contact: contact ?? this.contact,
         shareUser: shareUser ?? this.shareUser,
-        pathLogo: pathLogo ?? this.pathLogo,
+        nameLocal: nameLocal ?? this.nameLocal,
         maxDownload: maxDownload ?? this.maxDownload,
         maxUpload: maxUpload ?? this.maxUpload,
         wifiCredentials: wifiCredentials ?? this.wifiCredentials,
@@ -97,17 +101,22 @@ class ConfigModel {
       dhcp: json["dhcp"],
       identity: json["identity"],
       shareUser: json["share-user"],
-      pathLogo: json["path-logo"],
+      nameLocal: json["name-local"],
+      contact: json["contact"],
       maxDownload: json["max-download"],
       port: json["port"],
       maxUpload: json["max-upload"],
       dnsNamed: json["dns-name"],
       bluetoothDevice: json["bt_service"] != null
-          ? json["bt_service"] != "" ? BluetoothDevice.fromId(json["bt_service"])
-          : null : null,
+          ? json["bt_service"] != ""
+              ? BluetoothDevice.fromId(json["bt_service"])
+              : null
+          : null,
       bluetoothCharacteristic: json["bt_char"] != null
-          ? json["bt_char"] != "" ? bluetoothCharacteristicFromJson(json["bt_char"])
-          : null : null);
+          ? json["bt_char"] != ""
+              ? bluetoothCharacteristicFromJson(json["bt_char"])
+              : null
+          : null);
 
   static String bluetoothCharacteristicToJson(
       BluetoothCharacteristic? bluetoothCharacteristic) {
@@ -145,9 +154,10 @@ class ConfigModel {
         "disablePrint": disablePrint,
         "user": user,
         "dhcp": dhcp,
-        "identity":identity,
+        "contact": contact,
+        "identity": identity,
         "share-user": shareUser,
-        "path-logo": pathLogo,
+        "path-logo": nameLocal,
         "max-download": maxDownload,
         "max-upload": maxUpload,
         "bt_service": bluetoothDevice?.remoteId.toString(),
