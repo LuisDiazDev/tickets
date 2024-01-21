@@ -19,6 +19,7 @@ class BtStateWidget extends StatefulWidget {
 
 class _BtStateWidgetState extends State<BtStateWidget> {
   bool _connect = false;
+  int attempts = 0;
 
   @override
   void initState() {
@@ -49,14 +50,23 @@ class _BtStateWidgetState extends State<BtStateWidget> {
               }
             case BluetoothConnectionState.disconnected:
               {
-                return IconButton(onPressed: onBluetoothDeviceSelected, icon: const Icon(
+                if(attempts < 3){
+                  onBluetoothDeviceSelected();
+                }
+                return IconButton(onPressed: (){
+                  attempts = 0;
+                  onBluetoothDeviceSelected();
+                }, icon: const Icon(
                   EvaIcons.printer,
                   color: Colors.red,
                 ));
               }
             default:
               {
-                return IconButton(onPressed: onBluetoothDeviceSelected, icon: const Icon(
+                return IconButton(onPressed: (){
+                  attempts = 0;
+                  onBluetoothDeviceSelected();
+                }, icon: const Icon(
                   EvaIcons.printer,
                   color: Colors.red,
                 ));
@@ -73,6 +83,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
       }
       setState(() {
         _connect = !_connect;
+        attempts = attempts++;
       });
 
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
@@ -108,6 +119,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
                       .copyWith(bluetoothCharacteristic: c)));
               setState(() {
                 _connect = !_connect;
+                attempts = 0;
               });
               return;
             }
