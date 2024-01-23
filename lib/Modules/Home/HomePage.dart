@@ -59,8 +59,8 @@ class _BuildHomePageState extends State<_BuildHomePage>
         drawer: const DrawerCustom(),
         appBar: customAppBar(
           title: "VENTA TICKETS",
-          action:home.sessionCubit.state.cfg!.bluetoothDevice != null ?  BtStateWidget(
-            bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice!,
+          action:home.sessionCubit.state.cfg!.bluetoothDevice != null ||  home.sessionCubit.state.cfg!.lastIdBtPrint != "" ? BtStateWidget(
+            bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice,
             sessionBloc: home.sessionCubit,
           ):null
         ),

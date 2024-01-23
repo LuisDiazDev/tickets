@@ -14,6 +14,7 @@ class ConfigModel {
       dnsNamed,
       port,
       identity,
+      lastIdBtPrint,
       dhcp;
 
   bool limitSpeedInternet, disablePrint;
@@ -38,6 +39,7 @@ class ConfigModel {
       this.maxDownload = "1M",
       this.maxUpload = "1M",
       this.bluetoothDevice,
+      this.lastIdBtPrint = "",
       this.bluetoothCharacteristic,
       this.wifiCredentials = const []});
 
@@ -65,6 +67,7 @@ class ConfigModel {
     String? maxDownload,
     String? maxUpload,
     String? port,
+    String? lastIdBtPrint,
     BluetoothDevice? bluetoothDevice,
     BluetoothCharacteristic? bluetoothCharacteristic,
     List<WifiDataModels>? wifiCredentials,
@@ -77,6 +80,7 @@ class ConfigModel {
         password: password ?? this.password,
         host: host ?? this.host,
         ip: ip ?? this.ip,
+        lastIdBtPrint: lastIdBtPrint ?? this.lastIdBtPrint,
         identity: identity ?? this.identity,
         port: port ?? this.port,
         user: user ?? this.user,
@@ -92,31 +96,32 @@ class ConfigModel {
   }
 
   factory ConfigModel.fromJson(Map<String, dynamic> json) => ConfigModel(
-      limitSpeedInternet: json["limit-speed-internet"],
-      disablePrint: json["disablePrint"],
-      password: json["password"],
-      host: json["host"],
-      user: json["user"],
-      ip: json["ip"],
-      dhcp: json["dhcp"],
-      identity: json["identity"],
-      shareUser: json["share-user"],
-      nameLocal: json["name-local"],
-      contact: json["contact"],
-      maxDownload: json["max-download"],
-      port: json["port"],
-      maxUpload: json["max-upload"],
-      dnsNamed: json["dns-name"],
-      bluetoothDevice: json["bt_service"] != null
-          ? json["bt_service"] != ""
-              ? BluetoothDevice.fromId(json["bt_service"])
-              : null
-          : null,
-      bluetoothCharacteristic: json["bt_char"] != null
-          ? json["bt_char"] != ""
-              ? bluetoothCharacteristicFromJson(json["bt_char"])
-              : null
-          : null);
+      limitSpeedInternet: json["limit-speed-internet"]??false,
+      disablePrint: json["disablePrint"]??false,
+      password: json["password"]??"",
+      host: json["host"]??"",
+      user: json["user"]??"",
+      ip: json["ip"]??"",
+      lastIdBtPrint: json["lastIdBtPrint"]??"",
+      dhcp: json["dhcp"]??"",
+      identity: json["identity"]??"",
+      shareUser: json["share-user"]??"",
+      nameLocal: json["name-local"]??"",
+      contact: json["contact"]??"",
+      maxDownload: json["max-download"]??"",
+      port: json["port"]??"",
+      maxUpload: json["max-upload"]??"",
+      dnsNamed: json["dns-name"]??"",);
+      // bluetoothDevice: json["bt_service"] != null
+      //     ? json["bt_service"] != ""
+      //         ? BluetoothDevice.fromId(json["bt_service"])
+      //         : null
+      //     : null,
+      // bluetoothCharacteristic: json["bt_char"] != null
+      //     ? json["bt_char"] != ""
+      //         ? bluetoothCharacteristicFromJson(json["bt_char"])
+      //         : null
+      //     : null);
 
   static String bluetoothCharacteristicToJson(
       BluetoothCharacteristic? bluetoothCharacteristic) {
@@ -153,6 +158,7 @@ class ConfigModel {
         "port": port,
         "disablePrint": disablePrint,
         "user": user,
+        "lastIdBtPrint": lastIdBtPrint,
         "dhcp": dhcp,
         "contact": contact,
         "identity": identity,
@@ -160,8 +166,8 @@ class ConfigModel {
         "path-logo": nameLocal,
         "max-download": maxDownload,
         "max-upload": maxUpload,
-        "bt_service": bluetoothDevice?.remoteId.toString(),
-        "bt_char": bluetoothCharacteristicToJson(bluetoothCharacteristic)
+        // "bt_service": bluetoothDevice?.remoteId.toString(),
+        // "bt_char": bluetoothCharacteristicToJson(bluetoothCharacteristic)
       };
 }
 

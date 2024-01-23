@@ -1,110 +1,152 @@
+import 'dart:async';
+
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-import '../../../Widgets/starlink/text_style.dart';
 import '../../Session/SessionCubit.dart';
 import '../../settings/widgets/print_setting.dart';
 
+
+
 class BtStateWidget extends StatefulWidget {
-  final BluetoothDevice bluetoothDevice;
+
+  final BluetoothDevice? bluetoothDevice;
   final SessionCubit sessionBloc;
 
-  const BtStateWidget(
-      {super.key, required this.bluetoothDevice, required this.sessionBloc});
+  const BtStateWidget({super.key,this.bluetoothDevice,required this.sessionBloc});
 
   @override
   State<BtStateWidget> createState() => _BtStateWidgetState();
 }
 
 class _BtStateWidgetState extends State<BtStateWidget> {
+
+  Widget icon = Container();
   bool _connect = false;
   int attempts = 0;
+  late StreamSubscription<BluetoothConnectionState>? stream;
+
+  void check(btState){
+    switch(btState){
+      case BluetoothConnectionState.disconnected:{
+        onBluetoothDeviceSelected();
+        setState(() {
+          icon = IconButton(
+              onPressed: () {
+                attempts = 0;
+                onBluetoothDeviceSelected();
+              },
+              icon: const Icon(
+                EvaIcons.printer,
+                color: Colors.red,
+              ));
+        });
+        break;
+      }
+      case BluetoothConnectionState.connected:{
+        setState(() {
+          icon = Container();
+        });
+        break;
+      }
+      // TODO: Handle this case.
+      case BluetoothConnectionState.connecting:{
+        setState(() {
+          icon = Container();
+        });
+        break;
+      }
+      case BluetoothConnectionState.disconnecting:{
+        onBluetoothDeviceSelected();
+        setState(() {
+          icon = IconButton(
+              onPressed: () {
+                attempts = 0;
+                onBluetoothDeviceSelected();
+              },
+              icon: const Icon(
+                EvaIcons.printer,
+                color: Colors.red,
+              ));
+        });
+        break;
+      }
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-    onBluetoothDeviceSelected();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    if(_connect){
-      return const Padding(
-        padding: EdgeInsets.all(12.0),
-        child: CircularProgressIndicator(
-          color: Colors.cyan,
-        ),
-      );
+    if(widget.bluetoothDevice != null){
+      stream = widget.bluetoothDevice?.connectionState.listen(check);
     }
 
-    return StreamBuilder<BluetoothConnectionState>(
-        stream: widget.bluetoothDevice.connectionState,
-        builder: (context, AsyncSnapshot<BluetoothConnectionState> snapchat) {
-          switch (snapchat.data) {
-            case BluetoothConnectionState.connected:
-              {
-                return Container();
-              }
-            case BluetoothConnectionState.disconnected:
-              {
-                if(attempts < 3){
-                  onBluetoothDeviceSelected();
-                }
-                return IconButton(onPressed: (){
-                  attempts = 0;
-                  onBluetoothDeviceSelected();
-                }, icon: const Icon(
-                  EvaIcons.printer,
-                  color: Colors.red,
-                ));
-              }
-            default:
-              {
-                return IconButton(onPressed: (){
-                  attempts = 0;
-                  onBluetoothDeviceSelected();
-                }, icon: const Icon(
-                  EvaIcons.printer,
-                  color: Colors.red,
-                ));
-              }
-          }
-        });
+    if (widget.sessionBloc.state.cfg!.lastIdBtPrint != "") {
+      searchBluetoothDeviceSelected();
+    }
+
+    super.initState();
   }
 
-  void onBluetoothDeviceSelected() async {
+  void searchBluetoothDeviceSelected() {
+    FlutterBluePlus.startScan(withServices: [
+      Guid.fromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2")
+    ]);
+    FlutterBluePlus.scanResults.listen((bts) {
+      for (var bt in bts) {
+        if (bt.device.remoteId.str ==
+            widget.sessionBloc.state.cfg!.lastIdBtPrint) {
+          widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+              configModel: widget.sessionBloc.state.cfg!
+                  .copyWith(bluetoothDevice: bt.device)));
+          onBluetoothDeviceSelected(bt: bt.device);
+          return;
+        }
+      }
+    });
+  }
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    stream?.cancel();
+    super.dispose();
+  }
+
+  void onBluetoothDeviceSelected({BluetoothDevice? bt}) async {
+    if(_connect){
+      return;
+    }
     try {
       await FlutterBluePlus.stopScan();
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
       setState(() {
         _connect = !_connect;
         attempts = attempts++;
       });
-
+      BluetoothDevice _bt = bt ?? widget.bluetoothDevice!;
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
           configModel: widget.sessionBloc.state.cfg!
-              .copyWith(bluetoothDevice: widget.bluetoothDevice)));
-      widget.sessionBloc.state.cfg!.bluetoothDevice = widget.bluetoothDevice;
+              .copyWith(bluetoothDevice: _bt,
+              lastIdBtPrint: _bt.remoteId.str
+          )));
+      widget.sessionBloc.state.cfg!.bluetoothDevice =
+          bt ?? widget.bluetoothDevice;
 
-      await widget.bluetoothDevice.connect(timeout: const Duration(seconds: 30));
+      await _bt.connect(timeout: const Duration(seconds: 30));
 
       for (var i = 0; i < 20; i++) {
-        if (!widget.bluetoothDevice.isConnected) {
-
+        if (!_bt.isConnected) {
           await Future.delayed(const Duration(seconds: 1));
         } else {
           break;
         }
       }
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-          configModel: widget.sessionBloc.state.cfg!.copyWith(
-              bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice)));
-      var service = await widget.bluetoothDevice.discoverServices();
+          configModel: widget.sessionBloc.state.cfg!.copyWith(bluetoothDevice: _bt,
+              lastIdBtPrint: _bt.remoteId.str)));
+      var service = await widget.bluetoothDevice!.discoverServices();
       for (BluetoothService service in service) {
         if (!service.isPrimary) {
           continue;
@@ -117,6 +159,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
               widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
                   configModel: widget.sessionBloc.state.cfg!
                       .copyWith(bluetoothCharacteristic: c)));
+              stream = _bt.connectionState.listen(check);
               setState(() {
                 _connect = !_connect;
                 attempts = 0;
@@ -136,4 +179,20 @@ class _BtStateWidgetState extends State<BtStateWidget> {
       });
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_connect) {
+      return const Padding(
+        padding: EdgeInsets.all(12.0),
+        child: CircularProgressIndicator(
+          color: Colors.cyan,
+        ),
+      );
+    }
+
+    return icon;
+  }
 }
+
+

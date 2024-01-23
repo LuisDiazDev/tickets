@@ -387,7 +387,11 @@ class _PrintSettingsState extends State<PrintSettings> {
 
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
           configModel: widget.sessionBloc.state.cfg!
-              .copyWith(bluetoothDevice: bluetooth.device)));
+              .copyWith(
+              bluetoothDevice: bluetooth.device,
+              lastIdBtPrint: bluetooth.device.remoteId.str
+
+          )));
       widget.sessionBloc.state.cfg!.bluetoothDevice = bluetooth.device;
 
       await bluetooth.device.connect(timeout: const Duration(seconds: 30));
@@ -402,7 +406,8 @@ class _PrintSettingsState extends State<PrintSettings> {
       }
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
           configModel: widget.sessionBloc.state.cfg!.copyWith(
-              bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice)));
+              bluetoothDevice: widget.sessionBloc.state.cfg?.bluetoothDevice,
+              lastIdBtPrint: bluetooth.device.remoteId.str)));
       var service = await bluetooth.device.discoverServices();
       for (BluetoothService service in service) {
         if (!service.isPrimary) {
@@ -417,6 +422,7 @@ class _PrintSettingsState extends State<PrintSettings> {
               widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
                   configModel: widget.sessionBloc.state.cfg!
                       .copyWith(bluetoothCharacteristic: c)));
+
               widget.alertCubit.showAlertInfo(
                   title: "Conectado",
                   subtitle:
