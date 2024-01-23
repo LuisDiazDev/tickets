@@ -205,9 +205,11 @@ class _IpSearchDialogState extends State<IpSearchDialog> {
                                 return StarlinkButtonCard(
                                   title: title,
                                   subtitle: subtitle,
-                                  onPressed: () {
-                                    NavigatorService.navigatorKey.currentState!
-                                        .pop(e);
+                                  onPressed: ()async {
+                                    if(NavigatorService.navigatorKey.currentState!.canPop()){
+                                      NavigatorService.navigatorKey.currentState!
+                                          .pop(e);
+                                    }
                                   },
                                   suffixWidget: suffixWidget,
                                 );
@@ -225,7 +227,8 @@ class _IpSearchDialogState extends State<IpSearchDialog> {
           StarlinkButton(
             text: "CERRAR",
             onPressed: () async {
-              NavigatorService.navigatorKey.currentState!.pop();
+              // NavigatorService.navigatorKey.currentState!.pop();
+              NavigatorService.goBack();
             },
           ),
         ],
