@@ -46,6 +46,8 @@ dependencies:
   open_file: any
   fl_chart: ^0.66.0
   firebase_core: ^2.24.2
+  open_settings_plus: ^0.1.0
+  mikrotik_mndp: ^0.0.4
 
 dev_dependencies:
   flutter_test:

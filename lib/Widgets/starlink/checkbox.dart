@@ -74,8 +74,8 @@ class _CustomCheckboxTileState extends State<StarlinkCheckBox> {
             style: const TextStyle(
               color: StarlinkColors.white,
               fontWeight: FontWeight.bold,
-              fontFamily: 'DDIN-Bold',
-              fontSize: 16.0,
+              fontFamily: 'DDIN',
+              fontSize: 14.0,
             ),
           ),
           const SizedBox(width: 8),

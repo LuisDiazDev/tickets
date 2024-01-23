@@ -27,9 +27,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (r.statusCode == 200 || r.statusCode == 201) {
           var data = await provider.allProfiles();
           emit(state.copyWith(load: false, profiles: data));
-          alertCubit.showDialog("", "Se ha registrado un nuevo plan");
+          alertCubit.showInfoDialog(
+            AlertInfo(
+              "ÉXITO",
+              "Se ha registrado un nuevo plan",
+            ),
+          );
         } else {
-          alertCubit.showAlertInfo(title: "error", subtitle: r.body);
+          alertCubit.showInfoDialog(
+            AlertInfo(
+              "ERROR AL REGISTRAR UN NUEVO PLAN",
+              "Ha ocurrido un error al registrar un nuevo plan: ${r.body}"
+            ),
+          );
           emit(state.copyWith(load: false));
         }
       },
@@ -44,10 +54,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (r.statusCode == 200 || r.statusCode == 201) {
           var data = await provider.allProfiles();
           emit(state.copyWith(load: false, profiles: data));
-          alertCubit.showDialog("", "Se ha modificado un plan");
+          alertCubit.showInfoDialog(
+            AlertInfo(
+              "ÉXITO",
+              "Se ha actualizado un plan",
+            ),
+          );
         } else {
           emit(state.copyWith(load: false));
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("ERROR", r.body);
         }
       },
     );
@@ -59,9 +74,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var r = await provider.removeProfile(event.deletedProfile.id!);
         if (r.statusCode <= 205) {
           add(FetchData());
-          alertCubit.showDialog("", "Se ha eliminado un plan");
+          alertCubit.showErrorDialog("", "Se ha eliminado un plan");
         } else {
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("error", r.body);
         }
       },
     );

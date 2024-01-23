@@ -24,7 +24,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       : super(const HomeState()) {
     on<FetchData>(
       (event, emit) async {
-
         // if(sessionCubit.state.cfg!.password == "1234"){
         //   alertCubit.showAlertInfo(
         //     title: "Recomendacion",
@@ -34,16 +33,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         emit(state.copyWith(load: true));
         var profiles = (await provider.allProfiles())
-                .where((element) => element.metadata!.type! == "1").toList();
+            .where((element) => element.metadata!.type! == "1")
+            .toList();
         emit(state.copyWith(load: false, profiles: profiles));
       },
     );
     on<NewQr>(
       (event, emit) async {
         emit(state.copyWith(currentUser: event.qr));
-        alertCubit.showAlertInfo(
-          title: "Por favor seleccione un plan",
-          subtitle: "Clave: ${event.qr}",
+        alertCubit.showInfoDialog(
+          AlertInfo(
+            "Por favor seleccione un plan",
+            "Clave: ${event.qr}",
+          ),
         );
       },
     );
@@ -64,8 +66,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 configModel: sessionCubit.state.cfg!.copyWith(
                     bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
           } else {
-            alertCubit.showDialog(
-                "Error", "No se ha detectado ninguna impresora conectada");
+            alertCubit.showErrorDialog(
+                "ERROR", "No se ha detectado ninguna impresora");
             NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
             return;
           }
@@ -77,11 +79,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           r = await provider.newTicket(user, event.profile, event.duration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
-          alertCubit.showDialog("El usuario $user ya existe",
-              "Posiblemente el usuario ya este conectado");
+          alertCubit.showErrorDialog("USUARIO YA EXISTE",
+              "Posiblemente el usuario ya se encuentre registrado en el sistema");
           return;
         } catch (e) {
-          alertCubit.showDialog("Error", "Ha ocurrido un error");
+          alertCubit.showErrorDialog("ERROR",
+              "Ha ocurrido un error inesperado resgistrando el usuario");
           return;
         }
         if (r.statusCode == 200 || r.statusCode == 201) {
@@ -92,14 +95,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               price: event.price,
               duration: formatDuration(event.duration));
           if (state.currentUser == "") {
-            alertCubit.showAlertInfo(
-              title: "Imprimiendo",
-              subtitle: "Espere un momento",
-            );
+            alertCubit
+                .showInfoDialog(AlertInfo("IMPRIMIENDO", "Espere un momento"));
           }
         } else {
-          alertCubit.showAlertInfo(
-              title: "Error", subtitle: "Ah ocurrido un problema");
+          alertCubit.showInfoDialog(
+            AlertInfo("ERROR", "Ha ocurrido un problema: ${r.body}"),
+          );
         }
         if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
           PrinterService().printTicket(

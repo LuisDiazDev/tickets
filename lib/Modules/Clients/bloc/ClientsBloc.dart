@@ -17,58 +17,63 @@ class ClientsBloc extends Bloc<ClientsEvent, ClientsState> {
   final MkProvider provider;
   final SessionCubit sessionCubit;
 
-  ClientsBloc(this.alertCubit, {required this.provider,required this.sessionCubit})
+  ClientsBloc(this.alertCubit,
+      {required this.provider, required this.sessionCubit})
       : super(const ClientsState()) {
     on<FetchData>(
       (event, emit) async {
         emit(state.copyWith(load: event.load));
 
-        var data = await provider.allTickets();//todo: only users whit client plans
-        var profiles = (await provider.allProfiles()).where((element) => element.metadata!.type! == "2").toList();//todo: only users client plans
+        var data =
+            await provider.allTickets(); //todo: only users whit client plans
+        var profiles = (await provider.allProfiles())
+            .where((element) => element.metadata!.type! == "2")
+            .toList(); //todo: only users client plans
 
         List<TicketModel> clients = [];
 
-        for (var p in profiles){
+        for (var p in profiles) {
           var ts = data.where((t) => t.profile == p.fullName);
           clients.addAll(ts);
         }
 
-        clients.sort((a,b)=>b.id!.compareTo(a.id!));
+        clients.sort((a, b) => b.id!.compareTo(a.id!));
 
         emit(state.copyWith(load: false, clients: clients, profiles: profiles));
       },
     );
 
-
     on<NewProfile>(
-          (NewProfile event, Emitter<ClientsState> emit) async {
+      (NewProfile event, Emitter<ClientsState> emit) async {
         emit(state.copyWith(load: true));
         var r = await provider.newProfile(event.newProfile, event.duration);
         if (r.statusCode == 200 || r.statusCode == 201) {
           emit(state.copyWith(load: false));
           add(FetchData());
-          alertCubit.showDialog("", "Se ha registrado un nuevo plan");
+          alertCubit.showInfoDialog(AlertInfo(
+              "ÉXITO",
+              "Se ha registrado un nuevo plan",
+          ));
         } else {
-          alertCubit.showAlertInfo(title: "error", subtitle: r.body);
+          alertCubit.showInfoDialog(AlertInfo("error", r.body));
           emit(state.copyWith(load: false));
         }
       },
     );
 
     on<GenerateClient>(
-          (event, emit) async {
-
+      (event, emit) async {
         final user = event.name;
         late Response r;
         try {
           r = await provider.newTicket(user, event.profile, event.duration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
-          alertCubit.showDialog("El usuario $user ya existe",
-              "Posiblemente el usuario ya este conectado");
+          alertCubit.showErrorDialog("EL USUARIO YA EXISTE",
+              "En el sistema ya existe un usuario con el nombre $user");
           return;
         } catch (e) {
-          alertCubit.showDialog("Error", "Ha ocurrido un error");
+          alertCubit.showErrorDialog("ERROR", "Ha ocurrido un error inesperado resgistrando el usuario");
           return;
         }
         if (r.statusCode == 200 || r.statusCode == 201) {
@@ -81,70 +86,67 @@ class ClientsBloc extends Bloc<ClientsEvent, ClientsState> {
 
           add(FetchData());
         } else {
-          alertCubit.showAlertInfo(
-              title: "Error", subtitle: "Ah ocurrido un problema");
+          alertCubit.showErrorDialog("ERROR", "Ha ocurrido un problema: ${r.body}");
         }
-
       },
     );
 
     on<UpdateProfile>(
-          (UpdateProfile event, Emitter<ClientsState> emit) async {
+      (UpdateProfile event, Emitter<ClientsState> emit) async {
         emit(state.copyWith(load: true));
 
         var r = await provider.updateProfile(event.updateProfile);
 
         if (r.statusCode == 200 || r.statusCode == 201) {
-
           emit(state.copyWith(load: false));
           add(FetchData());
-          alertCubit.showDialog("", "Se ha modificado un plan");
+          alertCubit.showInfoDialog(AlertInfo("ÉXITO", "Se ha modificado un plan"));
         } else {
           emit(state.copyWith(load: false));
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("error", "Ha ocurrido un error inesperado modificando el plan: ${r.body}");
         }
       },
     );
 
     on<DeletedProfile>(
-          (event, emit) async {
+      (event, emit) async {
         emit(state.copyWith(load: true));
 
         var r = await provider.removeProfile(event.id);
         if (r.statusCode <= 205) {
           add(FetchData());
-          alertCubit.showDialog("", "Se ha eliminado un plan");
+          alertCubit.showInfoDialog(AlertInfo("PLAN ELIMINADO", "Se ha eliminado un plan"));
         } else {
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("ERROR ELIMINANDO PLAN", "Ha ocurrido un error inesperado eliminando el plan: ${r.body}");
         }
       },
     );
 
     on<DeletedClient>(
-          (event, emit) async {
+      (event, emit) async {
         emit(state.copyWith(load: true));
 
         var r = await provider.removeTicket(event.id);
         if (r.statusCode <= 205) {
           add(FetchData());
-          alertCubit.showDialog("", "Se ha eliminado un cliente");
+          alertCubit.showInfoDialog(AlertInfo("CLIENTE ELIMINADO", "Se ha eliminado un cliente"));
         } else {
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("ERROR ELIMINANDO CLIENTE", "Ha ocurrido un error inesperado eliminando el cliente: ${r.body}");
         }
       },
     );
 
     on<ResetClient>(
-          (event, emit) async {
+      (event, emit) async {
         emit(state.copyWith(load: true));
         var c = event.client;
         var response = await provider.reactiveUserHotspot(c);
         var r = await provider.resetClient(c.id!);
         if (response.statusCode <= 205 && r.statusCode <= 205) {
           add(FetchData());
-          alertCubit.showDialog("", "Se ha restablecido el cliente");
+          alertCubit.showInfoDialog(AlertInfo("CLIENTE RESETEADO", "Se ha reseteado un cliente"));
         } else {
-          alertCubit.showDialog("error", r.body);
+          alertCubit.showErrorDialog("ERROR RESETEANDO CLIENTE", "Ha ocurrido un error inesperado reseteando el cliente: ${r.body}");
         }
       },
     );

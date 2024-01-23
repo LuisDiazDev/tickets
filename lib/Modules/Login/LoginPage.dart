@@ -86,7 +86,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                               var fhost = await IpSearch().showDialogSearch();
                               if (fhost != null) {
                                 setState(() {
-                                  loginBloc.add(ChangeHost(fhost.ip));
+                                  loginBloc.add(ChangeHost(fhost.ipv4??""));
                                 });
                               }
                             }),
@@ -178,10 +178,14 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             Routes.showroom);
                       }
                     },
-                    child: StarlinkText(
-                      'STARTICKERA',
-                      size: 16,
-                      // color: ,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: StarlinkText(
+                        'STARTICKERA',
+                        size: 16,
+                        extraSeparation: true,
+                        // color: ,
+                      ),
                     ),
                   );
   }

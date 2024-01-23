@@ -17,13 +17,9 @@ import '../../Data/Provider/virtualTicketRepository.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/starlink/button_card.dart';
 import '../../Widgets/starlink/card.dart';
-import '../../Widgets/starlink/text_field.dart';
-import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
 
-import 'dart:convert';
-import 'dart:typed_data';
 
 class ShowRoomPage extends StatelessWidget {
   const ShowRoomPage({super.key});
@@ -56,12 +52,32 @@ class ShowRoomPage extends StatelessWidget {
                 //   Icons.error_outline,
                 //   color: Colors.white,
                 // ),
-                suffixIcon: const Icon(
+                suffixWidget: const Icon(
                  Icons.router_outlined,
                   color: Colors.white,
                 ),
               ),
               StarlinkProgressCircle(percent: 50),
+              const StarlinkCard(
+                  type: CardType.error,
+                  title: "Error",
+                  message: "Este es un error"
+              ),
+              const StarlinkCard(
+                  type: CardType.warning,
+                  title: "Warning",
+                  message: "Este es un warning"
+              ),
+              const StarlinkCard(
+                  type: CardType.info,
+                  title: "Info",
+                  message: "Este es un info"
+              ),
+              const StarlinkCard(
+                  type: CardType.success,
+                  title: "Success",
+                  message: "Este es un success"
+              ),
             ],
           )),
         ),

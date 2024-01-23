@@ -93,8 +93,9 @@ class _PrintSettingsState extends State<PrintSettings> {
     if (widget.sessionBloc.state.cfg?.bluetoothDevice == null) {
       return Column(
         children: [
+          const Gap(10),
           StarlinkCheckBox(
-            title: 'Desactivar Impresiones',
+            title: 'DESACTIVAR IMPRESIONES',
             initialState: widget.sessionBloc.state.cfg?.disablePrint ?? false,
             onChanged: (check) {
               setState(() {
@@ -238,7 +239,7 @@ class _PrintSettingsState extends State<PrintSettings> {
       await FlutterBluePlus.turnOn();
     }
 
-    loc2.Location location = new loc2.Location();
+    loc2.Location location = loc2.Location();
 
     bool ison = await location.serviceEnabled();
     if (!ison) {
@@ -256,7 +257,7 @@ class _PrintSettingsState extends State<PrintSettings> {
     if (wasApproved) {
       await showBluetoothDeviceListPopUp(context);
     } else {
-      widget.alertCubit.showDialog(
+      widget.alertCubit.showErrorDialog(
           "error", "recuerda mantener activo el bluetooth y el gps");
     }
   }
@@ -360,9 +361,10 @@ class _PrintSettingsState extends State<PrintSettings> {
 
   void onBluetoothDeviceSelected(ScanResult bluetooth, context) async {
     await FlutterBluePlus.stopScan();
-    widget.alertCubit.showAlertInfo(
-        title: "Aviso",
-        subtitle: "Conectando con el dispositivo ${bluetooth.device.advName}");
+    widget.alertCubit.showInfoDialog(AlertInfo(
+      "Aviso",
+      "Conectando con el dispositivo ${bluetooth.device.advName}",
+    ));
 
     widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
         configModel: widget.sessionBloc.state.cfg!
@@ -396,10 +398,8 @@ class _PrintSettingsState extends State<PrintSettings> {
             widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
                 configModel: widget.sessionBloc.state.cfg!
                     .copyWith(bluetoothCharacteristic: c)));
-            widget.alertCubit.showAlertInfo(
-                title: "Conectado",
-                subtitle:
-                    "Conectado a la impresora ${bluetooth.device.advName}");
+            widget.alertCubit.showInfoDialog(AlertInfo("CONECTADO",
+                "Conectado a la impresora ${bluetooth.device.advName}"));
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
@@ -409,10 +409,10 @@ class _PrintSettingsState extends State<PrintSettings> {
       }
     }
 
-    widget.alertCubit.showAlertInfo(
-        title: "Error",
-        subtitle:
-            "No se ha encontrado el servicio de impresion en este dispositivo");
+    widget.alertCubit.showInfoDialog(AlertInfo(
+      "Error",
+      "No se ha encontrado el servicio de impresion en este dispositivo",
+    ));
     Navigator.pop(context);
   }
 

@@ -103,15 +103,13 @@ class CustomTicketWidget extends StatelessWidget {
                         price: price);
                   }
 
-                  alertCubit.showAlertInfo(
-                    title: "Imprimiendo",
-                    subtitle: "Espere un momento",
+                  alertCubit.showInfoDialog(
+                    AlertInfo("Imprimiendo", "Espere un momento"),
                   );
                 } else {
                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-                  alertCubit.showAlertInfo(
-                    title: "Error",
-                    subtitle: "No hay impresora conectada",
+                  alertCubit.showInfoDialog(
+                    AlertInfo("Error", "No hay impresora conectada"),
                   );
                 }
               });
@@ -170,15 +168,13 @@ class CustomTicketWidget extends StatelessWidget {
                         price: price);
                   }
 
-                  alertCubit.showAlertInfo(
-                    title: "Imprimiendo",
-                    subtitle: "Espere un momento",
+                  alertCubit.showInfoDialog(
+                    AlertInfo("Imprimiendo", "Espere un momento"),
                   );
                 } else {
                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-                  alertCubit.showAlertInfo(
-                    title: "Error",
-                    subtitle: "No hay impresora conectada",
+                  alertCubit.showInfoDialog(
+                    AlertInfo("Error", "No hay impresora conectada"),
                   );
                 }
               },

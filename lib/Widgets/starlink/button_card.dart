@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import '../../Core/Values/Colors.dart';
 
 // Define un enum con los tipos de tarjetas
-enum CardType { error, warning, info, success }
+enum ButtonCardType { error, warning, info, success }
 
 // Define un mapa para los colores asociados a cada tipo de tarjeta
-const Map<CardType, Color> _cardColor = {
-  CardType.error: Colors.red,
-  CardType.warning: Colors.orange,
-  CardType.info: Colors.blue,
-  CardType.success: Colors.green,
+const Map<ButtonCardType, Color> _cardColor = {
+  ButtonCardType.error: Colors.red,
+  ButtonCardType.warning: Colors.orange,
+  ButtonCardType.info: Colors.blue,
+  ButtonCardType.success: Colors.green,
 };
 
 // Define un mapa para los iconos asociados a cada tipo de tarjeta
-const Map<CardType, IconData> _cardIcon = {
-  CardType.error: Icons.error_outline,
-  CardType.warning: Icons.warning_amber_outlined,
-  CardType.info: Icons.info_outline,
-  CardType.success: Icons.check_circle_outline,
+const Map<ButtonCardType, IconData> _cardIcon = {
+  ButtonCardType.error: Icons.error_outline,
+  ButtonCardType.warning: Icons.warning_amber_outlined,
+  ButtonCardType.info: Icons.info_outline,
+  ButtonCardType.success: Icons.check_circle_outline,
 };
 
 
@@ -27,7 +27,7 @@ class StarlinkButtonCard extends StatelessWidget {
   final String? subtitle;
   final Function() onPressed;
   final Icon? prefixIcon;
-  final Icon? suffixIcon;
+  final Widget? suffixWidget;
 
   const StarlinkButtonCard({
     super.key,
@@ -35,7 +35,7 @@ class StarlinkButtonCard extends StatelessWidget {
     required this.onPressed,
     this.subtitle,
     this.prefixIcon,
-    this.suffixIcon,
+    this.suffixWidget,
   });
 
   @override
@@ -67,13 +67,19 @@ class StarlinkButtonCard extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                suffixIcon ?? Container(),
-                const SizedBox(width: 8),
-                Icon(
+                suffixWidget ?? Container(),
+                Visibility(visible: suffixWidget == null, child: const SizedBox(width: 8)),
+                Visibility(visible: suffixWidget == null, child: Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.white.withAlpha(200),
                   size: 18,
-                ),
+                )),
+                Visibility(visible: suffixWidget != null, child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white.withAlpha(200),
+                  size: 10,
+                )),
+
               ],
             )
         ),

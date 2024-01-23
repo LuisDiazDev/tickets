@@ -8,7 +8,7 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..connectionTimeout = const Duration(milliseconds: 1500)
+      ..connectionTimeout = const Duration(milliseconds: 5000)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
 
@@ -113,7 +113,8 @@ class RestApiProvider {
             'Content-Type': 'application/json'
           });
     } catch (e) {
-      alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+      alertCubit?.showInfoDialog(AlertInfo(
+          "ERROR DE COMUNICACIÓN","Error comunicandose con el mikrotik: $e"));
       return http.Response("error", 500);
     }
   }

@@ -693,6 +693,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  mikrotik_mndp:
+    dependency: "direct main"
+    description:
+      name: mikrotik_mndp
+      sha256: "74b9636fd1195e05b998567e3b724a7b3da7d76f95b32b60682676982db2a2ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   mime:
     dependency: transitive
     description:
@@ -757,6 +765,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.2"
+  open_settings_plus:
+    dependency: "direct main"
+    description:
+      name: open_settings_plus
+      sha256: "2283f214b88a168320ff6c230e95b1400cae49d5118883f2c2a950cc8b6c27e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   package_config:
     dependency: transitive
     description:
