@@ -63,13 +63,13 @@ class DrawerCustom extends StatelessWidget {
               ),
             ],
           ),
-          TileDrawer(
-            icon: EvaIcons.bookOpen,
-            title: "REPORTES",
-            onTap: (){
-              NavigatorService.pushNamedAndRemoveUntil(Routes.report);
-            },
-          ),
+          // TileDrawer(
+          //   icon: EvaIcons.bookOpen,
+          //   title: "REPORTES",
+          //   onTap: (){
+          //     NavigatorService.pushNamedAndRemoveUntil(Routes.report);
+          //   },
+          // ),
           TileDrawer(
             icon: EvaIcons.pricetags,
             title: "services_drawer".tr,

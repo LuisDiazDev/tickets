@@ -9,6 +9,7 @@ const Map<CardType, Color> _cardColor = {
   CardType.warning: Color.fromARGB(100, 120, 90, 36),
   CardType.info: Color.fromARGB(100, 0, 60, 120),
   CardType.success: Color.fromARGB(100, 0, 120, 0),
+  CardType.load: Color.fromARGB(100, 0, 106, 120),
 };
 
 const Map<CardType, Color> _cardDecorationColor = {
@@ -16,6 +17,7 @@ const Map<CardType, Color> _cardDecorationColor = {
   CardType.warning: Color.fromARGB(200, 210, 166, 51),
   CardType.info: Color.fromARGB(200, 0, 122, 255),
   CardType.success: Color.fromARGB(150, 0, 255, 0),
+  CardType.load: Color.fromARGB(100, 0, 230, 255),
 };
 
 const Map<CardType, Color> _textColor = {
@@ -23,6 +25,7 @@ const Map<CardType, Color> _textColor = {
   CardType.warning: Color.fromARGB(255, 255, 255, 240),
   CardType.info: Color.fromARGB(255, 245, 245, 255),
   CardType.success: Color.fromARGB(255, 240, 255, 240),
+  CardType.load: Color.fromARGB(255, 240, 255, 240),
 };
 
 // Define un mapa para los iconos asociados a cada tipo de tarjeta

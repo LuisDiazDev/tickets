@@ -210,7 +210,7 @@ packages:
     source: hosted
     version: "0.7.10"
   device_info_plus:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: device_info_plus
       sha256: "0042cb3b2a76413ea5f8a2b40cec2a33e01d0c937e91f0f7c211fde4f7739ba6"
@@ -353,22 +353,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.3+16"
-  firebase_dynamic_links:
-    dependency: "direct main"
-    description:
-      name: firebase_dynamic_links
-      sha256: b0522806658428803aeb5e7be0b22a29acb8f8697a8909c36965feaeb1f655bd
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.4.8"
-  firebase_dynamic_links_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_dynamic_links_platform_interface
-      sha256: "8b90384d8f85c7211f2b5e2d9d5ae98bd08091f116ef2bd1a74b33574efacc61"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.6+16"
   fl_chart:
     dependency: "direct main"
     description:
@@ -630,7 +614,7 @@ packages:
     source: hosted
     version: "0.2.1+1"
   intl:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: intl
       sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
