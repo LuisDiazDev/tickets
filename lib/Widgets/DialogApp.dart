@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,8 @@ class DialogWidget {
     required String title,
     required String content,
     required BuildContext context,
-    String titleAction = "Ok",
+    Function? onTap,
+    String titleAction = "OK",
   }) {
     return AlertDialog(
       title: StarlinkText(
@@ -16,29 +18,27 @@ class DialogWidget {
         size: 22,
         isBold: true,
       ),
-      content: Text(content,
-          style: const TextStyle(
-              fontFamily: 'poppins_regular',
-              fontSize: 18,
-              color: ColorsApp.secondary,
-              fontWeight: FontWeight.w400)),
+      content: StarlinkText(content),
       titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       contentPadding:
           const EdgeInsets.only(top: 0, bottom: 10, left: 20, right: 20),
-      backgroundColor: ColorsApp.primary,
+      backgroundColor: StarlinkColors.darkGray,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      actionsPadding: const EdgeInsets.only(
-        right: 20,
-      ),
+      actionsPadding: const EdgeInsets.only(top: 30,bottom: 10, right: 20, left: 20),
       actionsAlignment: MainAxisAlignment.center,
       actions: [
-        ElevatedButton(
+        StarlinkButton(
             onPressed: () {
-              Navigator.pop(context);
+              if (onTap != null) {
+                onTap();
+              }else{
+                Navigator.pop(context);
+              }
             },
-            child: Text(titleAction))
+            text: titleAction.toUpperCase(),
+        ),
       ],
     );
   }

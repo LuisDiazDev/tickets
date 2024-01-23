@@ -96,8 +96,9 @@ class _PrintSettingsState extends State<PrintSettings> {
     if (widget.sessionBloc.state.cfg?.bluetoothDevice == null) {
       return Column(
         children: [
+          const Gap(10),
           StarlinkCheckBox(
-            title: 'Desactivar Impresiones',
+            title: 'DESACTIVAR IMPRESIONES',
             initialState: widget.sessionBloc.state.cfg?.disablePrint ?? false,
             onChanged: (check) {
               setState(() {
@@ -108,7 +109,6 @@ class _PrintSettingsState extends State<PrintSettings> {
               });
             },
           ),
-
           Visibility(
             visible: !(widget.sessionBloc.state.cfg?.disablePrint ?? true),
             child: Column(
@@ -252,7 +252,7 @@ class _PrintSettingsState extends State<PrintSettings> {
       await FlutterBluePlus.turnOn();
     }
 
-    loc2.Location location = new loc2.Location();
+    loc2.Location location = loc2.Location();
 
     bool ison = await location.serviceEnabled();
     if (!ison) {
@@ -270,7 +270,7 @@ class _PrintSettingsState extends State<PrintSettings> {
     if (wasApproved) {
       await showBluetoothDeviceListPopUp(context);
     } else {
-      widget.alertCubit.showDialog(
+      widget.alertCubit.showErrorDialog(
           "error", "recuerda mantener activo el bluetooth y el gps");
     }
   }
@@ -381,9 +381,10 @@ class _PrintSettingsState extends State<PrintSettings> {
       setState(() {
         _connect = !_connect;
       });
-      widget.alertCubit.showAlertInfo(
-          title: "Aviso",
-          subtitle: "Conectando con el dispositivo ${bluetooth.device.advName}");
+    widget.alertCubit.showInfoDialog(AlertInfo(
+      "Aviso",
+      "Conectando con el dispositivo ${bluetooth.device.advName}",
+    ));
 
       widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
           configModel: widget.sessionBloc.state.cfg!
@@ -414,37 +415,36 @@ class _PrintSettingsState extends State<PrintSettings> {
           continue;
         }
 
-        for (String characteristic in validBluetoothCharacteristics) {
-          for (BluetoothCharacteristic c in service.characteristics) {
-            if (c.characteristicUuid.toString() == characteristic) {
-              widget.sessionBloc.state.cfg!.bluetoothCharacteristic = c;
-              log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
-              widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-                  configModel: widget.sessionBloc.state.cfg!
-                      .copyWith(bluetoothCharacteristic: c)));
-
-              widget.alertCubit.showAlertInfo(
-                  title: "Conectado",
-                  subtitle:
-                  "Conectado a la impresora ${bluetooth.device.advName}");
-              setState(() {
-                _connect=!_connect;
-              });
-              return;
-            }
+      for (String characteristic in validBluetoothCharacteristics) {
+        for (BluetoothCharacteristic c in service.characteristics) {
+          if (c.characteristicUuid.toString() == characteristic) {
+            widget.sessionBloc.state.cfg!.bluetoothCharacteristic = c;
+            log("Se ha encontrado el servicio de impresion: ${c.serviceUuid.toString()}");
+            widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
+                configModel: widget.sessionBloc.state.cfg!
+                    .copyWith(bluetoothCharacteristic: c)));
+            widget.alertCubit.showInfoDialog(AlertInfo("CONECTADO",
+                "Conectado a la impresora ${bluetooth.device.advName}"));
+            setState(() {
+              _connect=!_connect;
+            });
+            return;
           }
         }
       }
+    }
 
-      widget.alertCubit.showAlertInfo(
-          title: "Error",
-          subtitle:
-          "No se ha encontrado el servicio de impresion en este dispositivo");
+    widget.alertCubit.showInfoDialog(AlertInfo(
+      "Error",
+      "No se ha encontrado el servicio de impresion en este dispositivo",
+    ));
+
+
     }catch(e){
-      widget.alertCubit.showAlertInfo(
-          title: "Error",
-          subtitle:
-          "Ah ocurrido un error intentando conectar, intentelo de nuevo...");
+      widget.alertCubit.showInfoDialog(AlertInfo(
+        "Error",
+        "No se ha encontrado el servicio de impresion en este dispositivo",
+      ));
     }finally{
       setState(() {
         _connect = false;

@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:open_settings_plus/android/open_settings_plus_android.dart';
+import 'package:open_settings_plus/ios/open_settings_plus_ios.dart';
 import 'Core/Theme/Theme.dart';
 import 'Core/Values/Enums.dart';
 import 'Core/localization/app_localization.dart';
@@ -17,8 +19,12 @@ import 'Modules/Session/SessionCubit.dart';
 import 'Routes/Route.dart';
 import 'Widgets/DialogApp.dart';
 import 'Widgets/Snakbar.dart';
+import 'Widgets/starlink/card.dart';
 
 class App extends StatelessWidget {
+  static const settingsiOS = OpenSettingsPlusIOS();
+  static const settingsAndroid = OpenSettingsPlusAndroid();
+
   const App({Key? key}) : super(key: key);
 
   @override
@@ -63,40 +69,39 @@ class _MyAppState extends State<MyApp> {
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       // Got a new connectivity status!
-      if(result != ConnectivityResult.wifi){
-        alertCubit.showDialog(
-            "Sin Conexion", "no se encuentra conectado a ninguna red wifi");
-        sessionCubit.changeState(sessionCubit.state.copyWith(
-          wifi: false
-        ));
-      }else{
-        sessionCubit.changeState(sessionCubit.state.copyWith(
-          wifi: true
-        ));
+      if (result != ConnectivityResult.wifi) {
+        alertCubit.showErrorDialog(
+            "SIN CONEXIÓN", "No se encuentra conectado a ninguna red wifi",
+            onTap: () {
+          App.settingsAndroid.wifi();
+        },
+          titleAction: "ABRIR AJUSTES DE WIFI"
+        );
+        sessionCubit.changeState(sessionCubit.state.copyWith(wifi: false));
+      } else {
+        sessionCubit.changeState(sessionCubit.state.copyWith(wifi: true));
       }
     });
 
-    NetworkInfo().getWifiIP().then((w){
-      sessionCubit.changeState(sessionCubit.state.copyWith(
-          ip:w
-      ));
+    NetworkInfo().getWifiIP().then((w) {
+      sessionCubit.changeState(sessionCubit.state.copyWith(ip: w));
     });
 
-    Connectivity().checkConnectivity().then((result){
-      if(result != ConnectivityResult.wifi){
-        alertCubit.showDialog(
-            "Sin Conexion", "no se encuentra conectado a ninguna red wifi");
-        sessionCubit.changeState(sessionCubit.state.copyWith(
-            wifi: false
-        ));
-      }else{
-        NetworkInfo().getWifiIP().then((w){
-          sessionCubit.changeState(sessionCubit.state.copyWith(
-              wifi: true,
-              ip:w
-          ));
+    Connectivity().checkConnectivity().then((result) {
+      if (result != ConnectivityResult.wifi) {
+        alertCubit.showErrorDialog(
+            "SIN CONEXIÓN", "No se encuentra conectado a ninguna red wifi",
+            onTap: () {
+          App.settingsAndroid.wifi();
+        },
+          titleAction: "ABRIR AJUSTES DE WIFI"
+        );
+        sessionCubit.changeState(sessionCubit.state.copyWith(wifi: false));
+      } else {
+        NetworkInfo().getWifiIP().then((w) {
+          sessionCubit
+              .changeState(sessionCubit.state.copyWith(wifi: true, ip: w));
         });
-
       }
     });
     super.initState();
@@ -132,15 +137,19 @@ class _MyAppState extends State<MyApp> {
         listeners: [
           BlocListener<AlertCubit, AlertState>(
             listener: (context, state) {
-              if(state is AlertDialogEvent){
+              if (state is ErrorDialogEvent) {
                 showDialog(
                     barrierDismissible: false,
-                    context: NavigatorService.navigatorKey.currentState!.context,
+                    context:
+                        NavigatorService.navigatorKey.currentState!.context,
                     builder: (context) => DialogWidget.dialogInfo(
-                        title: state.title,
-                        content: state.message,
-                        context:  NavigatorService.navigatorKey.currentState!.context,
-                    ));
+                          title: state.title,
+                          content: state.message,
+                          context: NavigatorService
+                              .navigatorKey.currentState!.context,
+                          onTap: state.onTap,
+                          titleAction: state.titleAction??"OK",
+                        ));
               }
               if (state is AlertAction) {
                 ScaffoldMessenger.of(context)
@@ -151,6 +160,7 @@ class _MyAppState extends State<MyApp> {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   },
                   titleAction: 'Action',
+                  type: CardType.error,
                 ));
               }
               if (state is AlertInfo) {
@@ -164,6 +174,7 @@ class _MyAppState extends State<MyApp> {
                   hideSnackBar: () {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   },
+                  type: CardType.info,
                 ));
               }
             },

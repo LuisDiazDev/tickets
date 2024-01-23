@@ -79,10 +79,10 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       var r = await provider.removeTicket(event.id);
       if(r.statusCode <= 205 ){
         add(FetchData(load: false));
-        alertCubit.showDialog("", "Se ha eliminado un ticket");
+        alertCubit.showInfoDialog(AlertInfo("ÉXITO", "Se ha eliminado el ticket"));
       } else{
         add(FetchData(load: false));
-        alertCubit.showDialog("error", r.body);
+        alertCubit.showErrorDialog("ERROR", "Ha ocurrido un error eliminando el ticket: ${r.body}");
       }
 
     });

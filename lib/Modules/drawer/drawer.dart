@@ -29,17 +29,11 @@ class DrawerCustom extends StatelessWidget {
               NavigatorService.pushNamedAndRemoveUntil(Routes.home);
             },
           ),
-          TileDrawer(
-            icon: EvaIcons.list,
-            title: "list_tickets_drawer".tr,
-            onTap: (){
-              NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
-            },
-          ),
           ExpansionTile(
               leading: Icon(EvaIcons.peopleOutline, color: StarlinkColors.white),
+              backgroundColor: StarlinkColors.darkGray,
               title: StarlinkText(
-                "Clientes",
+                "CLIENTES",
                 size: 22,
                 isBold: true,
               ),
@@ -48,23 +42,30 @@ class DrawerCustom extends StatelessWidget {
             children: [
               TileDrawer(
                 icon: EvaIcons.personAddOutline,
-                title: "Lista de Clientes",
+                title: "LISTA DE CLIENTES",
                 onTap: (){
                   NavigatorService.pushNamedAndRemoveUntil(Routes.clientList);
                 },
               ),
               TileDrawer(
                 icon: EvaIcons.pricetagsOutline,
-                title: "Planes Clientes",
+                title: "PLANES CLIENTES",
                 onTap: (){
                   NavigatorService.pushNamedAndRemoveUntil(Routes.clientProfile);
+                },
+              ),
+              TileDrawer(
+                icon: EvaIcons.list,
+                title: "MIS TICKETS",
+                onTap: (){
+                  NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
                 },
               ),
             ],
           ),
           TileDrawer(
             icon: EvaIcons.bookOpen,
-            title: "Reportes",
+            title: "REPORTES",
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.report);
             },

@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 
 part 'AlertState.dart';
 
+
+
 class AlertCubit extends Cubit<AlertState> {
   AlertCubit() : super(AlertInitial());
 
@@ -13,18 +15,17 @@ class AlertCubit extends Cubit<AlertState> {
     ));
   }
 
-  void showDialog(String title, String message) {
-    emit(AlertDialogEvent(
+  void showErrorDialog(String title, String message,
+      {Function? onTap, String? titleAction}) {
+    emit(ErrorDialogEvent(
       title,
       message,
+      onTap,
+      titleAction,
     ));
-
   }
 
-  void showAlertInfo({required String title,required String subtitle}) {
-    emit(AlertInfo(
-      title,
-      subtitle,
-    ));
+  void showInfoDialog(AlertInfo alertInfo) {
+    emit(alertInfo);
   }
 }

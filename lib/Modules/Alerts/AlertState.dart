@@ -20,9 +20,10 @@ class AlertInfo extends AlertState {
 }
 
 
-class AlertDialogEvent extends AlertState {
+class ErrorDialogEvent extends AlertState {
   final String title;
   final String message;
-
-  AlertDialogEvent(this.title, this.message);
+  final Function? onTap;
+  final String? titleAction;
+  ErrorDialogEvent(this.title, this.message, this.onTap, this.titleAction);
 }

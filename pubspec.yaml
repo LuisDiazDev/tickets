@@ -37,6 +37,7 @@ dependencies:
   ftpconnect: ^2.0.5
   permission_handler: ^11.0.1
   network_info_plus: ^4.1.0
+  device_info: ^2.0.3
   flutter_blue_plus: ^1.31.0
   flutter_esc_pos_utils: ^1.0.0
   location: ^5.0.3
@@ -45,10 +46,8 @@ dependencies:
   open_file: any
   fl_chart: ^0.66.0
   firebase_core: ^2.24.2
-  firebase_dynamic_links: ^5.4.8
-  device_info_plus: ^9.0.2
-  firebase_database: ^10.4.0
-  intl: ^0.18.1
+  open_settings_plus: ^0.1.0
+  mikrotik_mndp: ^0.0.4
 
 dev_dependencies:
   flutter_test:

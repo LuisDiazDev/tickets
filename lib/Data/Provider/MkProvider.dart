@@ -5,6 +5,9 @@ import 'dart:developer';
 import 'package:StarTickera/models/scheduler_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:mikrotik_mndp/decoder.dart';
+import 'package:mikrotik_mndp/listener.dart';
+import 'package:mikrotik_mndp/product_info_provider.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../models/active_user_models.dart';
@@ -27,10 +30,20 @@ class UserAlreadyExist implements Exception {
 }
 
 class FoundMikrotik {
-  final String ip;
   final bool isConnected;
+  String? ipv4;
+  String? ipv6;
+  String? mac;
+  String? identity;
+  String? softwareVersion;
+  Duration? uptime;
+  String? boardName;
+  String? boardImageUrl;
+  String? interfaceName;
+  String? name;
+  String? model;
 
-  FoundMikrotik(this.ip, this.isConnected);
+  FoundMikrotik(this.isConnected);
 }
 
 class MkProvider {
@@ -210,7 +223,8 @@ class MkProvider {
     });
   }
 
-  Future<Response> changePass(String oldPass, String newPass, String verifyPass) async {
+  Future<Response> changePass(
+      String oldPass, String newPass, String verifyPass) async {
     return await restApi.post(url: "/password", body: {
       "new-password": newPass,
       "confirm-new-password": verifyPass,
@@ -235,9 +249,8 @@ class MkProvider {
   }
 
   Future<Response> resetClient(String id) async {
-    return await restApi.post(url: "/ip/hotspot/user/reset-counters",body: {
-      ".id":id
-    });
+    return await restApi
+        .post(url: "/ip/hotspot/user/reset-counters", body: {".id": id});
   }
 
   Future<Response> newProfile(ProfileModel profile, String duration) async {
@@ -294,48 +307,78 @@ class MkProvider {
     });
   }
 
+  Stream<FoundMikrotik> findMikrotiksInLocalNetwork(
+      ValueNotifier<int> progressNotifier,
+      {int timeoutSecs = 5}) {
+    var poolStream = _findMikrotiksInLocalNetworkByPolling(
+        progressNotifier,
+        timeoutSecs: timeoutSecs);
 
+    var productProvider = MikrotikProductInfoProviderImpl();
+    var decoder = MndpMessageDecoderImpl(productProvider);
+    MNDPListener mndpListener = MNDPListener(decoder);
+    var mnpdStream = mndpListener.listen();
 
-  Future<List<FoundMikrotik?>> findMikrotiksInLocalNetwork(
+    var joinController = StreamController<FoundMikrotik>();
+
+    poolStream?.listen((event) {
+      joinController.add(event);
+    });
+    mnpdStream.listen((event) {
+      var m = FoundMikrotik(false);
+      m.ipv4 = event.unicastIpv4Address;
+      m.ipv6 = event.unicastIpv6Address;
+      m.mac = event.macAddress;
+      m.boardName = event.boardName;
+      m.boardImageUrl = event.productInfo?.imageUrl;
+      m.name = event.productInfo?.name;
+      joinController.add(m);
+    });
+    return joinController.stream;
+  }
+
+  Stream<FoundMikrotik>? _findMikrotiksInLocalNetworkByPolling(
       ValueNotifier<int> count,
-      {int timeoutSecs = 5}) async {
-    String? localIp = await NetworkInfo().getWifiIP();
-    if (localIp == null) {
-      log("No se pudo obtener la ip local");
-      return [];
-    }
-    List<FoundMikrotik?> results = [];
-    List<Future<Response>> promises = [];
-    String ipRange = _getIpRange(localIp);
-    for (int i = 1; i < 255; i++) {
-      var ip = "$ipRange.$i";
-      var p = restApi.get(
-        host: ip,
-        url: "/system/routerboard",
-        timeoutSecs: timeoutSecs,
-      );
-      promises.add(p);
-    }
-    var responses = await Future.wait(promises);
-    var internalCount = 0;
-    for (var e in responses) {
-      internalCount++;
-      if (internalCount % 10 == 0 || internalCount == 255) {
-        count.value = internalCount;
+      {int timeoutSecs = 5}) {
+    StreamController<FoundMikrotik> controller = StreamController();
+    NetworkInfo().getWifiIP().then((String? localIp) {
+      if (localIp == null) {
+        log("No se pudo obtener la ip local");
+        return null;
       }
-      if (e.statusCode < 500) {
-        var body = e.body;
-        // if the mikrotik is found, the body contains "Bad Request"
-        if (body.contains("Unauthorized") || body.contains("board-name") || body.contains("Bad Request")) {
-          count.value = 255;
-          var url = e.request!.url.host;
-          var isConnected = body.contains("board-name");
-          var m = FoundMikrotik(url, isConnected);
-          results.add(m);
-        }
+      String ipRange = _getIpRange(localIp);
+      var internalCount = 0;
+      for (int i = 1; i < 255; i++) {
+        var ip = "$ipRange.$i";
+        restApi
+            .get(
+          host: ip,
+          url: "/system/routerboard",
+          timeoutSecs: timeoutSecs,
+        )
+            .then((e) {
+          internalCount++;
+          if (internalCount % 10 == 0 || internalCount == 255) {
+            count.value = internalCount;
+          }
+          if (e.statusCode < 500) {
+            var body = e.body;
+            // if the mikrotik is found, the body contains "Bad Request"
+            if (body.contains("Unauthorized") ||
+                body.contains("board-name") ||
+                body.contains("Bad Request")) {
+              count.value = 255;
+              var ipv4 = e.request!.url.host;
+              var isConnected = body.contains("board-name");
+              var m = FoundMikrotik(isConnected);
+              m.ipv4 = ipv4;
+              controller.add(m);
+            }
+          }
+        });
       }
-    }
-    return results;
+    });
+    return controller.stream;
   }
 
   String _getIpRange(String ip) {
