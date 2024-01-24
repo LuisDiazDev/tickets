@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import '../../../../Data/Provider/MkProvider.dart';
 import '../../../../Data/Services/navigator_service.dart';
 import '../../../../Widgets/starlink/button_card.dart';
+import '../../../../Widgets/starlink/colors.dart';
 import '../../../../Widgets/starlink/progress_circle.dart';
 import '../../../../Widgets/starlink/text_style.dart';
 

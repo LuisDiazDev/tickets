@@ -14,9 +14,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AlertCubit alertCubit;
   final SessionCubit sessionCubit;
 
-  LoginBloc(this.alertCubit,this.sessionCubit) : super(const LoginState()){
+  LoginBloc(this.alertCubit, this.sessionCubit) : super(const LoginState()) {
     on<ChangeUser>(
-          (event, emit) {
+      (event, emit) {
         final newUser = TextInput.dirty(value: event.user);
         emit(
           state.copyWith(
@@ -26,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       },
     );
     on<ChangePassword>(
-          (event, emit) {
+      (event, emit) {
         final newPassword = TextInput.dirty(value: event.password);
         emit(
           state.copyWith(
@@ -37,8 +37,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     on<LogIn>(
-          (event, emit) async {
-
+      (event, emit) async {
         emit(state.copyWith(
           isLoading: true,
         ));
@@ -50,26 +49,46 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             isLoading: false,
           ));
 
-          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          final credential =
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: event.user,
             password: event.password,
           );
 
           // Get current device id and saved it to database
-          final ref = FirebaseDatabase.instance.ref("users/${credential.user!.uid}");
+          final ref =
+              FirebaseDatabase.instance.ref("users/${credential.user!.uid}");
           ref.set({"id": sessionCubit.state.uuid});
 
           // ignore: use_build_context_synchronously
-          sessionCubit.changeState(sessionCubit.state.copyWith(firebaseID: credential.user!.uid,sessionStatus: SessionStatus.mikrotik));
+          sessionCubit.changeState(sessionCubit.state.copyWith(
+              firebaseID: credential.user!.uid,
+              sessionStatus: SessionStatus.mikrotik));
         } on FirebaseAuthException catch (e) {
           if (e.code == 'user-not-found') {
-            alertCubit.showErrorDialog("ERROR AL INICIAR SESIÓN", "No se ha encontrado el correo ingresado");
+            alertCubit.showDialog(ShowDialogEvent(
+              title: "ERROR AL INICIAR SESIÓN",
+              message: "No se ha encontrado el correo ingresado",
+              type: AlertType.error,
+            ));
           } else if (e.code == 'wrong-password') {
-            alertCubit.showErrorDialog("ERROR AL INICIAR SESIÓN", "Contraseña incorrecta");
+            alertCubit.showDialog(
+              ShowDialogEvent(
+                title: "ERROR AL INICIAR SESIÓN",
+                message: "Contraseña incorrecta",
+                type: AlertType.error,
+              ),
+            );
           }
         } catch (e) {
-          alertCubit.showErrorDialog("ERROR AL INICIAR SESIÓN", "Verifique los datos ingresados");
-        }finally{
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR AL INICIAR SESIÓN",
+              message: "Ocurrió un error al iniciar sesión",
+              type: AlertType.error,
+            ),
+          );
+        } finally {
           ProgressDialogUtils.hideProgressDialog();
           emit(state.copyWith(
             isLoading: false,
@@ -78,5 +97,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       },
     );
   }
-
 }
