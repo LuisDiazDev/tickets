@@ -16,15 +16,6 @@ import 'Data/Provider/restApiProvider.dart';
 import 'MyApp.dart';
 
 Future<void> main() async {
-  await SentryFlutter.init(
-        (options) {
-      options.dsn = 'https://d2ec9772122589b058b8bfb4460904e7@o878781.ingest.sentry.io/4506621199319040';
-      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-      // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(MyApp()),
-  );
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   await Hive.initFlutter();
@@ -36,7 +27,16 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(const App());
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_)async{
+    await SentryFlutter.init(
+          (options) {
+        options.dsn = 'https://d2ec9772122589b058b8bfb4460904e7@o878781.ingest.sentry.io/4506621199319040';
+        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+        // We recommend adjusting this value in production.
+        options.tracesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(MyApp()),
+    );
   });
 }
