@@ -45,14 +45,14 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: StarlinkButtonGroup(
-              labels: ["Cards", "Dialogs", "Inputs"],
+              labels: ["Inputs","Cards", "Dialogs", ],
               onChanged: (index) {
                 log("Index: $index");
               },
               widgets: [
+                buildInputs(context),
                 buildCards(),
                 buildDialogs(context),
-                buildInputs(context),
               ],
             )),
       );
@@ -64,10 +64,10 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
+        const Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
-            child: const StarlinkProgressCircle(percent: 50),
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            child: StarlinkProgressCircle(percent: 50),
           ),
         ),
         Padding(
@@ -82,19 +82,19 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
                   type: AlertType.success,
                   metadata: null,
                   actions: [
-                    StarlinkButton(
+                    StarlinkDialogAction(
                       text: "CANCEL",
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      type: ButtonType.secondary,
+                      type: ActionType.destructive,
                     ),
-                    StarlinkButton(
+                    StarlinkDialogAction(
                       text: "OK",
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      type: ButtonType.primary,
+                      type: ActionType.info,
                     ),
                   ],
                   error: Exception("Error"),

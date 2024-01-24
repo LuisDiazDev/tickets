@@ -154,26 +154,22 @@ class _MyAppState extends State<MyApp> {
           BlocListener<AlertCubit, AlertState>(
             listener: (context, state) {
               if (state is ShowDialogEvent) {
-                showDialog(
-                    barrierDismissible: false,
-                    context:
-                        NavigatorService.navigatorKey.currentState!.context,
-                    builder: (context) => StarlinkDialog.show(
-                          context: context,
-                          title: state.title,
-                          message: state.message,
-                          type: state.type,
-                          onTap: () {
-                            if (state.onTap != null) {
-                              state.onTap!();
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          },
-                          actions: state.actions,
-                          error: state.error,
-                          metadata: state.metadata,
-                        ));
+                StarlinkDialog.show(
+                  context: NavigatorService.navigatorKey.currentState!.context,
+                  title: state.title,
+                  message: state.message,
+                  type: state.type,
+                  onTap: () {
+                    if (state.onTap != null) {
+                      state.onTap!();
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  actions: state.actions,
+                  error: state.error,
+                  metadata: state.metadata,
+                );
               }
               // if (state is AlertAction) {
               //   ScaffoldMessenger.of(context)
