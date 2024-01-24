@@ -24,7 +24,7 @@ class DatabaseFirebase {
   Future<bool> checkUUID()async{
     try{
       final ref = FirebaseDatabase.instance.ref();
-      final snapshot = await ref.child('users/${sessionCubit?.state.uuid}').get();
+      final snapshot = await ref.child('users/${sessionCubit?.state.firebaseID}').get();
       if (snapshot.exists) {
         return true;
       } else {
@@ -37,7 +37,7 @@ class DatabaseFirebase {
 
   Future getLicense()async{
     final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('users/${sessionCubit?.state.uuid}').get();
+    final snapshot = await ref.child('users/${sessionCubit?.state.firebaseID}').get();
     if (snapshot.exists) {
       return snapshot.value;
     } else {
@@ -48,7 +48,7 @@ class DatabaseFirebase {
   Future<bool> updateLicense(String license)async{
     try{
       await FirebaseDatabase.instance
-          .ref('users/${sessionCubit?.state.uuid}/license')
+          .ref('users/${sessionCubit?.state.firebaseID}/license')
           .set(license);
       return true;
     }catch (e){
@@ -59,7 +59,7 @@ class DatabaseFirebase {
   Future<bool> updateName(String name)async{
     try{
       await FirebaseDatabase.instance
-          .ref('users/${sessionCubit?.state.uuid}/name')
+          .ref('users/${sessionCubit?.state.firebaseID}/name')
           .set(name);
       return true;
     }catch (e){
@@ -69,7 +69,7 @@ class DatabaseFirebase {
 
   Future getName()async{
     final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('users/${sessionCubit?.state.uuid}/name').get();
+    final snapshot = await ref.child('users/${sessionCubit?.state.firebaseID}/name').get();
     if (snapshot.exists) {
       return snapshot.value;
     } else {
@@ -97,7 +97,7 @@ class DatabaseFirebase {
     sellers.add(seller);
     try{
       await FirebaseDatabase.instance
-          .ref('users/${sessionCubit?.state.uuid}/seller')
+          .ref('users/${sessionCubit?.state.firebaseID}/seller')
           .set(sellers);
       return true;
     }catch (e){
@@ -107,7 +107,7 @@ class DatabaseFirebase {
 
   Future getSellers()async{
     final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('users/${sessionCubit?.state.uuid}/seller').get();
+    final snapshot = await ref.child('users/${sessionCubit?.state.firebaseID}/seller').get();
     if (snapshot.exists) {
       return snapshot.value;
     } else {
@@ -118,7 +118,7 @@ class DatabaseFirebase {
   Future<bool> updateContact(String phone)async{
     try{
       await FirebaseDatabase.instance
-          .ref('users/${sessionCubit?.state.uuid}/phone')
+          .ref('users/${sessionCubit?.state.firebaseID}/phone')
           .set(phone);
       return true;
     }catch (e){
@@ -128,7 +128,7 @@ class DatabaseFirebase {
 
   Future getContact()async{
     final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('users/${sessionCubit?.state.uuid}/phone').get();
+    final snapshot = await ref.child('users/${sessionCubit?.state.firebaseID}/phone').get();
     if (snapshot.exists) {
       return snapshot.value;
     } else {

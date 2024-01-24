@@ -3,11 +3,13 @@ import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import '../../../Data/Provider/MkProvider.dart';
-import '../../../Data/Services/navigator_service.dart';
-import '../../../Widgets/starlink/button_card.dart';
-import '../../../Widgets/starlink/progress_circle.dart';
-import '../../../Widgets/starlink/text_style.dart';
+
+import '../../../../Data/Provider/MkProvider.dart';
+import '../../../../Data/Services/navigator_service.dart';
+import '../../../../Widgets/starlink/button_card.dart';
+import '../../../../Widgets/starlink/progress_circle.dart';
+import '../../../../Widgets/starlink/text_style.dart';
+
 
 class IpSearch {
   Future<FoundMikrotik?> showDialogSearch(
@@ -19,7 +21,7 @@ class IpSearch {
       barrierDismissible: false,
       context: NavigatorService.navigatorKey.currentState!.overlay!.context,
       builder: (context) {
-        return IpSearchDialog();
+        return const IpSearchDialog();
       },
     );
     return foudMikrotik;
@@ -34,11 +36,13 @@ class MergeResult{
 
 // Asegúrate de que tu clase de diálogo sea un StatefulWidget
 class IpSearchDialog extends StatefulWidget {
+  const IpSearchDialog({super.key});
+
   @override
-  _IpSearchDialogState createState() => _IpSearchDialogState();
+  IpSearchDialogState createState() => IpSearchDialogState();
 }
 
-class _IpSearchDialogState extends State<IpSearchDialog> {
+class IpSearchDialogState extends State<IpSearchDialog> {
   MkProvider mkProvider = MkProvider();
   late Stream<FoundMikrotik> result;
   final ValueNotifier<int> scannedIPCount = ValueNotifier<int>(0);
@@ -70,7 +74,7 @@ class _IpSearchDialogState extends State<IpSearchDialog> {
         setState(() {});
       }
     });
-    Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (scannedIPCount.value < 500) {
         scannedIPCount.value+=10;
       } else {

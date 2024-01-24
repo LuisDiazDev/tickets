@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:StarTickera/Data/database/databse_firebase.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,7 +24,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
     RestApiProvider().sessionCubit = this;
   }
 
-  Future checkSerial() async {
+  Future checkUserData() async {
     final database = DatabaseFirebase();
 
     if (await database.checkUUID()) {
@@ -38,8 +40,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
         )
       ));
     } else {
-      await database.updateLicense("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
-      emit(state.copyWith(active: false));
+      // await database.updateLicense("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+      // emit(state.copyWith(active: false));
     }
   }
 
@@ -54,63 +56,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
     cfg ??= ConfigModel();
     changeState(state.copyWith(configModel: cfg,uuid: uuid));
 
-    checkSerial();
-
-    if (isAuthenticated) {
-      MkProvider provider = MkProvider();
-      var profilesH = await provider.allProfilesHotspot();
-      if (profilesH.isNotEmpty) {
-        emit(state.copyWith(
-            configModel: state.cfg!.copyWith(
-          dnsNamed: profilesH.last.dnsName,
-        )));
-      } else {
-        emit(state.copyWith(
-            sessionStatus: SessionStatus.finish,
-            isAuthenticated: false,
-            configModel: ConfigModel()));
-        return;
-      }
-
-      FtpService.initService(
-          address: state.cfg?.host ?? "",
-          user: state.cfg?.user ?? "",
-          pass: state.cfg?.password ?? "");
-
-      emit(state.copyWith(sessionStatus: SessionStatus.started));
-      loadSetting();
-      // loginHotspot();
-    } else {
-      var ip = await getIp();
-      if (ip["connect"]) {
-        MkProvider provider = MkProvider();
-        var profilesH = await provider.allProfilesHotspot();
-        if (profilesH.isNotEmpty) {
-          emit(state.copyWith(
-              configModel: state.cfg!.copyWith(
-            dnsNamed: profilesH.last.dnsName,
-          )));
-        }
-
-        FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
-
-        emit(state.copyWith(
-            configModel: state.cfg!
-                .copyWith(host: ip["ip"], user: "admin", password: "1234"),
-            isAuthenticated: true,
-            sessionStatus: SessionStatus.started));
-
-        loadSetting();
-        // loginHotspot();
-      } else {
-        emit(state.copyWith(
-            sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
-      }
-      // // ip["connect"] ||
-      // if(cfg != null){
-      //     connect(cfg);
-      //   }
-    }
+    authListener();
+    checkUserData();
   }
 
   void loadSetting() async {
@@ -170,12 +117,103 @@ class SessionCubit extends HydratedCubit<SessionState> {
     }
   }
 
-  void exitSession() {
-    emit(const SessionState(sessionStatus: SessionStatus.finish));
+  void logOutMK(){
+    emit(SessionState(sessionStatus: SessionStatus.mikrotik,firebaseID:state.firebaseID,uuid: state.uuid,ip: state.ip));
+  }
+
+  void exitSession()async {
+    await FirebaseAuth.instance.signOut();
+    emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip));
   }
 
   Future<void> changeState(SessionState newState) async {
     emit(newState);
+  }
+
+  void initData()async{
+    if (state.isAuthenticated && state.firebaseID != "") {
+      MkProvider provider = MkProvider();
+      var profilesH = await provider.allProfilesHotspot();
+      if (profilesH.isNotEmpty) {
+        emit(state.copyWith(
+            configModel: state.cfg!.copyWith(
+              dnsNamed: profilesH.last.dnsName,
+            )));
+      } else {
+        emit(state.copyWith(
+            sessionStatus: SessionStatus.mikrotik,
+            isAuthenticated: false,
+            configModel: ConfigModel()));
+        return;
+      }
+
+      FtpService.initService(
+          address: state.cfg?.host ?? "",
+          user: state.cfg?.user ?? "",
+          pass: state.cfg?.password ?? "");
+
+      emit(state.copyWith(sessionStatus: SessionStatus.started));
+      loadSetting();
+      // loginHotspot();
+    } else if(state.firebaseID != ""){
+      var ip = await getIp();
+      if (ip["connect"]) {
+        MkProvider provider = MkProvider();
+        var profilesH = await provider.allProfilesHotspot();
+        if (profilesH.isNotEmpty) {
+          emit(state.copyWith(
+              configModel: state.cfg!.copyWith(
+                dnsNamed: profilesH.last.dnsName,
+              )));
+        }
+
+        FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
+
+        emit(state.copyWith(
+            configModel: state.cfg!
+                .copyWith(host: ip["ip"], user: "admin", password: "1234"),
+            isAuthenticated: true,
+            sessionStatus: SessionStatus.started));
+
+        loadSetting();
+        // loginHotspot();
+      } else if(state.firebaseID != ""){
+        emit(state.copyWith(
+            sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
+      }
+      // // ip["connect"] ||
+      // if(cfg != null){
+      //     connect(cfg);
+      //   }
+    }
+  }
+
+  Future<void> authListener() async {
+    try {
+      FirebaseAuth.instance
+          .authStateChanges()
+          .listen((User? user) {
+        if (user == null) {
+          emit(state.copyWith(sessionStatus: SessionStatus.finish));
+        } else {
+          emit(state.copyWith(firebaseID: user.uid));
+          initData();
+          final ref = FirebaseDatabase.instance.ref("users/${user.uid}");
+          ref.onValue.listen((event) async {
+            if (event.snapshot.value != null) {
+              final value = event.snapshot.value as Map<dynamic, dynamic>;
+              // Check if the same id, if not same then logout and navigate to login screen
+              if (value['id'] != state.uuid) {
+                exitSession();
+              }
+            }
+          });
+        }
+      });
+    } catch (e) {
+      //
+      exitSession();
+    }
   }
 
   @override

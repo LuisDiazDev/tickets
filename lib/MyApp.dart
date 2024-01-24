@@ -11,7 +11,6 @@ import 'Core/Theme/Theme.dart';
 import 'Core/Values/Enums.dart';
 import 'Core/localization/app_localization.dart';
 import 'Data/Services/navigator_service.dart';
-import 'Data/Services/printer_service.dart';
 import 'Data/Provider/restApiProvider.dart';
 import 'Data/database/databse_firebase.dart';
 import 'Modules/Alerts/AlertCubit.dart';
@@ -56,14 +55,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    final restApiProvider = RestApiProvider();
-    final database = DatabaseFirebase();
-    PrinterService();
+
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
 
-    restApiProvider.init(alertCubit, sessionCubit);
-    database.init(alertCubit, sessionCubit);
+    RestApiProvider().init(alertCubit, sessionCubit);
+    DatabaseFirebase().init(alertCubit, sessionCubit);
 
     subscription = Connectivity()
         .onConnectivityChanged
@@ -139,7 +136,7 @@ class _MyAppState extends State<MyApp> {
             listener: (context, state) {
               if (state is ErrorDialogEvent) {
                 showDialog(
-                    barrierDismissible: false,
+                    barrierDismissible: true,
                     context:
                         NavigatorService.navigatorKey.currentState!.context,
                     builder: (context) => DialogWidget.dialogInfo(
@@ -180,17 +177,16 @@ class _MyAppState extends State<MyApp> {
             },
           ),
           BlocListener<SessionCubit, SessionState>(
-            listenWhen: (previous, current) =>
-                previous.sessionStatus != current.sessionStatus,
+            listenWhen: (previous, current) => previous.sessionStatus != current.sessionStatus,
             listener: (context, state) {
-              // if(state.fistUse){
-              //   _navigator?.pushNamedAndRemoveUntil(Routes.login, (Route<dynamic> route) => false);
-              // }else
               if (state.sessionStatus == SessionStatus.started) {
                 NavigatorService.pushNamedAndRemoveUntil(Routes.home);
               }
               if (state.sessionStatus == SessionStatus.finish) {
-                NavigatorService.pushNamedAndRemoveUntil(Routes.login);
+                NavigatorService.pushNamedAndRemoveUntil(Routes.loginFB);
+              }
+              if (state.sessionStatus == SessionStatus.mikrotik) {
+                NavigatorService.pushNamedAndRemoveUntil(Routes.loginMK);
               }
             },
           ),

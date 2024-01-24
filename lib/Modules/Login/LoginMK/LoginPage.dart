@@ -1,19 +1,19 @@
-import 'package:StarTickera/Modules/Login/widget/find_ip_widget.dart';
+import 'package:StarTickera/Modules/Login/LoginMK/widget/find_ip_widget.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Core/Values/Colors.dart';
-import '../../Data/Services/navigator_service.dart';
-import '../../Routes/Route.dart';
-import '../../Widgets/starlink/text_style.dart';
-import '../Alerts/AlertCubit.dart';
-import '../Session/SessionCubit.dart';
+import '../../../Core/Values/Colors.dart';
+import '../../../Data/Services/navigator_service.dart';
+import '../../../Routes/Route.dart';
+import '../../../Widgets/starlink/text_style.dart';
+import '../../Alerts/AlertCubit.dart';
+import '../../Session/SessionCubit.dart';
 import 'bloc/LoginBloc.dart';
 import 'bloc/LoginEvents.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPageMK extends StatelessWidget {
+  const LoginPageMK({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
 }
 
 class _BuildLoginPage extends StatefulWidget {
-  const _BuildLoginPage({Key? key}) : super(key: key);
+  const _BuildLoginPage();
 
   @override
   State<_BuildLoginPage> createState() => _BuildLoginPageState();

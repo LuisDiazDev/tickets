@@ -3,6 +3,7 @@ part of 'SessionCubit.dart';
 class SessionState extends Equatable {
   final bool isAuthenticated;
   final String uuid;
+  final String firebaseID;
   final String? state;
   final String? ip;
   final bool? wifi;
@@ -14,6 +15,7 @@ class SessionState extends Equatable {
     this.state = '',
     this.ip = "",
     this.uuid = "",
+    this.firebaseID = "",
     this.active = false,
     this.wifi = false,
     this.isAuthenticated = false,
@@ -26,6 +28,7 @@ class SessionState extends Equatable {
     String? state,
     String? ip,
     String? uuid,
+    String? firebaseID,
     SessionStatus? sessionStatus,
     ConfigModel? configModel,
     bool? wifi,
@@ -36,6 +39,7 @@ class SessionState extends Equatable {
           state: state ?? this.state,
           wifi: wifi ?? this.wifi,
           ip: ip ?? this.ip,
+          firebaseID: firebaseID ?? this.firebaseID,
           uuid: uuid ?? this.uuid,
           active: active ?? this.active,
           sessionStatus: sessionStatus ?? this.sessionStatus,
@@ -47,7 +51,8 @@ class SessionState extends Equatable {
       state: json['state'] as String?,
       ip: json['ip'] as String?,
       uuid: json['uuid'] as String,
-      active: json['active'] as bool,
+      firebaseID: json['firebase_id'] ?? "",
+      active: json['active'] as bool ?? false,
       sessionStatus: SessionStatus.values.firstWhere(
         (element) => element.toString() == json['sessionStatus'],
       ),
@@ -62,11 +67,12 @@ class SessionState extends Equatable {
         'cfg': cfg?.toJson(),
         'wifi': wifi,
         'ip': ip,
-        'uuid':uuid,
-        'active': active
+        'uuid': uuid,
+        'active': active,
+        'firebase_id': firebaseID,
       };
 
   @override
   List<Object?> get props =>
-      [isAuthenticated, state, sessionStatus, cfg, wifi, active,uuid];
+      [isAuthenticated, state, sessionStatus, cfg, wifi, active, uuid];
 }

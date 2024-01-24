@@ -89,7 +89,7 @@ class DrawerCustom extends StatelessWidget {
             title: "CERRAR SESIÓN",
             onTap: () async {
               final sessionCubit = BlocProvider.of<SessionCubit>(context);
-              sessionCubit.exitSession();
+              sessionCubit.logOutMK();
             },
           ),
         ],

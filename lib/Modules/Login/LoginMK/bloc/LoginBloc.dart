@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 import '../../../../Core/Values/Enums.dart';
 import '../../../../Core/utils/TextsInputs.dart';
-import '../../../Core/utils/progress_dialog_utils.dart';
-import '../../../Data/Provider/MkProvider.dart';
-import '../../../Data/Services/ftp_service.dart';
-import '../../../models/config_model.dart';
-import '../../../models/dhcp_server_model.dart';
-import '../../Alerts/AlertCubit.dart';
-import '../../Session/SessionCubit.dart';
+import '../../../../Core/utils/progress_dialog_utils.dart';
+import '../../../../Data/Provider/MkProvider.dart';
+import '../../../../Data/Services/ftp_service.dart';
+import '../../../../models/config_model.dart';
+import '../../../../models/dhcp_server_model.dart';
+import '../../../Alerts/AlertCubit.dart';
+import '../../../Session/SessionCubit.dart';
 import 'LoginState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'LoginEvents.dart';
@@ -135,5 +138,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       },
     );
+  }
+
+  Future<void> loginFirebase({String user="",String pass=""}) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: user,
+        password: pass,
+      );
+
+      // Get current device id and saved it to database
+      final ref = FirebaseDatabase.instance.ref("users/${credential.user!.uid}");
+      ref.set({"id":sessionCubit.state.uuid});
+
+      // ignore: use_build_context_synchronously
+      sessionCubit.changeState(sessionCubit.state.copyWith());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        // showSnackbar(context, 'No user found for that email.', false);
+      } else if (e.code == 'wrong-password') {
+        // showSnackbar(context, 'Wrong password provided for that user.', false);
+      }
+    } catch (e) {
+      // showSnackbar(context, e.toString(), false);
+    }
   }
 }

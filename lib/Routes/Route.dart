@@ -1,3 +1,4 @@
+import 'package:StarTickera/Modules/Login/LoginMK/LoginPage.dart';
 import 'package:StarTickera/Modules/Showroom/Showroom.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ import '../../Modules/settings/SettingsPage.dart';
 import '../Modules/Clients/client_list.dart';
 import '../Modules/Clients/client_profiles.dart';
 import '../Modules/Initial/Initial.dart';
-import '../Modules/Login/LoginPage.dart';
+import '../Modules/Login/LoginFB/LoginPage.dart';
 import '../Modules/Profiles/ProfilesPage.dart';
 import '../Modules/Reports/ReportPage.dart';
 
@@ -21,9 +22,15 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
             settings: RouteSettings(name: settings.name),
           );
           break;
-        case Routes.login:
+        case Routes.loginMK:
           route = MaterialPageRoute(
-            builder: (_) => const LoginPage(),
+            builder: (_) => const LoginPageMK(),
+            settings: RouteSettings(name: settings.name),
+          );
+          break;
+        case Routes.loginFB:
+          route = MaterialPageRoute(
+            builder: (_) => const LoginPageFB(),
             settings: RouteSettings(name: settings.name),
           );
           break;
@@ -81,7 +88,8 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
     };
 
 abstract class Routes {
-  static const login = _Paths.login;
+  static const loginMK = _Paths.loginMK;
+  static const loginFB = _Paths.loginFB;
   static const home = _Paths.home;
   static const initial = _Paths.initial;
   static const settings = _Paths.settings;
@@ -94,7 +102,8 @@ abstract class Routes {
 }
 
 abstract class _Paths {
-  static const login = '/login';
+  static const loginMK = '/loginMK';
+  static const loginFB = '/loginFB';
   static const home = '/home';
   static const initial = '/initial';
   static const settings = '/settings';

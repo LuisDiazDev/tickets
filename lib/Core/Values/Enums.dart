@@ -1,6 +1,7 @@
 enum SessionStatus {
   none,
   started,
+  mikrotik,
   finish,
 }
 
