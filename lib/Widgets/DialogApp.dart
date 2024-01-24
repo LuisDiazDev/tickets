@@ -1,15 +1,13 @@
+import 'package:StarTickera/Data/Services/navigator_service.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/colors.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
-import '../Core/Values/Colors.dart';
-
 class DialogWidget {
   static dialogInfo({
     required String title,
     required String content,
-    required BuildContext context,
     Function? onTap,
     String titleAction = "OK", List<Widget>? actions,
   }) {
@@ -35,7 +33,7 @@ class DialogWidget {
               if (onTap != null) {
                 onTap();
               }else{
-                Navigator.pop(context);
+                NavigatorService.goBack();
               }
             },
             text: titleAction.toUpperCase(),

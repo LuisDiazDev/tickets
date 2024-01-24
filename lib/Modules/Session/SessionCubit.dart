@@ -15,6 +15,9 @@ import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/MkProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
 import '../../Data/Services/ftp_service.dart';
+import '../../Data/Services/navigator_service.dart';
+import '../../Widgets/DialogApp.dart';
+import '../../Widgets/starlink/dialog.dart';
 import '../../models/config_model.dart';
 import '../Alerts/AlertCubit.dart';
 
@@ -118,12 +121,12 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   void logOutMK(){
-    emit(SessionState(sessionStatus: SessionStatus.mikrotik,firebaseID:state.firebaseID,uuid: state.uuid,ip: state.ip));
+    emit(SessionState(sessionStatus: SessionStatus.mikrotik,firebaseID:state.firebaseID,uuid: state.uuid,ip: state.ip,wifi: state.wifi));
   }
 
   void exitSession()async {
     await FirebaseAuth.instance.signOut();
-    emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip));
+    emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip,wifi: state.wifi));
   }
 
   Future<void> changeState(SessionState newState) async {
@@ -205,6 +208,20 @@ class SessionCubit extends HydratedCubit<SessionState> {
               // Check if the same id, if not same then logout and navigate to login screen
               if (value['id'] != state.uuid) {
                 exitSession();
+               Future.delayed(const Duration(seconds: 1)).then((value){
+                 StarlinkDialog.show(
+                     context: NavigatorService.navigatorKey.currentState!.context,
+                     title: "Cierre de sesión",
+                     message: "Se ha abierto la aplicacion en otro dispositivo con las mismas credenciales",
+                     type: AlertType.info,
+                     onTap: () {
+                       NavigatorService.goBack();
+                     },
+                     actions: [],
+                     error: null,
+                     metadata: {}
+                 );
+               });
               }
             }
           });
