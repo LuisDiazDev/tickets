@@ -51,17 +51,24 @@ class _BuildHomePageState extends State<_BuildHomePage>
     return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
       var filteredProfiles =
           state.profiles.where((t) => t.name != "" && t.name != "default");
+      late Widget? bstate;
+
+      if (home.sessionCubit.state.cfg != null && (home.sessionCubit.state.cfg!.bluetoothDevice != null ||
+          home.sessionCubit.state.cfg!.lastIdBtPrint != "")) {
+        bstate = BtStateWidget(
+          bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice,
+          sessionBloc: home.sessionCubit,
+        );
+      } else {
+        bstate = null;
+      }
 
       return Scaffold(
         backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-          title: "VENTA DE TICKETS",
-          action:home.sessionCubit.state.cfg!.bluetoothDevice != null ||  home.sessionCubit.state.cfg!.lastIdBtPrint != "" ? BtStateWidget(
-            bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice,
-            sessionBloc: home.sessionCubit,
-          ):null
-        ),
+            title: "VENTA DE TICKETS",
+            action: bstate),
         body: Container(
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(4),
@@ -91,7 +98,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                   visible: filteredProfiles.isNotEmpty && !state.load,
                   child: Builder(builder: (context) {
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height*.591,
+                      height: MediaQuery.of(context).size.height * .591,
                       width: MediaQuery.of(context).size.width,
                       child: SingleChildScrollView(
                         child: Wrap(
@@ -99,7 +106,8 @@ class _BuildHomePageState extends State<_BuildHomePage>
                               .map((e) => CustomPlanWidget(
                                     profile: e,
                                     generatedUser: (user) {
-                                      var duration = e.metadata?.usageTime ?? "";
+                                      var duration =
+                                          e.metadata?.usageTime ?? "";
                                       var price = e.metadata?.price ?? "";
                                       var limit = e.metadata?.dataLimit ?? 0;
                                       home.add(GeneratedTicket(
@@ -108,8 +116,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                           user,
                                           duration,
                                           price.toString(),
-                                          limitMb: limit
-                                      ));
+                                          limitMb: limit));
                                     },
                                   ))
                               .toList(),

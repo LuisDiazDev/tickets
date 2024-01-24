@@ -6,55 +6,107 @@ import 'package:flutter/material.dart';
 import '../../Modules/Alerts/AlertCubit.dart';
 import 'colors.dart';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+// Importa los widgets y los estilos necesarios aquí...
+
 class StarlinkDialog {
-  static Future<T?> show<T>(
-      {required BuildContext context,
-      required final String title,
-      required final String message,
-      required final AlertType type,
-      required final Map<String, dynamic>? metadata, // TODO usar metadata
-      required final List<Widget>? actions,
-      required final Exception? error,
-      required final Function? onTap}) async {
-    var d = _buildDialog(title, message, actions, onTap, context);
-    return showDialog(
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required final String title,
+    required final String message,
+    required final List<Widget>? actions,
+    required final Function? onTap,
+    required final AlertType type,
+    Exception? error,
+    Map<String, dynamic>? metadata,
+  }) async {
+    return showDialog<T>(
       context: context,
       builder: (BuildContext context) {
-        return d;
+        return _buildCustomDialog(
+            title: title,
+            message: message,
+            actions: actions,
+            onTap: onTap,
+            context: context,
+            type: type);
       },
     );
   }
 
-  static AlertDialog _buildDialog(String title, String message,
-      List<Widget>? actions, Function? onTap, BuildContext context) {
-    return AlertDialog(
-      title: StarlinkText(
-        title,
-        size: 20,
-        isBold: true,
-      ),
-      content: StarlinkText(message, size: 16, isBold: false),
-      titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      contentPadding:
-          const EdgeInsets.only(top: 0, bottom: 10, left: 20, right: 20),
-      backgroundColor: StarlinkColors.gray,
+  static Widget _buildCustomDialog(
+      {required String title,
+      required String message,
+      required List<Widget>? actions,
+      required Function? onTap,
+      required BuildContext context,
+      required AlertType type}) {
+    late Color boxDecorationColor;
+    if (type == AlertType.error) {
+      boxDecorationColor = StarlinkColors.red;
+    } else if (type == AlertType.success) {
+      boxDecorationColor = StarlinkColors.green;
+    } else if (type == AlertType.info) {
+      boxDecorationColor = StarlinkColors.midLightGray;
+    } else {
+      boxDecorationColor = StarlinkColors.blue;
+    }
+
+    if (actions == null || actions.isEmpty) {
+      actions = [
+        StarlinkDialogAction(
+          text: "OK",
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          type: ActionType.info,
+        )
+      ];
+    }
+
+    return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(2),
       ),
-      // actionsPadding: const EdgeInsets.only(top: 30,bottom: 10, right: 20, left: 20),
-      actionsAlignment: MainAxisAlignment.end,
-      actionsPadding: const EdgeInsets.only(bottom: 10, left: 100, right: 20),
-      actions: [
-        if (actions == null)
-          StarlinkDialogAction(
-            text: "OK",
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            type: ActionType.info,
+      backgroundColor: StarlinkColors.gray,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(2),
+          color: StarlinkColors.gray,
+          shape: BoxShape.rectangle,
+          border: Border(
+            left: BorderSide(
+              color: boxDecorationColor,
+              // Replace with the actual color you want
+              width: 5, // Width of the side border
+            ),
           ),
-        if (actions != null) ...actions,
-      ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
+          children: [
+            // Title
+            Container(
+              alignment: Alignment.topLeft,
+              child: StarlinkText(title, size: 18, isBold: true),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              alignment: Alignment.centerLeft,
+              child: StarlinkText(message, size: 16, isBold: false),
+            ),
+            const SizedBox(height: 10),
+            // Aquí va la lógica para mostrar tus acciones/buttons
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: actions!,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -82,8 +134,8 @@ class StarlinkDialogAction extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(
           left: 40.0,
-          top: 20,
-          bottom: 10,
+          top: 10,
+          bottom: 0,
         ),
         child: StarlinkText(
           text.toUpperCase(),

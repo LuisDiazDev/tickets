@@ -41,6 +41,8 @@ const Map<InfoContextType, Color> boxDecorationColor = {
   InfoContextType.success: Color.fromARGB(150, 0, 255, 0),
 };
 
+
+
 const Map<InfoContextType, Color> textColor = {
   InfoContextType.error: Color.fromARGB(255, 255, 240, 240),
   InfoContextType.warning: Color.fromARGB(255, 255, 255, 240),
