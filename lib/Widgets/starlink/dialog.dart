@@ -1,14 +1,8 @@
-import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../Modules/Alerts/AlertCubit.dart';
 import 'colors.dart';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-// Importa los widgets y los estilos necesarios aquí...
 
 class StarlinkDialog {
   static Future<T?> show<T>({
@@ -42,15 +36,17 @@ class StarlinkDialog {
       required Function? onTap,
       required BuildContext context,
       required AlertType type}) {
-    late Color boxDecorationColor;
+    late Color boxDecColor;
     if (type == AlertType.error) {
-      boxDecorationColor = StarlinkColors.red;
+      boxDecColor = boxDecorationColor[InfoContextType.error]!;
     } else if (type == AlertType.success) {
-      boxDecorationColor = StarlinkColors.green;
+      boxDecColor = boxDecorationColor[InfoContextType.success]!;
     } else if (type == AlertType.info) {
-      boxDecorationColor = StarlinkColors.midLightGray;
+      boxDecColor = boxDecorationColor[InfoContextType.info]!;
+    } else if (type == AlertType.warning) {
+      boxDecColor = boxDecorationColor[InfoContextType.warning]!;
     } else {
-      boxDecorationColor = StarlinkColors.blue;
+      boxDecColor = boxDecorationColor[InfoContextType.info]!;
     }
 
     if (actions == null || actions.isEmpty) {
@@ -78,14 +74,14 @@ class StarlinkDialog {
           shape: BoxShape.rectangle,
           border: Border(
             left: BorderSide(
-              color: boxDecorationColor,
+              color: boxDecColor,
               // Replace with the actual color you want
               width: 5, // Width of the side border
             ),
           ),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Title
             Container(
@@ -98,11 +94,9 @@ class StarlinkDialog {
               child: StarlinkText(message, size: 16, isBold: false),
             ),
             const SizedBox(height: 10),
-            // Aquí va la lógica para mostrar tus acciones/buttons
-
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: actions!,
+              children: actions,
             ),
           ],
         ),

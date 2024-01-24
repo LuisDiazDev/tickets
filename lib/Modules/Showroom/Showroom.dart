@@ -46,7 +46,7 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: StarlinkButtonGroup(
-              labels: ["Inputs","Cards", "Dialogs", ],
+              labels: const ["Inputs","Cards", "Dialogs", ],
               onChanged: (index) {
                 log("Index: $index");
               },

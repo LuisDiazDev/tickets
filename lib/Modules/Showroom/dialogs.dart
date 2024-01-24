@@ -69,6 +69,40 @@ SingleChildScrollView buildDialogs(BuildContext context) {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StarlinkButton(
+              text: "Show Warning Dialog",
+              onPressed: () {
+                StarlinkDialog.show(
+                    context: context,
+                    title: "SOME WARNING",
+                    message: "This is a warning message",
+                    type: AlertType.warning,
+                    actions: [],
+                    onTap: () {
+                      log("Tapped");
+                    });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StarlinkButton(
+              text: "Show Error Dialog",
+              onPressed: () {
+                StarlinkDialog.show(
+                    context: context,
+                    title: "SOME ERROR",
+                    message: "This is a error message",
+                    type: AlertType.error,
+                    actions: [],
+                    onTap: () {
+                      log("Tapped");
+                    });
+              },
+            ),
+          ),
         ],
       ));
 }

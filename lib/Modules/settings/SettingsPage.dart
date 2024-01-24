@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:StarTickera/Data/database/databse_firebase.dart';
@@ -11,6 +12,7 @@ import 'package:gap/gap.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/virtualTicketRepository.dart';
 import '../../Widgets/custom_appbar.dart';
+import '../../Widgets/starlink/button_group.dart';
 import '../../Widgets/starlink/card.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../../Widgets/starlink/text_field.dart';
@@ -30,8 +32,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
-  String _contact ="",_name="";
+  String _contact = "", _name = "";
 
   @override
   void initState() {
@@ -48,180 +49,31 @@ class _SettingsPageState extends State<SettingsPage> {
     final alertBloc = BlocProvider.of<AlertCubit>(context);
 
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
+      DatabaseFirebase databaseFirebase = DatabaseFirebase();
       return Scaffold(
         backgroundColor: StarlinkColors.black.withOpacity(.9),
         drawer: const DrawerCustom(),
-        appBar: customAppBar(
-            title: "title_configuration".tr,
-          saved: ()async{
-            DatabaseFirebase databaseFirebase = DatabaseFirebase();
-            if(state.cfg?.nameLocal != _name){
-              databaseFirebase.updateName(_name);
-              sessionBloc.changeState(state.copyWith(
-                  configModel: state.cfg!.copyWith(nameLocal: _name)));
-            }
-            if(state.cfg?.contact != _contact){
-              databaseFirebase.updateContact(_contact);
-              sessionBloc.changeState(state.copyWith(
-                  configModel: state.cfg!.copyWith(contact: _contact)));
-            }
-          }
-        ),
+        appBar:
+            customAppBar(title: "title_configuration".tr, saved: () async {}),
         body: Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const StarlinkSectionTitle(
-                title: "TICKETS VIRTUALES",
-              ),
-              const StarlinkCard(
-                type: InfoContextType.info,
-                title: "Tickets Virtuales",
-                message:
-                    "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
-                    "Son mas rápidos de imprimir y no necesitan una impresora térmica (tickera)",
-              ),
-              StarlinkButton(
-                text: "GENERAR TICKETS VIRTUALES",
-                onPressed: () async {
-                  ProgressDialogUtils.showProgressDialog();
-                  generateTickets(10);
-                  // sessionBloc.backUp(alertBloc);
-                },
-              ),
-              /////////////////////////////
-              const Gap(40),
-              PrintSettings(
-                sessionBloc: sessionBloc,
-                alertCubit: alertBloc,
-              ),
-
-              //////////////////
-              const Gap(16),
-              const StarlinkSectionTitle(
-                title: "INFORMACIÓN DEL MIKROTIK",
-              ),
-              StarlinkTextField(
-                initialValue: state.cfg?.identity ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(identity: str)));
-                },
-                title: "Identidad",
-                textHint: "Nombre del Mikrotik",
-                readOnly: true,
-              ),
-              StarlinkTextField(
-                initialValue: state.cfg?.host ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(host: str)));
-                },
-                title: "Mikrotik",
-                textHint: "Dirección IP de tu Mikrotik",
-                readOnly: true,
-              ),
-              StarlinkTextField(
-                initialValue: state.cfg?.user ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(user: str)));
-                },
-                title: "Usuario",
-                textHint: "Usuario de tu Mikrotik",
-                readOnly: true,
-              ),
-              StarlinkTextField(
-                initialValue: state.cfg?.password ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(password: str)));
-                },
-                title: "Contraseña",
-                readOnly: true,
-                obscureText: true,
-                textHint: "Contraseña de tu Mikrotik",
-              ),
-              StarlinkButton(
-                text: "CAMBIAR CONTRASEÑA",
-                onPressed: () async {
-                  return showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: StarlinkColors.black,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(16.0))),
-                          contentPadding: const EdgeInsets.only(top: 10.0),
-                          content: FormNewPassWord(session:sessionBloc),
-                        );
-                      });
-                },
-              ),
-              const Gap(8),
-              StarlinkTextField(
-                initialValue: state.cfg?.dnsNamed ?? "",
-                onChanged: (str) {
-                  sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(dnsNamed: str)));
-                },
-                readOnly: true,
-                title: "Página Hotspot",
-                textHint: "Ejemplo: wifi.com",
-              ),
-              const Gap(8),
-              StarlinkTextField(
-                initialValue: state.cfg?.nameLocal ?? "",
-                onChanged: (str) {
-                  _name = str;
-                },
-                title: "Nombre del local",
-                textHint: "Ejemplo: mi tienda",
-              ),
-              const Gap(8),
-              StarlinkTextField(
-                initialValue: state.cfg?.contact ?? "",
-                onChanged: (str) {
-                  _contact = str;
-                },
-                title: "Numero de contacto",
-                textHint: "Tlf: 04.........",
-              ),
-              const Gap(8),
-              StarlinkButton(
-                text: "COMPROBAR CONEXIÓN",
-                onPressed: () async {
-                  await sessionBloc.checkConnection(alertBloc);
-                },
-              ),
-              const Gap(16),
-              StarlinkButton(
-                text: "SUBIR LOGIN.HTML",
-                type: ButtonType.destructive,
-                onPressed: () async {
-                  ProgressDialogUtils.showProgressDialog();
-                  await sessionBloc.loginHotspot();
-                  ProgressDialogUtils.hideProgressDialog();
-                },
-              ),
-              const Gap(16),
-              // StarlinkButton(
-              //   text: "RESTABLECER MIKROTIK",
-              //   type: ButtonType.destructive,
-              //   onPressed: () async {
-              //     ProgressDialogUtils.showProgressDialog();
-              //     sessionBloc.backUp(alertBloc);
-              //   },
-              // ),
-              // const Gap(16),
+          child:
+               StarlinkButtonGroup(
+            labels: const ["Impresora", "Mikrotik", "Otros"],
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            widgets: [
+              buildPrinterSettings(sessionBloc, alertBloc),
+              buildMikrotikSettings(state, sessionBloc, context, alertBloc),
+              buildCustomerSettings(
+                  state, sessionBloc, alertBloc, databaseFirebase),
             ],
+            onChanged: (int) {
+              log("Index: $int");
+            },
           )),
-        ),
-      );
+        );
     });
   }
 
@@ -243,6 +95,159 @@ Future<File> writeToFile(ByteData data, String path) {
   return File(path).writeAsBytes(buffer.asUint8ClampedList());
 }
 
-/*
-*
-* */
+Widget buildPrinterSettings(sessionBloc, alertBloc) {
+  return SingleChildScrollView(
+    child: Column(
+      children: [
+        /////////////////////////////
+        PrintSettings(
+          sessionBloc: sessionBloc,
+          alertCubit: alertBloc,
+        ),
+        const Gap(40),
+        const StarlinkSectionTitle(
+          title: "TICKETS VIRTUALES",
+        ),
+        const StarlinkCard(
+          type: InfoContextType.info,
+          title: "Tickets Virtuales",
+          message:
+          "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
+              "Son mas rápidos de imprimir y no necesitan una impresora térmica (tickera)",
+        ),
+        StarlinkButton(
+          text: "GENERAR TICKETS VIRTUALES",
+          onPressed: () async {
+            ProgressDialogUtils.showProgressDialog();
+            generateTickets(10);
+            // sessionBloc.backUp(alertBloc);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildMikrotikSettings(state, sessionBloc, context, alertBloc) {
+  return SingleChildScrollView(
+    child: Column(
+      children: [
+        const StarlinkSectionTitle(
+          title: "INFORMACIÓN DEL MIKROTIK",
+        ),
+        StarlinkTextField(
+          initialValue: state.cfg?.identity ?? "",
+          onChanged: (str) {
+            sessionBloc.changeState(state.copyWith(
+                configModel: state.cfg!.copyWith(identity: str)));
+          },
+          title: "Identidad",
+          textHint: "Nombre del Mikrotik",
+          readOnly: true,
+        ),
+        StarlinkTextField(
+          initialValue: state.cfg?.host ?? "",
+          onChanged: (str) {
+            sessionBloc.changeState(
+                state.copyWith(configModel: state.cfg!.copyWith(host: str)));
+          },
+          title: "Mikrotik",
+          textHint: "Dirección IP de tu Mikrotik",
+          readOnly: true,
+        ),
+        StarlinkTextField(
+          initialValue: state.cfg?.user ?? "",
+          onChanged: (str) {
+            sessionBloc.changeState(
+                state.copyWith(configModel: state.cfg!.copyWith(user: str)));
+          },
+          title: "Usuario",
+          textHint: "Usuario de tu Mikrotik",
+          readOnly: true,
+        ),
+        StarlinkTextField(
+          initialValue: state.cfg?.password ?? "",
+          onChanged: (str) {
+            sessionBloc.changeState(state.copyWith(
+                configModel: state.cfg!.copyWith(password: str)));
+          },
+          title: "Contraseña",
+          readOnly: true,
+          obscureText: true,
+          textHint: "Contraseña de tu Mikrotik",
+        ),
+        StarlinkButton(
+          text: "CAMBIAR CONTRASEÑA",
+          onPressed: () async {
+            return showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: StarlinkColors.black,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16.0))),
+                    contentPadding: const EdgeInsets.only(top: 10.0),
+                    content: FormNewPassWord(session: sessionBloc),
+                  );
+                });
+          },
+        ),
+        StarlinkTextField(
+          initialValue: state.cfg?.dnsNamed ?? "",
+          onChanged: (str) {
+            sessionBloc.changeState(state.copyWith(
+                configModel: state.cfg!.copyWith(dnsNamed: str)));
+          },
+          readOnly: true,
+          title: "Página Hotspot",
+          textHint: "Ejemplo: wifi.com",
+        ),
+        const Gap(8),
+        StarlinkButton(
+          text: "COMPROBAR CONEXIÓN",
+          onPressed: () async {
+            await sessionBloc.checkConnection(alertBloc);
+          },
+        ),
+        const Gap(16),
+        StarlinkButton(
+          text: "SUBIR LOGIN.HTML",
+          type: ButtonType.destructive,
+          onPressed: () async {
+            ProgressDialogUtils.showProgressDialog();
+            await sessionBloc.loginHotspot();
+            ProgressDialogUtils.hideProgressDialog();
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildCustomerSettings(state, sessionBloc, alertBloc, databaseFirebase) {
+  return Column(
+    children: [
+      StarlinkTextField(
+        initialValue: state.cfg?.nameLocal ?? "",
+        onChanged: (str) {
+          databaseFirebase.updateName(str);
+          sessionBloc.changeState(
+              state.copyWith(configModel: state.cfg!.copyWith(nameLocal: str)));
+        },
+        title: "Nombre del local",
+        textHint: "Ejemplo: mi tienda",
+      ),
+      const Gap(8),
+      StarlinkTextField(
+        initialValue: state.cfg?.contact ?? "",
+        onChanged: (str) {
+          databaseFirebase.updateContact(str);
+          sessionBloc.changeState(
+              state.copyWith(configModel: state.cfg!.copyWith(contact: str)));
+        },
+        title: "Numero de contacto",
+        textHint: "Tlf: 04.........",
+      ),
+    ],
+  );
+}

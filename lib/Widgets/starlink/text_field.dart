@@ -74,6 +74,7 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                   maxLength: widget.maxLength == 0 ? null : widget.maxLength,
                   enabled: widget.isEnabled,
                   onChanged: widget.onChanged,
+                  onFieldSubmitted: widget.onChanged,
                   keyboardType: widget.keyboardType,
                   style: const TextStyle(
                     color: StarlinkColors.white,
