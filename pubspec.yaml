@@ -48,6 +48,7 @@ dependencies:
   open_settings_plus: ^0.1.0
   mikrotik_mndp: ^0.0.4
   firebase_database: ^10.4.0
+  sentry_flutter: ^7.15.0
   firebase_auth: ^4.16.0
 
 dev_dependencies:

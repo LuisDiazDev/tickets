@@ -119,12 +119,12 @@ class PrinterService {
     bytes += generator.text('1- Conectate al wifi:', styles: styles);
     if (configModel!.wifiCredentials.isNotEmpty) {
       bytes += generator.text(
-          "Nombre:${configModel.wifiCredentials.first.ssid} Clave:${configModel
+          "Nombre: ${configModel.wifiCredentials.first.ssid} Clave:${configModel
               .wifiCredentials.first.pass.replaceAll("\n", "")}",
           styles: styles);
       if (configModel.wifiCredentials.length > 1) {
         bytes += generator.text(
-            "Nombre:${configModel.wifiCredentials.last.ssid} Clave:${configModel
+            "Nombre: ${configModel.wifiCredentials.last.ssid} Clave:${configModel
                 .wifiCredentials.last.pass.replaceAll("\n", "")}",
             styles: styles);
       }
