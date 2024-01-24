@@ -31,33 +31,7 @@ class _StarlinkButtonGroupState extends State<StarlinkButtonGroup> {
     _selectedIndex = widget.initialIndex;
   }
 
-  Widget _buildButton(int index) {
-    bool isSelected = _selectedIndex == index;
-    return IntrinsicWidth(
-      stepWidth: 40,
-      child: GestureDetector(
-          onTap: () {
-            widget.onChanged?.call(index);
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            decoration: BoxDecoration(
-              color: isSelected ? StarlinkColors.white : StarlinkColors.darkGray,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Center(
-              child: StarlinkText(
-                widget.labels![index].toUpperCase(),
-                color: isSelected ? StarlinkColors.darkGray : StarlinkColors.white,
-              ),
-            ),
-          ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +57,38 @@ class _StarlinkButtonGroupState extends State<StarlinkButtonGroup> {
             child: widget.widgets![_selectedIndex],
           ),
       ],
+    );
+  }
+
+
+  Widget _buildButton(int index) {
+    bool isSelected = _selectedIndex == index;
+    return Padding(
+      padding: const EdgeInsets.only(left: 1.0, right: 1.0),
+      child: IntrinsicWidth(
+        stepWidth: 40,
+        child: GestureDetector(
+          onTap: () {
+            widget.onChanged?.call(index);
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              color: isSelected ? StarlinkColors.white : StarlinkColors.darkGray,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Center(
+              child: StarlinkText(
+                widget.labels![index].toUpperCase(),
+                color: isSelected ? StarlinkColors.darkGray : StarlinkColors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

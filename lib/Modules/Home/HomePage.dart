@@ -53,8 +53,9 @@ class _BuildHomePageState extends State<_BuildHomePage>
           state.profiles.where((t) => t.name != "" && t.name != "default");
       late Widget? bstate;
 
-      if (home.sessionCubit.state.cfg != null && (home.sessionCubit.state.cfg!.bluetoothDevice != null ||
-          home.sessionCubit.state.cfg!.lastIdBtPrint != "")) {
+      if (home.sessionCubit.state.cfg != null &&
+          (home.sessionCubit.state.cfg!.bluetoothDevice != null ||
+              home.sessionCubit.state.cfg!.lastIdBtPrint != "")) {
         bstate = BtStateWidget(
           bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice,
           sessionBloc: home.sessionCubit,
@@ -66,37 +67,34 @@ class _BuildHomePageState extends State<_BuildHomePage>
       return Scaffold(
         backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
-        appBar: customAppBar(
-            title: "VENTA DE TICKETS",
-            action: bstate),
+        appBar: customAppBar(title: "VENTA DE TICKETS", action: bstate),
         body: Container(
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(4),
           child: Column(
             children: [
-              const Gap(12),
-              ScanVirtualTicketButton(
-                onPressed: () async {
-                  String? user = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ScanQrScreen()),
-                  );
-                  if (user != null) {
-                    home.add(NewQr(user));
-                  }
-                },
-              ),
-              const Gap(30),
               Visibility(
                 visible: filteredProfiles.isNotEmpty && !state.load,
-                child: const StarlinkSectionTitle(
-                    title: "IMPRIMIR NUEVOS TICKETS",
-                    alignment: Alignment.center),
-              ),
-              Visibility(
-                  visible: filteredProfiles.isNotEmpty && !state.load,
-                  child: Builder(builder: (context) {
+                child: Column(children: [
+                  const Gap(12),
+                  ScanVirtualTicketButton(
+                    onPressed: () async {
+                      String? user = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ScanQrScreen()),
+                      );
+                      if (user != null) {
+                        home.add(NewQr(user));
+                      }
+                    },
+                  ),
+                  const Gap(30),
+                  const StarlinkSectionTitle(
+                      title: "IMPRIMIR NUEVOS TICKETS",
+                      alignment: Alignment.center),
+                  const Gap(10),
+                  Builder(builder: (context) {
                     return SizedBox(
                       height: MediaQuery.of(context).size.height * .591,
                       width: MediaQuery.of(context).size.width,
@@ -106,8 +104,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                               .map((e) => CustomPlanWidget(
                                     profile: e,
                                     generatedUser: (user) {
-                                      var duration =
-                                          e.metadata?.usageTime ?? "";
+                                      var duration = e.metadata?.usageTime ?? "";
                                       var price = e.metadata?.price ?? "";
                                       var limit = e.metadata?.dataLimit ?? 0;
                                       home.add(GeneratedTicket(
@@ -123,7 +120,9 @@ class _BuildHomePageState extends State<_BuildHomePage>
                         ),
                       ),
                     );
-                  })),
+                  }),
+                ]),
+              ),
               Visibility(
                   visible: filteredProfiles.isEmpty && !state.load,
                   child: Center(
