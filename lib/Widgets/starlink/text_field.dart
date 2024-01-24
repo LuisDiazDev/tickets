@@ -3,31 +3,51 @@ import 'package:flutter/material.dart';
 
 import 'colors.dart';
 
-class StarlinkTextField extends StatelessWidget {
+class StarlinkTextField extends StatefulWidget {
   final String initialValue;
+  final bool obscureText;
   final Function(String) onChanged;
   final String title;
   final String textHint;
-  final bool isEnabled;
-  late String errorText;
+  final bool isEnabled,readOnly;
+  final String errorText;
   final TextInputType keyboardType;
   final int maxLength;
   final String textSuffix;
   final String? Function(String?)? validator;
+  final Widget? suffixIcon;
 
-  StarlinkTextField({
+  const StarlinkTextField({
     super.key,
     required this.initialValue,
     required this.onChanged,
     required this.title,
     required this.textHint,
+    this.readOnly = false,
     this.isEnabled = true,
     this.errorText = '',
+    this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.maxLength = 0,
+    this.suffixIcon,
     this.textSuffix = "",
      this.validator,
   });
+
+  @override
+  State<StarlinkTextField> createState() => _StarlinkTextFieldState();
+}
+
+class _StarlinkTextFieldState extends State<StarlinkTextField> {
+
+  late bool _passwordVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = widget.obscureText;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +57,7 @@ class StarlinkTextField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           StarlinkText(
-            title,
+            widget.title,
             size: 14.0,
             isBold: true,
           ),
@@ -46,13 +66,15 @@ class StarlinkTextField extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFormField(
-                  key: Key(initialValue.toString()),
-                  validator: validator,
-                  initialValue: initialValue,
-                  maxLength: maxLength == 0 ? null : maxLength,
-                  enabled: isEnabled,
-                  onChanged: onChanged,
-                  keyboardType: keyboardType,
+                  obscureText: _passwordVisible,
+                  readOnly: widget.readOnly,
+                  key: Key(widget.initialValue.toString()),
+                  validator: widget.validator,
+                  initialValue: widget.initialValue,
+                  maxLength: widget.maxLength == 0 ? null : widget.maxLength,
+                  enabled: widget.isEnabled,
+                  onChanged: widget.onChanged,
+                  keyboardType: widget.keyboardType,
                   style: const TextStyle(
                     color: StarlinkColors.white,
                     fontSize: 16.0,
@@ -60,7 +82,22 @@ class StarlinkTextField extends StatelessWidget {
                     fontFamily: 'DDIN-Bold',
                   ),
                   decoration: InputDecoration(
-                    hintText: textHint,
+                    hintText: widget.textHint,
+                    suffixIcon: widget.obscureText ? IconButton(
+                      icon: Icon(
+                        // Based on passwordVisible state choose the icon
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      onPressed: () {
+                        // Update the state i.e. toogle the state of passwordVisible variable
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ):widget.suffixIcon,
                     hintStyle: const TextStyle(
                       color: StarlinkColors.gray,
                       fontSize: 14.0,
@@ -72,7 +109,7 @@ class StarlinkTextField extends StatelessWidget {
                     ),
                     border: const OutlineInputBorder(),
                     fillColor: StarlinkColors.transparent,
-                    enabledBorder: errorText.isNotEmpty
+                    enabledBorder: widget.errorText.isNotEmpty
                         ? const OutlineInputBorder(
                             borderSide: BorderSide(color: StarlinkColors.red),
                           )
@@ -84,10 +121,10 @@ class StarlinkTextField extends StatelessWidget {
               ),
               const SizedBox(width: 8.0),
               Visibility(
-                visible: textSuffix.isNotEmpty,
+                visible: widget.textSuffix.isNotEmpty,
                 child: Expanded(
                   child: Text(
-                    textSuffix,
+                    widget.textSuffix,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: StarlinkColors.white,
@@ -101,9 +138,9 @@ class StarlinkTextField extends StatelessWidget {
             ],
           ),
           Visibility(
-            visible: errorText.isNotEmpty,
+            visible: widget.errorText.isNotEmpty,
             child: Text(
-              errorText,
+              widget.errorText,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: StarlinkColors.red,

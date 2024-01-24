@@ -35,8 +35,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
       emit(state.copyWith(
         active: true,
         configModel: state.cfg!.copyWith(
-          contact: phone,
-          nameLocal: name
+          contact: phone??"",
+          nameLocal: name??""
         )
       ));
     } else {
@@ -95,16 +95,18 @@ class SessionCubit extends HydratedCubit<SessionState> {
             }
           }
         }
-        emit(state.copyWith(
-            configModel: state.cfg!.copyWith(wifiCredentials: wDetails)));
-        var identity = interfaces
-            .firstWhere((element) => element.contains("system identity"));
-        var identitySplit = identity.split("=");
-        emit(state.copyWith(
-            configModel: state.cfg!.copyWith(
-                identity: identitySplit.last
-                    .replaceAll("\n", "")
-                    .replaceAll("\r", ""))));
+       if(state.cfg != null){
+         emit(state.copyWith(
+             configModel: state.cfg!.copyWith(wifiCredentials: wDetails)));
+         var identity = interfaces
+             .firstWhere((element) => element.contains("system identity"));
+         var identitySplit = identity.split("=");
+         emit(state.copyWith(
+             configModel: state.cfg!.copyWith(
+                 identity: identitySplit.last
+                     .replaceAll("\n", "")
+                     .replaceAll("\r", ""))));
+       }
       }
     } else {
       MkProvider provider = MkProvider();

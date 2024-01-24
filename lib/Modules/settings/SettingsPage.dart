@@ -113,6 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
                 title: "Identidad",
                 textHint: "Nombre del Mikrotik",
+                readOnly: true,
               ),
               StarlinkTextField(
                 initialValue: state.cfg?.host ?? "",
@@ -122,6 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
                 title: "Mikrotik",
                 textHint: "Dirección IP de tu Mikrotik",
+                readOnly: true,
               ),
               StarlinkTextField(
                 initialValue: state.cfg?.user ?? "",
@@ -131,6 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
                 title: "Usuario",
                 textHint: "Usuario de tu Mikrotik",
+                readOnly: true,
               ),
               StarlinkTextField(
                 initialValue: state.cfg?.password ?? "",
@@ -139,6 +142,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       configModel: state.cfg!.copyWith(password: str)));
                 },
                 title: "Contraseña",
+                readOnly: true,
+                obscureText: true,
                 textHint: "Contraseña de tu Mikrotik",
               ),
               StarlinkButton(
@@ -164,6 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   sessionBloc.changeState(state.copyWith(
                       configModel: state.cfg!.copyWith(dnsNamed: str)));
                 },
+                readOnly: true,
                 title: "Página Hotspot",
                 textHint: "Ejemplo: wifi.com",
               ),
