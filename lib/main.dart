@@ -36,7 +36,7 @@ Future<void> main() async {
         // We recommend adjusting this value in production.
         options.tracesSampleRate = 1.0;
       },
-      appRunner: () => runApp(MyApp()),
+      appRunner: () => runApp(App()),
     );
   });
 }
