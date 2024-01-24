@@ -1,4 +1,4 @@
-import 'package:StarTickera/Core/localization/app_localization.dart';
+
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -9,6 +9,7 @@ import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
+import '../../Widgets/starlink/colors.dart';
 import '../../models/profile_model.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
@@ -20,7 +21,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 
 class TicketsPage extends StatelessWidget {
-  const TicketsPage({Key? key}) : super(key: key);
+  const TicketsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:badges/badges.dart' as badges;
-import 'package:gap/gap.dart';
-
-import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/profile_model.dart';
 import '../bloc/ProfileBloc.dart';
@@ -25,7 +22,7 @@ class CustomProfile extends StatelessWidget {
     if (profile.metadata == null) {
       return Container();
     }
-    var duration = profile.metadata!.usageTime ?? "";
+    var duration = profile.metadata!.usageTime;
     String price = "${profile.metadata?.price ?? ""}";
     price = price.replaceAll(".0", "");
     return GestureDetector(

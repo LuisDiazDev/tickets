@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/colors.dart';
 
 class CustomLineChart extends StatelessWidget {
   const CustomLineChart({super.key, required this.isShowingMainData});
@@ -16,7 +17,7 @@ class CustomLineChart extends StatelessWidget {
       width: MediaQuery.of(context).size.width*.92,
       child: Column(
         children: [
-          Text("Ventas de hoy", style: TextStyle(
+          const Text("Ventas de hoy", style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontFamily: 'DDIN-Bold',

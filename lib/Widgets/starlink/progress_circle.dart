@@ -1,8 +1,6 @@
-import 'dart:async';
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
-import '../../Core/Values/Colors.dart';
+import 'colors.dart';
 
 class StarlinkProgressCircle extends StatefulWidget {
   final int percent;
@@ -36,7 +34,7 @@ class StarlinkProgressCircleState extends State<StarlinkProgressCircle> {
               style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: StarlinkColors.white,
                 fontFamily: 'DDIN',
               ),
             ),
@@ -63,7 +61,7 @@ class CircleProgressPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     Offset center = Offset(size.width / 2.0, size.height / 2.0);
-    double radius = this.diameter / 2.0;
+    double radius = diameter / 2.0;
 
     canvas.drawCircle(center, radius, paint);
 

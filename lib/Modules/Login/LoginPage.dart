@@ -3,9 +3,9 @@ import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Core/Values/Colors.dart';
 import '../../Data/Services/navigator_service.dart';
 import '../../Routes/Route.dart';
+import '../../Widgets/starlink/colors.dart';
 import '../../Widgets/starlink/text_style.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
@@ -13,7 +13,7 @@ import 'bloc/LoginBloc.dart';
 import 'bloc/LoginEvents.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {

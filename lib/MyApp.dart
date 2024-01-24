@@ -18,14 +18,13 @@ import 'Modules/Alerts/AlertCubit.dart';
 import 'Modules/Session/SessionCubit.dart';
 import 'Routes/Route.dart';
 import 'Widgets/DialogApp.dart';
-import 'Widgets/Snakbar.dart';
-import 'Widgets/starlink/card.dart';
+import 'Widgets/starlink/dialog.dart';
 
 class App extends StatelessWidget {
   static const settingsiOS = OpenSettingsPlusIOS();
   static const settingsAndroid = OpenSettingsPlusAndroid();
 
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +55,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    initAppState();
+    super.initState();
+  }
+
+  void initAppState() {
     final restApiProvider = RestApiProvider();
     final database = DatabaseFirebase();
     PrinterService();
@@ -70,12 +74,22 @@ class _MyAppState extends State<MyApp> {
         .listen((ConnectivityResult result) {
       // Got a new connectivity status!
       if (result != ConnectivityResult.wifi) {
-        alertCubit.showErrorDialog(
-            "SIN CONEXIÓN", "No se encuentra conectado a ninguna red wifi",
-            onTap: () {
-          App.settingsAndroid.wifi();
-        },
-          titleAction: "ABRIR AJUSTES DE WIFI"
+        alertCubit.showDialog(
+          ShowDialogEvent(
+              title: "SIN CONEXIÓN",
+              message: "No se encuentra conectado a ninguna red wifi",
+              type: AlertType.error,
+              onTap: () {
+                App.settingsAndroid.wifi();
+              },
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    App.settingsAndroid.wifi();
+                  },
+                  child: const Text("ABRIR AJUSTES DE WIFI"),
+                ),
+              ]),
         );
         sessionCubit.changeState(sessionCubit.state.copyWith(wifi: false));
       } else {
@@ -89,12 +103,22 @@ class _MyAppState extends State<MyApp> {
 
     Connectivity().checkConnectivity().then((result) {
       if (result != ConnectivityResult.wifi) {
-        alertCubit.showErrorDialog(
-            "SIN CONEXIÓN", "No se encuentra conectado a ninguna red wifi",
-            onTap: () {
-          App.settingsAndroid.wifi();
-        },
-          titleAction: "ABRIR AJUSTES DE WIFI"
+        alertCubit.showDialog(
+          ShowDialogEvent(
+              title: "SIN CONEXIÓN",
+              message: "No se encuentra conectado a ninguna red wifi",
+              type: AlertType.error,
+              onTap: () {
+                App.settingsAndroid.wifi();
+              },
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    App.settingsAndroid.wifi();
+                  },
+                  child: const Text("ABRIR AJUSTES DE WIFI"),
+                ),
+              ]),
         );
         sessionCubit.changeState(sessionCubit.state.copyWith(wifi: false));
       } else {
@@ -137,46 +161,54 @@ class _MyAppState extends State<MyApp> {
         listeners: [
           BlocListener<AlertCubit, AlertState>(
             listener: (context, state) {
-              if (state is ErrorDialogEvent) {
+              if (state is ShowDialogEvent) {
                 showDialog(
                     barrierDismissible: false,
                     context:
                         NavigatorService.navigatorKey.currentState!.context,
-                    builder: (context) => DialogWidget.dialogInfo(
+                    builder: (context) => StarlinkDialog.show(
+                          context: context,
                           title: state.title,
-                          content: state.message,
-                          context: NavigatorService
-                              .navigatorKey.currentState!.context,
-                          onTap: state.onTap,
-                          titleAction: state.titleAction??"OK",
+                          message: state.message,
+                          type: state.type,
+                          onTap: () {
+                            if (state.onTap != null) {
+                              state.onTap!();
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          },
+                          actions: state.actions,
+                          error: state.error,
+                          metadata: state.metadata,
                         ));
               }
-              if (state is AlertAction) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBarCustom.snackBarCustom(
-                  title: 'title',
-                  onTap: () {
-                    state.onTap();
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                  titleAction: 'Action',
-                  type: CardType.error,
-                ));
-              }
-              if (state is AlertInfo) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBarCustom.snackBarStatusCustom(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                  title: state.title,
-                  subtitle: state.subtitle,
-                  hideSnackBar: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                  type: CardType.info,
-                ));
-              }
+              // if (state is AlertAction) {
+              //   ScaffoldMessenger.of(context)
+              //       .showSnackBar(SnackBarCustom.snackBarCustom(
+              //     title: 'title',
+              //     onTap: () {
+              //       state.onTap();
+              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              //     },
+              //     titleAction: 'Action',
+              //     type: CardType.error,
+              //   ));
+              // }
+              // if (state is AlertInfo) {
+              //   ScaffoldMessenger.of(context)
+              //       .showSnackBar(SnackBarCustom.snackBarStatusCustom(
+              //     onTap: () {
+              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              //     },
+              //     title: state.title,
+              //     subtitle: state.subtitle,
+              //     hideSnackBar: () {
+              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              //     },
+              //     type: CardType.info,
+              //   ));
+              // }
             },
           ),
           BlocListener<SessionCubit, SessionState>(

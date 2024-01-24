@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Core/Values/Colors.dart';
+import 'colors.dart';
 
 enum ButtonType {
   primary,
@@ -83,7 +83,7 @@ class StarlinkButton extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  text,
+                  text.toUpperCase(),
                   style: TextStyle(
                     // bold
                     fontFamily: 'DDin-Bold',

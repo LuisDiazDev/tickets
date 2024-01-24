@@ -1,10 +1,6 @@
-
-
-
-import 'dart:ui';
-
-import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:flutter/material.dart';
+
+import 'colors.dart';
 
 class StarlinkTextStyle  extends TextStyle{
   const StarlinkTextStyle({double size=16, Color color=StarlinkColors.white, bool isBold=true, required bool extraSeparation}) : super(

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../Core/Values/Colors.dart';
 import 'package:gap/gap.dart';
+import '../../../Widgets/starlink/colors.dart';
+import '../../../Widgets/starlink/text_style.dart';
 import '../../../core/utils/size_utils.dart';
 
 class HeaderDrawer extends StatelessWidget {
@@ -12,17 +14,11 @@ class HeaderDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     mediaQueryData = MediaQuery.of(context);
     return  Container(
-      color: StarlinkColors.black,
+      color: StarlinkColors.darkGray,
       width: double.infinity,
       child: Column(
         children: [
           SizedBox(height: 100.v,),
-          Text("title_drawer".tr,style:const TextStyle(
-              color: ColorsApp.primary,
-              fontFamily: 'poppins_bold',
-              fontWeight: FontWeight.w600,
-              fontSize: 26
-          ),),
           const Gap(45),
         ],
       ),

@@ -30,7 +30,7 @@ Future<Map> _check(int current,String locate) async {
       var ip = "192.168.$locate.$j";
       promises.add(ticketProvider.restApi.get(
         host: ip,
-        url: "/ip/hotspot/user",
+        endpoint: "/ip/hotspot/user",
         user: "admin",
         pass: "1234",
       ));

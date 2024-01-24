@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../Core/Values/Colors.dart';
+import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 
 class TileDrawer extends StatelessWidget {

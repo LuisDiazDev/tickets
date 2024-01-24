@@ -7,15 +7,15 @@ import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Routes/Route.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/starlink/button.dart';
+import '../../Widgets/starlink/colors.dart';
+import '../../Widgets/starlink/text_style.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
 import '../drawer/drawer.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 import 'bloc/ClientsBloc.dart';
 import 'bloc/ClientsEvents.dart';
@@ -52,7 +52,7 @@ class _BuildListClientPageState extends State<_BuildListClientPage> {
       return Scaffold(
           backgroundColor: StarlinkColors.black,
           drawer: const DrawerCustom(),
-          appBar: customAppBar(title: "Clientes"),
+          appBar: customAppBar(title: "CLIENTES"),
           body: Container(
             color: Colors.transparent,
             alignment: Alignment.topCenter,
@@ -60,35 +60,37 @@ class _BuildListClientPageState extends State<_BuildListClientPage> {
             height: MediaQuery.of(context).size.height,
             child: ListView(
               children: [
-                Padding(
+                Visibility(
+                  visible: clientBloc.state.clients.isNotEmpty,
+                  child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Card(
-                      color: StarlinkColors.white,
-                      child: ListTile(
-                        leading: const Icon(
-                          EvaIcons.arrowCircleDownOutline,
-                          color: StarlinkColors.green,
-                          size: 42,
-                        ),
-                        title: const Text(
-                          "Total de Clientes",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: StarlinkColors.black,
-                            fontFamily: 'DDIN-Bold',
-                          ),
-                        ),
-                        subtitle: state.load
-                            ? const CircularProgressIndicator()
-                            : Text(
-                                "${clientBloc.state.clients.length}",
-                                style: const TextStyle(
-                                    color: StarlinkColors.black,
-                                    fontFamily: 'DDIN',
-                                    fontSize: 22),
-                              ),
+                    child: Column(children: [
+                      StarlinkText(
+                        "CANTIDAD DE CLIENTES",
                       ),
-                    )),
+                      Text(
+                        "${clientBloc.state.clients.length}",
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'DDIN',
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+                Visibility(
+                  visible: clientBloc.state.clients.isEmpty,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(children: [
+                      StarlinkText(
+                        "NO HAY CLIENTES REGISTRADOS",
+                      ),
+                    ]),
+                  ),
+                ),
                 const Gap(10),
                 Column(
                   children: state.clients
@@ -104,12 +106,16 @@ class _BuildListClientPageState extends State<_BuildListClientPage> {
             ),
           ),
           bottomSheet: StarlinkButton(
-              text: "Registrar Cliente",
+              text: "REGISTRAR CLIENTE",
               type: ButtonType.primary,
               onPressed: () {
                 if (state.profiles.isEmpty) {
-                  alertCubit.showInfoDialog(
-                    AlertInfo("Sin Planes disponibles", "Cree un plan primero"),
+                  alertCubit.showDialog(
+                    ShowDialogEvent(
+                      title: "Sin Perfiles disponibles",
+                      message: "Cree un perfil primero",
+                      type: AlertType.warning,
+                    ),
                   );
                   NavigatorService.pushNamed(Routes.clientProfile);
                 } else {

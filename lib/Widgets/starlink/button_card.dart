@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../Core/Values/Colors.dart';
+import 'colors.dart';
 
 // Define un enum con los tipos de tarjetas
 enum ButtonCardType { error, warning, info, success }

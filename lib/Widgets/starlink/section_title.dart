@@ -1,5 +1,6 @@
-import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:flutter/material.dart';
+
+import 'colors.dart';
 
 class StarlinkSectionTitle extends StatelessWidget {
   final String title;

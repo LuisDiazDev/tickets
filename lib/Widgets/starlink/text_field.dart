@@ -1,6 +1,7 @@
-import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
+
+import 'colors.dart';
 
 class StarlinkTextField extends StatelessWidget {
   final String initialValue;
