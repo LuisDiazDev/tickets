@@ -42,10 +42,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<NewQr>(
       (event, emit) async {
         emit(state.copyWith(currentUser: event.qr));
-        alertCubit.showInfoDialog(
-          AlertInfo(
-            "Por favor seleccione un plan",
-            "Clave: ${event.qr}",
+        alertCubit.showDialog(
+          ShowDialogEvent(
+            title: "SELECCIONE UN PLAN",
+            message: "Clave: ${event.qr}",
+            type: AlertType.info,
           ),
         );
       },
@@ -68,8 +69,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 configModel: sessionCubit.state.cfg!.copyWith(
                     bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
           } else {
-            alertCubit.showErrorDialog(
-                "ERROR", "No se ha detectado ninguna impresora");
+            alertCubit.showDialog(ShowDialogEvent(
+              title: "ERROR",
+              message: "No se ha detectado ninguna impresora",
+              type: AlertType.warning,
+            ));
             NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
             return;
           }
@@ -82,12 +86,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               user.toLowerCase(), event.profile, event.duration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
-          alertCubit.showErrorDialog("USUARIO YA EXISTE",
-              "Posiblemente el usuario ya se encuentre registrado en el sistema");
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "USUARIO YA EXISTE",
+              message:
+                  "Posiblemente el usuario ya se encuentre registrado en el sistema",
+              type: AlertType.error,
+            ),
+          );
           return;
         } catch (e) {
-          alertCubit.showErrorDialog("ERROR",
-              "Ha ocurrido un error inesperado resgistrando el usuario");
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR",
+              message:
+                  "Ha ocurrido un error inesperado resgistrando el usuario",
+              type: AlertType.error,
+            ),
+          );
           return;
         }
         if (r.statusCode == 200 || r.statusCode == 201) {
@@ -100,12 +116,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               price: event.price,
               duration: formatDuration(event.duration));
           if (state.currentUser == "") {
-            alertCubit
-                .showInfoDialog(AlertInfo("IMPRIMIENDO", "Espere un momento"));
+            alertCubit.showDialog(
+              ShowDialogEvent(
+                title: "TICKET GENERADO",
+                message: "Imprimiendo el ticket",
+                type: AlertType.success,
+              ),
+            );
           }
         } else {
-          alertCubit.showInfoDialog(
-            AlertInfo("ERROR", "Ha ocurrido un problema: ${r.body}"),
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR",
+              message: "Ha ocurrido un problema: ${r.body}",
+              type: AlertType.error, // TODO: emit domain error
+            ),
           );
         }
         if (state.currentUser == "" && !sessionCubit.state.cfg!.disablePrint) {
@@ -116,9 +141,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               duration: event.duration);
         }
         emit(state.copyWith(currentUser: ""));
-        // if(!PrinterService.isProgress){
-        //   PrinterService().printTicket(user: event.name,configModel: sessionCubit.state.cfg,price: event.price,duration: event.duration);
-        // }
       },
     );
 

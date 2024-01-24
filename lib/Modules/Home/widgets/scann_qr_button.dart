@@ -1,6 +1,6 @@
-import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/section_title.dart';
 
 class ScanVirtualTicketButton extends StatelessWidget {

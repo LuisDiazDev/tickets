@@ -50,14 +50,13 @@ class MkProvider {
   final restApi = RestApiProvider();
 
   Future<String> identity() async {
-    var response = await restApi.get(url: "/system/identity");
+    var response = await restApi.get(endpoint: "/system/identity");
 
     if (response.statusCode == 200) {
       try {
         var decode = jsonDecode(response.body)["name"] ?? "";
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return "";
       }
     }
@@ -65,14 +64,13 @@ class MkProvider {
   }
 
   Future<List<TicketModel>> allTickets() async {
-    var response = await restApi.get(url: "/ip/hotspot/user");
+    var response = await restApi.get(endpoint: "/ip/hotspot/user");
 
     if (response.statusCode == 200) {
       try {
         var decode = ticketModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -80,14 +78,13 @@ class MkProvider {
   }
 
   Future<List<SchedulerModel>> allScheduler() async {
-    var response = await restApi.get(url: "/system/scheduler");
+    var response = await restApi.get(endpoint: "/system/scheduler");
 
     if (response.statusCode == 200) {
       try {
         var decode = schedulerModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -95,14 +92,13 @@ class MkProvider {
   }
 
   Future<List<ActiveModel>> allActiveTickets() async {
-    var response = await restApi.get(url: "/ip/hotspot/active");
+    var response = await restApi.get(endpoint: "/ip/hotspot/active");
 
     if (response.statusCode == 200) {
       try {
         var decode = activeModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -110,14 +106,13 @@ class MkProvider {
   }
 
   Future<List<Hotspot>> allHotspot() async {
-    var response = await restApi.get(url: "/ip/hotspot");
+    var response = await restApi.get(endpoint: "/ip/hotspot");
 
     if (response.statusCode == 200) {
       try {
         var decode = hotspotFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -125,14 +120,13 @@ class MkProvider {
   }
 
   Future<List<ProfileModel>> allProfiles() async {
-    var response = await restApi.get(url: "/ip/hotspot/user/profile");
+    var response = await restApi.get(endpoint: "/ip/hotspot/user/profile");
 
     if (response.statusCode == 200) {
       try {
         var decode = profileModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     }
@@ -143,48 +137,42 @@ class MkProvider {
   Future<Object> allDhcpServer(
       {String? user, String? pass, String? host}) async {
     var response = await restApi.get(
-        url: "/ip/dhcp-server", user: user, pass: pass, host: host);
+        endpoint: "/ip/dhcp-server", user: user, pass: pass, host: host);
 
     if (response.statusCode == 200) {
       try {
         var decode = dhcpServerModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
     } else {
-      // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
       return false;
     }
   }
 
   Future<Response> exportData({String file = "default"}) async {
     return await restApi
-        .post(url: "/export", body: {"file": file, "show-sensitive": true});
+        .post(endpoint: "/export", body: {"file": file, "show-sensitive": true});
   }
 
   Future<List<ProfileHotspotModel>> allProfilesHotspot() async {
-    var response = await restApi.get(url: "/ip/hotspot/profile");
+    var response = await restApi.get(endpoint: "/ip/hotspot/profile");
 
     if (response.statusCode == 200) {
       try {
         var decode = profileHotspotModelFromJson(response.body);
         return decode;
       } catch (e) {
-        // restApi.alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
         return [];
       }
-    } else {
-      // restApi.alertCubit?.showAlertInfo(title: "", subtitle: response.body);
     }
-
     return [];
   }
 
   Future<Response> newTicket(String name, String profile, String duration,
       {int limitBytesTotal = 0}) async {
-    var r = await restApi.post(url: "/ip/hotspot/user/add", body: {
+    var r = await restApi.post(endpoint: "/ip/hotspot/user/add", body: {
       "server": "hotspot1",
       "name": name,
       "password": name,
@@ -216,7 +204,7 @@ class MkProvider {
   }
 
   Future<Response> backup(String name, String pass) async {
-    return await restApi.post(url: "/system/backup/load", body: {
+    return await restApi.post(endpoint: "/system/backup/load", body: {
       "name": name,
       "password": pass,
       "force-v6-to-v7-configuration-upgrade": true
@@ -225,7 +213,7 @@ class MkProvider {
 
   Future<Response> changePass(
       String oldPass, String newPass, String verifyPass) async {
-    return await restApi.post(url: "/password", body: {
+    return await restApi.post(endpoint: "/password", body: {
       "new-password": newPass,
       "confirm-new-password": verifyPass,
       "old-password": oldPass
@@ -233,13 +221,11 @@ class MkProvider {
   }
 
   Future<Response> removeTicket(String id) async {
-    // id = id.replaceAll("*", "");
     var result = await restApi.delete(url: "/ip/hotspot/user/$id");
     return result;
   }
 
   Future<Response> disconnectTicket(String id) async {
-    // id = id.replaceAll("*", "");
     var result = await restApi.delete(url: "/ip/hotspot/active/$id");
     return result;
   }
@@ -250,7 +236,7 @@ class MkProvider {
 
   Future<Response> resetClient(String id) async {
     return await restApi
-        .post(url: "/ip/hotspot/user/reset-counters", body: {".id": id});
+        .post(endpoint: "/ip/hotspot/user/reset-counters", body: {".id": id});
   }
 
   Future<Response> newProfile(ProfileModel profile, String duration) async {
@@ -266,7 +252,7 @@ class MkProvider {
         return newProfile(profile, duration);
       }
     }
-    return await restApi.post(url: "/ip/hotspot/user/profile/add", body: {
+    return await restApi.post(endpoint: "/ip/hotspot/user/profile/add", body: {
       "name": profile.metadata!.toMikrotiketNameString(profile.name ?? ""),
       // TODO mover toMikrotiketNameString a esta clase
       "address-pool": "dhcp",
@@ -276,7 +262,6 @@ class MkProvider {
       "mac-cookie-timeout": duration,
       "on-login": profile.onLogin,
       "transparent-proxy": "yes"
-      // "parent-queue": "",
     });
   }
 
@@ -289,7 +274,6 @@ class MkProvider {
       "shared-users": profile.sharedUsers,
       "status-autorefresh": "1m",
       "on-login": profile.onLogin,
-      // "parent-queue": ""
     });
   }
 
@@ -353,7 +337,7 @@ class MkProvider {
         restApi
             .get(
           host: ip,
-          url: "/system/routerboard",
+          endpoint: "/system/routerboard",
           timeoutSecs: timeoutSecs,
         )
             .then((e) {

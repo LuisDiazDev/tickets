@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:StarTickera/Core/Values/Colors.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

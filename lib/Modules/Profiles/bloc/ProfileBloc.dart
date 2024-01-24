@@ -27,17 +27,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (r.statusCode == 200 || r.statusCode == 201) {
           var data = await provider.allProfiles();
           emit(state.copyWith(load: false, profiles: data));
-          alertCubit.showInfoDialog(
-            AlertInfo(
-              "ÉXITO",
-              "Se ha registrado un nuevo plan",
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ÉXITO",
+              message: "Se ha creado un nuevo plan",
+              type: AlertType.success,
             ),
           );
         } else {
-          alertCubit.showInfoDialog(
-            AlertInfo(
-              "ERROR AL REGISTRAR UN NUEVO PLAN",
-              "Ha ocurrido un error al registrar un nuevo plan: ${r.body}"
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR",
+              message: "Ha ocurrido un error inesperado registrando el plan",
+              type: AlertType.error,
             ),
           );
           emit(state.copyWith(load: false));
@@ -54,15 +56,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (r.statusCode == 200 || r.statusCode == 201) {
           var data = await provider.allProfiles();
           emit(state.copyWith(load: false, profiles: data));
-          alertCubit.showInfoDialog(
-            AlertInfo(
-              "ÉXITO",
-              "Se ha actualizado un plan",
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ÉXITO",
+              message: "Se ha actualizado un plan",
+              type: AlertType.success,
             ),
           );
         } else {
           emit(state.copyWith(load: false));
-          alertCubit.showErrorDialog("ERROR", r.body);
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR",
+              message: "Ha ocurrido un error inesperado actualizando el plan",
+              type: AlertType.error,
+            ),
+          );
         }
       },
     );
@@ -74,9 +83,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var r = await provider.removeProfile(event.deletedProfile.id!);
         if (r.statusCode <= 205) {
           add(FetchData());
-          alertCubit.showErrorDialog("", "Se ha eliminado un plan");
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "PLAN ELIMINADO",
+              message: "Se ha eliminado un plan",
+              type: AlertType.success,
+            ),
+          );
         } else {
-          alertCubit.showErrorDialog("error", r.body);
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR ELIMINANDO PLAN",
+              message:
+                  "Ha ocurrido un error inesperado eliminando el plan: ${r.body}",
+              type: AlertType.error,
+            ),
+          );
         }
       },
     );

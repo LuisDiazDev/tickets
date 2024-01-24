@@ -53,8 +53,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           (event, emit) {
         final newHost = IpInput.dirty(value: event.host);
         if(newHost.value == "..."){
-          alertCubit.showInfoDialog(
-              AlertInfo("Error", "No se ha encontrado el mikrotik en esta red")
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "ERROR",
+              message: "Ingrese una dirección IP válida",
+              type: AlertType.error,
+            ),
           );
         }else{
           emit(
@@ -127,10 +131,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
             emit(const LoginState());
           }else{
-            alertCubit.showErrorDialog("ERROR AL INICIAR SESIÓN", "Verifique los datos ingresados");
+            alertCubit.showDialog(
+              ShowDialogEvent(
+                title: "DATOS INCORRECTOS",
+                message: "Verifique los datos ingresados",
+                type: AlertType.error,
+              ),
+            );
           }
         } catch (e) {
-          alertCubit.showErrorDialog("ERROR AL INICIAR SESIÓN", "Verifique los datos ingresados");
+          alertCubit.showDialog(
+            ShowDialogEvent(
+              title: "DATOS INCORRECTOS",
+              message: "Verifique los datos ingresados",
+              type: AlertType.error,
+            ),
+          );
         }finally{
           emit(state.copyWith(
             isLoading: false,

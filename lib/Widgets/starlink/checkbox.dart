@@ -1,41 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Core/Values/Colors.dart';
-
-// class StarlinkCheckBox extends StatelessWidget {
-//   final String text;
-//   final bool isMandatory;
-//   final bool value;
-//   final Function(bool) onChanged;
-//
-//   const StarlinkCheckBox({
-//     Key? key,
-//     required this.text,
-//     required this.isMandatory,
-//     required this.value,
-//     required this.onChanged,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListTile(
-//       title: Text(
-//         text,
-//         style: TextStyle(
-//           fontWeight: isMandatory ? FontWeight.bold : FontWeight.normal,
-//           color: isMandatory ? Colors.black : Colors.grey,
-//         ),
-//       ),
-//       trailing: Switch(
-//         value: value,
-//         onChanged: onChanged,
-//       ),
-//       onTap: () {
-//         onChanged(!value);
-//       },
-//     );
-//   }
-// }
+import 'colors.dart';
 
 class StarlinkCheckBox extends StatefulWidget {
   final String title;

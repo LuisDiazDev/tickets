@@ -1,12 +1,13 @@
 import 'package:StarTickera/Modules/Profiles/widget/form_new_profile.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
+import '../../Widgets/starlink/colors.dart';
 import '../../models/profile_model.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
@@ -16,7 +17,7 @@ import 'bloc/ProfileState.dart';
 import 'widget/custom_profile_widget.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,25 +67,25 @@ class _BuildHomePageState extends State<_BuildHomePage>
                       ...state.profiles
                           .where((p) => p.name != "default")
                           .map((e) => CustomProfile(
-                        profile: e,
-                        onTap: () {
-                          showGlobalDrawer(
-                              context: context,
-                              builder: horizontalDrawerBuilder(
-                                  profileBloc,
-                                  profileModel: e),
-                              direction: AxisDirection.right);
-                        },
-                        copyTap: () {
-                          showGlobalDrawer(
-                              context: context,
-                              builder: horizontalDrawerBuilder(
-                                  profileBloc,
-                                  newProfile: true,
-                                  profileModel: e),
-                              direction: AxisDirection.right);
-                        },
-                      )),
+                                profile: e,
+                                onTap: () {
+                                  showGlobalDrawer(
+                                      context: context,
+                                      builder: horizontalDrawerBuilder(
+                                          profileBloc,
+                                          profileModel: e),
+                                      direction: AxisDirection.right);
+                                },
+                                copyTap: () {
+                                  showGlobalDrawer(
+                                      context: context,
+                                      builder: horizontalDrawerBuilder(
+                                          profileBloc,
+                                          newProfile: true,
+                                          profileModel: e),
+                                      direction: AxisDirection.right);
+                                },
+                              )),
                       const Gap(45)
                     ],
                   ),
@@ -94,29 +95,21 @@ class _BuildHomePageState extends State<_BuildHomePage>
             Visibility(
                 visible: !state.load && state.profiles.isEmpty,
                 child: Center(
-                  child: StarlinkButton(
-                    text: 'CREAR NUEVO PLAN',
-                    onPressed: () {
-                      showGlobalDrawer(
-                          context: context,
-                          builder: horizontalDrawerBuilder(profileBloc),
-                          direction: AxisDirection.right);
-                    },
+                  child: StarlinkText(
+                    'NO HAY PLANES REGISTRADOS',
                   ),
                 ))
           ],
         ),
-        bottomSheet: Visibility(
-          visible: state.profiles.isNotEmpty && !state.load,
-          child: StarlinkButton(
-              text: "CREAR NUEVO PLAN",
-              type: ButtonType.primary,
-              onPressed: () {
-                showGlobalDrawer(
-                    context: context,
-                    builder: horizontalDrawerBuilder(profileBloc),
-                    direction: AxisDirection.right);
-              }),
+        bottomSheet: StarlinkButton(
+          text: "CREAR NUEVO PLAN",
+          type: ButtonType.primary,
+          onPressed: () {
+            showGlobalDrawer(
+                context: context,
+                builder: horizontalDrawerBuilder(profileBloc),
+                direction: AxisDirection.right);
+          },
         ),
       );
     });

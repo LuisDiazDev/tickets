@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:StarTickera/Data/database/databse_firebase.dart';
@@ -28,7 +29,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
     final database = DatabaseFirebase();
 
     if (await database.checkUUID()) {
-
       var phone = await database.getContact();
       var name = await database.getName();
 
@@ -84,16 +84,14 @@ class SessionCubit extends HydratedCubit<SessionState> {
                 ssid: details
                         .firstWhere((element) => element.contains("ssid"))
                         .replaceAll(".ssid=", "")
-                        .replaceAll("\n", "") ??
-                    "",
+                        .replaceAll("\n", "")  ,
                 pass: details
                         .firstWhere((element) => element.contains("pass"))
                         .replaceAll(".passphrase=", "")
-                        .replaceAll("\n", "") ??
-                    "",
+                        .replaceAll("\n", ""),
               ));
             } catch (e) {
-              print(e);
+              log(e.toString()); // TODO: emit domain error
             }
           }
         }
@@ -233,14 +231,21 @@ class SessionCubit extends HydratedCubit<SessionState> {
     var r = await provider.allProfilesHotspot();
     ProgressDialogUtils.hideProgressDialog();
     if (r.isNotEmpty) {
-      alertCubit.showErrorDialog("CONECTADO", "Se estableció la conexión con el mikrotik");
-    } else {
-      alertCubit.showInfoDialog(
-        AlertInfo(
-            "ERROR",
-            "1. revise si el mikrotik está encendido\n"
-            "2. chequee la direccion del mikrotik y que las credenciales sean correctas"),
+      alertCubit.showDialog(
+        ShowDialogEvent(
+            title: "CONECTADO",
+            message: "Se estableció la conexión con el mikrotik",
+            type: AlertType.success,
+        ),
       );
+    } else {
+      alertCubit.showDialog(
+        ShowDialogEvent(
+          title: "ERROR",
+          message: "1. revise si el mikrotik está encendido\n"
+            "2. chequee la direccion del mikrotik y que las credenciales sean correctas",
+          type: AlertType.success,
+        ));
     }
   }
 
@@ -251,7 +256,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
     bool upload = await FtpService.uploadFile(
         file: file, remoteName: "hotspot/login.html");
     if (!upload) {
-      print("error subiendo login");
+      log("error subiendo login");
       return;
     }
   }
@@ -266,12 +271,16 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
     var r = await provider.backup("backup.backup", "");
     if (r.statusCode == 200) {
-      await Future.delayed(Duration(seconds: 20));
+      await Future.delayed(const Duration(seconds: 20));
       ProgressDialogUtils.hideProgressDialog();
     } else {
       ProgressDialogUtils.hideProgressDialog();
-      alertCubit.showInfoDialog(
-        AlertInfo("error", r.body),
+    alertCubit.showDialog(
+        ShowDialogEvent(
+          title: "ERROR",
+          message: "No se pudo realizar el backup",
+          type: AlertType.error,
+        ),
       );
     }
   }

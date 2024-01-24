@@ -1,7 +1,7 @@
+import 'package:StarTickera/Widgets/starlink/colors.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../Core/Values/Colors.dart';
 
 AppBar customAppBar({String title="",Widget? action,Function()? saved}){
   return AppBar(

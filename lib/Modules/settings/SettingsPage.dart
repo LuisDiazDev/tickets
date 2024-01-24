@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:StarTickera/Core/localization/app_localization.dart';
-import 'package:StarTickera/Data/Services/navigator_service.dart';
 import 'package:StarTickera/Data/database/databse_firebase.dart';
 import 'package:StarTickera/Modules/settings/widgets/form_new_password.dart';
 import 'package:StarTickera/Widgets/starlink/button.dart';
@@ -10,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../Core/Values/Colors.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
 import '../../Data/Provider/virtualTicketRepository.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/starlink/card.dart';
+import '../../Widgets/starlink/colors.dart';
 import '../../Widgets/starlink/text_field.dart';
 import '../Alerts/AlertCubit.dart';
 import '../Session/SessionCubit.dart';
@@ -58,14 +56,14 @@ class _SettingsPageState extends State<SettingsPage> {
           saved: ()async{
             DatabaseFirebase databaseFirebase = DatabaseFirebase();
             if(state.cfg?.nameLocal != _name){
-              databaseFirebase.updateName(_name ?? "");
+              databaseFirebase.updateName(_name);
               sessionBloc.changeState(state.copyWith(
-                  configModel: state.cfg!.copyWith(nameLocal: _name ?? "")));
+                  configModel: state.cfg!.copyWith(nameLocal: _name)));
             }
             if(state.cfg?.contact != _contact){
-              databaseFirebase.updateContact(_contact ?? "");
+              databaseFirebase.updateContact(_contact);
               sessionBloc.changeState(state.copyWith(
-                  configModel: state.cfg!.copyWith(contact: _contact ?? "")));
+                  configModel: state.cfg!.copyWith(contact: _contact)));
             }
           }
         ),
@@ -81,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "TICKETS VIRTUALES",
               ),
               const StarlinkCard(
-                type: CardType.info,
+                type: InfoContextType.info,
                 title: "Tickets Virtuales",
                 message:
                     "Son tickets de puedes imprimir masivamente en una impresora común de tinta.\n"
@@ -164,7 +162,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 initialValue: state.cfg?.dnsNamed ?? "",
                 onChanged: (str) {
                   sessionBloc.changeState(state.copyWith(
-                      configModel: state.cfg!.copyWith(dnsNamed: str ?? "")));
+                      configModel: state.cfg!.copyWith(dnsNamed: str)));
                 },
                 title: "Página Hotspot",
                 textHint: "Ejemplo: wifi.com",

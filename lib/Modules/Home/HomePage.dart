@@ -1,14 +1,12 @@
-import 'package:StarTickera/Core/localization/app_localization.dart';
 import 'package:StarTickera/Modules/Home/widgets/bt_state_widget.dart';
 import 'package:StarTickera/Modules/Home/widgets/scann_qr_button.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../../Core/Values/Colors.dart';
 import '../../../Data/Provider/MkProvider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/qr_scan.dart';
+import '../../Widgets/starlink/colors.dart';
 import '../../Widgets/starlink/section_title.dart';
 import '../../Widgets/starlink/text_style.dart';
 import '../Alerts/AlertCubit.dart';
@@ -20,7 +18,7 @@ import 'bloc/HomeState.dart';
 import 'widgets/CustomPlanWidget.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +56,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
         backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
         appBar: customAppBar(
-          title: "VENTA TICKETS",
+          title: "VENTA DE TICKETS",
           action:home.sessionCubit.state.cfg!.bluetoothDevice != null ||  home.sessionCubit.state.cfg!.lastIdBtPrint != "" ? BtStateWidget(
             bluetoothDevice: home.sessionCubit.state.cfg!.bluetoothDevice,
             sessionBloc: home.sessionCubit,
@@ -82,10 +80,13 @@ class _BuildHomePageState extends State<_BuildHomePage>
                   }
                 },
               ),
-              const Gap(16),
-              const StarlinkSectionTitle(
-                  title: "IMPRIMIR NUEVOS TICKETS",
-                  alignment: Alignment.center),
+              const Gap(30),
+              Visibility(
+                visible: filteredProfiles.isNotEmpty && !state.load,
+                child: const StarlinkSectionTitle(
+                    title: "IMPRIMIR NUEVOS TICKETS",
+                    alignment: Alignment.center),
+              ),
               Visibility(
                   visible: filteredProfiles.isNotEmpty && !state.load,
                   child: Builder(builder: (context) {
@@ -120,7 +121,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                   visible: filteredProfiles.isEmpty && !state.load,
                   child: Center(
                     child: StarlinkText(
-                      "Sin Planes disponibles",
+                      "SIN PLANES DISPONIBLES",
                       size: 18,
                       isBold: true,
                     ),

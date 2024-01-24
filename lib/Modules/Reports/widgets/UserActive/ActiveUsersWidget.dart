@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Values/Colors.dart';
 import '../../../../Data/Provider/MkProvider.dart';
+import '../../../../Widgets/starlink/colors.dart';
 import 'bloc/ActiveTicketsBloc.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
@@ -63,7 +64,7 @@ class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
               onPressed: () async {
                 await showActiveListPopUp(context, state);
               },
-              icon: Icon(EvaIcons.eyeOff2),
+              icon: const Icon(EvaIcons.eyeOff2),
             ),
           ),
         ),
@@ -120,7 +121,7 @@ class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
                                 child: ListTile(
                                       title: Text(e.user ?? ""),
                                       subtitle: Text("IP: ${e.address} \nMac: ${e.macAddress}"),
-                                      trailing: IconButton(onPressed: (){},icon: Icon(EvaIcons.trash2),),
+                                      trailing: IconButton(onPressed: (){},icon: const Icon(EvaIcons.trash2),),
                                 ),
 
                               ))

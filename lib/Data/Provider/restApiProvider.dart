@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import '../../Modules/Alerts/AlertCubit.dart';
@@ -11,7 +12,6 @@ class MyHttpOverrides extends HttpOverrides {
       ..connectionTimeout = const Duration(milliseconds: 5000)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
-
   }
 }
 
@@ -33,89 +33,82 @@ class RestApiProvider {
     this.sessionCubit = sessionCubit;
   }
 
-  Future<http.Response> get(
-      {String url = "", String? user, String? pass, String? host,int? timeoutSecs}) async {
+  Future<http.Response> _req(String method,
+      {String endpoint = "",
+        String? user,
+        String? pass,
+        String? host,
+        Map? body = const {},
+        int? timeoutSecs}) async {
     String username = user ?? sessionCubit?.state.cfg?.user ?? "";
     String password = pass ?? sessionCubit?.state.cfg?.password ?? "";
     String basicAuth =
         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+    var uri = Uri.parse('http://${host ?? sessionCubit?.state.cfg?.host}/rest$endpoint');
+    var headers = {
+      'authorization': basicAuth,
+      'Content-Type': 'application/json'
+    };
+    var timeout = Duration(seconds: timeoutSecs ?? 5);
     try {
-      return await http.get(
-          Uri.parse('http://${host ?? sessionCubit?.state.cfg?.host}/rest$url'),
-          //todo
-          headers: {'authorization': basicAuth},
-          ).timeout(Duration(seconds: timeoutSecs??5));
+      if (method == "get") {
+        return await http.get(
+          uri,
+          headers: headers,
+        ).timeout(timeout);
+      } else if (method == "post") {
+        return await http.post(
+          uri,
+          body: jsonEncode(body),
+          headers: headers,
+        ).timeout(timeout);
+      } else if (method == "put") {
+        return await http.put(
+          uri,
+          body: jsonEncode(body),
+          headers: headers,
+        ).timeout(timeout);
+      } else if (method == "delete") {
+        return await http.delete(
+          uri,
+          body: jsonEncode(body),
+          headers: headers,
+        ).timeout(timeout);
+      }
+      throw Exception("method not found: $method");
     } catch (e) {
-      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
+      log(e.toString()); // TODO: emit domain error
       return http.Response(e.toString(), 500);
     }
   }
 
-  Future<http.Response> post(
-      {String url = "default", Map body = const {}}) async {
-    String username = sessionCubit?.state.cfg?.user ?? "";
-    String password = sessionCubit?.state.cfg?.password ?? "";
-    String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+  Future<http.Response> get(
+      {String endpoint = "",
+      String? user,
+      String? pass,
+      String? host,
+      int? timeoutSecs}) async {
+    return _req("get",
+        endpoint: endpoint,
+        user: user,
+        pass: pass,
+        host: host,
+        timeoutSecs: timeoutSecs);
+  }
 
-    try {
-      final msg = jsonEncode(body);
-      return await http.post(
-          Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'),
-          body: msg,
-          headers: {
-            'authorization': basicAuth,
-            'Content-Type': 'application/json'
-          });
-    } catch (e) {
-      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
-      return http.Response(e.toString(), 500);
-    }
+  Future<http.Response> post(
+      {String endpoint = "default", Map body = const {}}) async {
+    return _req("post", endpoint: endpoint, body: body);
+
   }
 
   Future<http.Response> put(
       {String url = "default", Map body = const {}}) async {
-    String username = sessionCubit?.state.cfg?.user ?? "";
-    String password = sessionCubit?.state.cfg?.password ?? "";
-    String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-
-    try {
-      final msg = jsonEncode(body);
-      return await http.put(
-          Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'), //todo
-          body: msg,
-          headers: {
-            'authorization': basicAuth,
-            'Content-Type': 'application/json'
-          });
-    } catch (e) {
-      // alertCubit?.showAlertInfo(title: "", subtitle: e.toString());
-      return http.Response("error", 500);
-    }
+    return _req("put", endpoint: url, body: body);
   }
 
   Future<http.Response> delete(
       {String url = "default", Map body = const {}}) async {
-    String username = sessionCubit?.state.cfg?.user ?? "";
-    String password = sessionCubit?.state.cfg?.password ?? "";
-    String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-
-    final msg = jsonEncode(body);
-
-    try {
-      return await http.delete(
-          Uri.parse('http://${sessionCubit?.state.cfg?.host}/rest$url'),
-          body: msg,
-          headers: {
-            'authorization': basicAuth,
-            'Content-Type': 'application/json'
-          });
-    } catch (e) {
-      alertCubit?.showInfoDialog(AlertInfo(
-          "ERROR DE COMUNICACIÓN","Error comunicandose con el mikrotik: $e"));
-      return http.Response("error", 500);
-    }
+    return _req("delete", endpoint: url, body: body);
   }
 }

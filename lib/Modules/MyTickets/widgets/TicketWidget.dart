@@ -12,6 +12,7 @@ import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Routes/Route.dart';
 import '../../../Widgets/qr_dialog.dart';
+import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/scheduler_model.dart';
 import '../../../models/ticket_model.dart';
@@ -117,13 +118,21 @@ class CustomTicketWidget extends StatelessWidget {
                         price: price);
                   }
 
-                  alertCubit.showInfoDialog(
-                    AlertInfo("Imprimiendo", "Espere un momento"),
+                  alertCubit.showDialog(
+                    ShowDialogEvent(
+                      title: "IMPRIMIENDO",
+                      message: "Espere un momento",
+                      type: AlertType.info,
+                    ),
                   );
                 } else {
                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-                  alertCubit.showInfoDialog(
-                    AlertInfo("Error", "No hay impresora conectada"),
+                  alertCubit.showDialog(
+                    ShowDialogEvent(
+                      title: "ERROR",
+                      message: "No hay impresora conectada",
+                      type: AlertType.error,
+                    ),
                   );
                 }
               });
@@ -182,13 +191,21 @@ class CustomTicketWidget extends StatelessWidget {
                         price: price);
                   }
 
-                  alertCubit.showInfoDialog(
-                    AlertInfo("Imprimiendo", "Espere un momento"),
+                  alertCubit.showDialog(
+                    ShowDialogEvent(
+                      title: "IMPRIMIENDO",
+                      message: "Espere un momento",
+                      type: AlertType.info,
+                    ),
                   );
                 } else {
                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-                  alertCubit.showInfoDialog(
-                    AlertInfo("Error", "No hay impresora conectada"),
+                  alertCubit.showDialog(
+                    ShowDialogEvent(
+                      title: "ERROR",
+                      message: "No hay impresora conectada",
+                      type: AlertType.error,
+                    ),
                   );
                 }
               },

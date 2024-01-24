@@ -7,7 +7,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/rand.dart';
 import '../../../Data/Provider/MkProvider.dart';
-import '../../../models/profile_model.dart';
 import '../../Alerts/AlertCubit.dart';
 import 'TicketsEvents.dart';
 import 'TicketsState.dart';
@@ -79,10 +78,18 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       var r = await provider.removeTicket(event.id);
       if(r.statusCode <= 205 ){
         add(FetchData(load: false));
-        alertCubit.showInfoDialog(AlertInfo("ÉXITO", "Se ha eliminado el ticket"));
+        alertCubit.showDialog(ShowDialogEvent(
+          title: "ÉXITO",
+          message: "Se ha eliminado el ticket",
+          type: AlertType.success,
+        ));
       } else{
         add(FetchData(load: false));
-        alertCubit.showErrorDialog("ERROR", "Ha ocurrido un error eliminando el ticket: ${r.body}");
+        alertCubit.showDialog(ShowDialogEvent(
+          title: "ERROR",
+          message: "Ha ocurrido un error inesperado eliminando el ticket",
+          type: AlertType.error,
+        ));
       }
 
     });
