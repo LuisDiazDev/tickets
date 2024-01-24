@@ -117,6 +117,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                         }
                         return null;
                       },
+                      obscureText: true,
                       initialValue: loginBloc.state.password.value,
                       title: 'CONTRASEÑA',
                       textHint: 'CONTRASEÑA DEL MIKROTIK',

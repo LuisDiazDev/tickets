@@ -76,6 +76,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                           }
                           return null;
                         },
+                        keyboardType: TextInputType.emailAddress,
                         initialValue: loginBloc.state.user.value,
                         title: 'USUARIO',
                         textHint: 'Usuario de la app',
@@ -90,6 +91,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                           }
                           return null;
                         },
+                        obscureText: true,
                         initialValue: loginBloc.state.password.value,
                         title: 'CONTRASEÑA',
                         textHint: 'Contraseña de la app',
