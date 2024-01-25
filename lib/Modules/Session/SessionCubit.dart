@@ -212,8 +212,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
                  StarlinkDialog.show(
                      context: NavigatorService.navigatorKey.currentState!.context,
                      title: "Cierre de sesión",
-                     message: "Se ha abierto la aplicacion en otro dispositivo con las mismas credenciales",
-                     type: AlertType.info,
+                     message: "Se ha abierto la aplicacion en otro dispositivo.\nRecuerde que solo puede tener una sesión abierta a la vez.",
+                     type: AlertType.warning,
                      onTap: () {
                        NavigatorService.goBack();
                      },

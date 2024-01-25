@@ -90,7 +90,7 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
+                        color: StarlinkColors.white,
                       ),
                       onPressed: () {
                         // Update the state i.e. toogle the state of passwordVisible variable
