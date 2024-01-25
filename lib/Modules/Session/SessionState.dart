@@ -2,6 +2,7 @@ part of 'SessionCubit.dart';
 
 class SessionState extends Equatable {
   final bool isAuthenticated;
+  final StreamSubscription? listener;
   final String uuid;
   final String firebaseID;
   final String? state;
@@ -15,6 +16,7 @@ class SessionState extends Equatable {
     this.state = '',
     this.ip = "",
     this.uuid = "",
+    this.listener,
     this.firebaseID = "",
     this.active = false,
     this.wifi = false,
@@ -33,6 +35,7 @@ class SessionState extends Equatable {
     ConfigModel? configModel,
     bool? wifi,
     bool? active,
+    StreamSubscription? listener
   }) =>
       SessionState(
           isAuthenticated: isAuthenticated ?? this.isAuthenticated,
@@ -41,6 +44,7 @@ class SessionState extends Equatable {
           ip: ip ?? this.ip,
           firebaseID: firebaseID ?? this.firebaseID,
           uuid: uuid ?? this.uuid,
+          listener: listener ?? this.listener,
           active: active ?? this.active,
           sessionStatus: sessionStatus ?? this.sessionStatus,
           cfg: configModel ?? cfg);

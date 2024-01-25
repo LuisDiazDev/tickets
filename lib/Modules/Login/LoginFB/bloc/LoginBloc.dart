@@ -45,9 +45,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         try {
           ProgressDialogUtils.showProgressDialog();
 
-          emit(state.copyWith(
-            isLoading: false,
-          ));
           final credential =
               await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: event.user,
@@ -63,6 +60,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           sessionCubit.changeState(sessionCubit.state.copyWith(
               firebaseID: credential.user!.uid,
               sessionStatus: SessionStatus.mikrotik));
+          sessionCubit.authListener();
         } on FirebaseAuthException catch (e) {
           if (e.code == 'user-not-found') {
             alertCubit.showDialog(ShowDialogEvent(
@@ -89,9 +87,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           );
         } finally {
           ProgressDialogUtils.hideProgressDialog();
-          emit(state.copyWith(
-            isLoading: false,
-          ));
         }
       },
     );
