@@ -143,149 +143,107 @@ class IpSearchDialogState extends State<IpSearchDialog> {
       contentPadding: const EdgeInsets.all(2),
       title: StarlinkText("BUSCANDO UN MIKROTIK"),
       backgroundColor: StarlinkColors.darkGray,
-      content: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ValueListenableBuilder<int>(
-            valueListenable: scannedIPCount,
-            builder: (context, value, child) {
-              return StarlinkProgressCircle(
-                percent: ((scannedIPCount.value.floorToDouble() /
-                            500.floorToDouble()) *
-                        100.0)
-                    .toInt(),
-              );
-            },
-          ),
-          const Gap(20),
-          StatefulBuilder(
-            builder: (context, snapshot) {
-              if (foundMikrotiksMap.isEmpty) {
-                return StarlinkText("BUSCANDO...");
-              }
-              return Column(
-                children: [
-                  StarlinkText("MIKROTIKS ENCONTRADOS:"),
-                  const SizedBox(height: 20),
-                  _buildFoundMikrotiksList(),
-                ],
-              );
-            },
-          ),
-          const Spacer(),
-          StarlinkButton(
-            text: "CERRAR",
-            onPressed: () async {
-              // NavigatorService.navigatorKey.currentState!.pop();
-              NavigatorService.goBack();
-            },
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 200,
+              width: 200,
+              child: ValueListenableBuilder<int>(
+                valueListenable: scannedIPCount,
+                builder: (context, value, child) {
+                  return StarlinkProgressCircle(
+                    percent: ((scannedIPCount.value.floorToDouble() /
+                                500.floorToDouble()) *
+                            100.0)
+                        .toInt(),
+                  );
+                },
+              ),
+            ),
+            const Gap(20),
+            SingleChildScrollView(
+              child: StatefulBuilder(
+                builder: (context, snapshot) {
+                  if (foundMikrotiksMap.isEmpty) {
+                    return StarlinkText("BUSCANDO...");
+                  }
+                  return Column(
+                    children: [
+                      StarlinkText("MIKROTIKS ENCONTRADOS:"),
+                      const SizedBox(height: 20),
+                      _buildFoundMikrotiksList(),
+                      const Gap(20),
+                      StarlinkButton(
+                        text: "CERRAR",
+                        onPressed: () async {
+                          // NavigatorService.navigatorKey.currentState!.pop();
+                          NavigatorService.goBack();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-  //
-  // @override
-  // Widget build(BuildContext context) {
-  //   // Tu código de diálogo aquí, con algunas modificaciones:
-  //   return AlertDialog(
-  //     contentPadding: const EdgeInsets.all(2),
-  //     title: StarlinkText("BUSCANDO UN MIKROTIK"),
-  //     backgroundColor: StarlinkColors.darkGray,
-  //     content: SingleChildScrollView( // Envolver en SingleChildScrollView
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min, // Cambia a MainAxisSize.min
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: [
-  //           ValueListenableBuilder<int>(
-  //             valueListenable: scannedIPCount,
-  //             builder: (context, value, child) {
-  //               // ... Tu código existente ...
-  //             },
-  //           ),
-  //           const Gap(20),
-  //           StatefulBuilder(
-  //             builder: (context, snapshot) {
-  //               if (foundMikrotiksMap.isEmpty) {
-  //                 // ... Tu código existente ...
-  //               }
-  //               return Column(
-  //                 children: [
-  //                   StarlinkText("MIKROTIKS ENCONTRADOS:"),
-  //                   const SizedBox(height: 20),
-  //                   SingleChildScrollView( // Hacer esta parte scrolleable
-  //                     child: _buildFoundMikrotiksList(),
-  //                   ),
-  //                 ],
-  //               );
-  //             },
-  //           ),
-  //           const Spacer(),
-  //           StarlinkButton(
-  //             text: "CERRAR",
-  //             onPressed: () async {
-  //               // ... Tu código existente ...
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+
 
   Column _buildFoundMikrotiksList() {
     return Column(
-                  children: foundMikrotiksMap.values
-                      .map(
-                        (e) => Builder(builder: (context) {
-                          String title = e.ipv4 ?? e.ipv6 ?? e.mac ?? "";
-                          String subtitle = "";
-                          if (e.name != null) {
-                            subtitle = e.name!;
-                          }
-                          if (e.boardName != null) {
-                            if (subtitle.isNotEmpty) {
-                              subtitle += "\n";
-                            }
-                            subtitle += e.boardName!;
-                          }
-                          if (e.mac != null) {
-                            if (subtitle.isNotEmpty) {
-                              subtitle += "\n";
-                            }
-                            subtitle += e.mac!;
-                          }
-                          late Widget suffixWidget;
-                          if (e.boardImageUrl != null) {
-                            suffixWidget = Image.network(
-                              e.boardImageUrl!,
-                              width: 50,
-                              height: 50,
-                            );
-                          } else {
-                            suffixWidget = const Icon(
-                              Icons.router_outlined,
-                              color: Colors.white,
-                            );
-                          }
-                          return StarlinkButtonCard(
-                            title: title,
-                            subtitle: subtitle,
-                            onPressed: () async {
-                              if (NavigatorService.navigatorKey.currentState!
-                                  .canPop()) {
-                                NavigatorService.navigatorKey.currentState!
-                                    .pop(e);
-                              }
-                            },
-                            suffixWidget: suffixWidget,
-                          );
-                        }),
-                      )
-                      .toList(),
+      children: foundMikrotiksMap.values
+          .map(
+            (e) => Builder(builder: (context) {
+              String title = e.ipv4 ?? e.ipv6 ?? e.mac ?? "";
+              String subtitle = "";
+              if (e.name != null) {
+                subtitle = e.name!;
+              }
+              if (e.boardName != null) {
+                if (subtitle.isNotEmpty) {
+                  subtitle += "\n";
+                }
+                subtitle += e.boardName!;
+              }
+              if (e.mac != null) {
+                if (subtitle.isNotEmpty) {
+                  subtitle += "\n";
+                }
+                subtitle += e.mac!;
+              }
+              late Widget suffixWidget;
+              if (e.boardImageUrl != null) {
+                suffixWidget = Image.network(
+                  e.boardImageUrl!,
+                  width: 50,
+                  height: 50,
                 );
+              } else {
+                suffixWidget = const Icon(
+                  Icons.router_outlined,
+                  color: Colors.white,
+                );
+              }
+              return StarlinkButtonCard(
+                title: title,
+                subtitle: subtitle,
+                onPressed: () async {
+                  if (NavigatorService.navigatorKey.currentState!.canPop()) {
+                    NavigatorService.navigatorKey.currentState!.pop(e);
+                  }
+                },
+                suffixWidget: suffixWidget,
+              );
+            }),
+          )
+          .toList(),
+    );
   }
 }
