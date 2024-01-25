@@ -137,7 +137,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   void initData()async{
-    if (state.isAuthenticated && state.firebaseID != "") {
+    if (state.isAuthenticated /*&& state.firebaseID != ""*/) {
       MkProvider provider = MkProvider();
       var profilesH = await provider.allProfilesHotspot();
       if (profilesH.isNotEmpty) {
@@ -161,7 +161,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
       emit(state.copyWith(sessionStatus: SessionStatus.started));
       loadSetting();
       // loginHotspot();
-    } else if(state.firebaseID != ""){
+    } else /*if(state.firebaseID != "")*/{
       var ip = await getIp();
       if (ip["connect"]) {
         MkProvider provider = MkProvider();
@@ -195,47 +195,49 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future<void> authListener() async {
-    try {
-     var steam =  FirebaseAuth.instance
-          .authStateChanges()
-          .listen((User? user) {
-        if (user == null) {
-          emit(state.copyWith(sessionStatus: SessionStatus.finish));
-        } else {
-          emit(state.copyWith(firebaseID: user.uid));
-          initData();
-          final ref = FirebaseDatabase.instance.ref("users/${user.uid}");
-          ref.onValue.listen((event) async {
-            if (event.snapshot.value != null) {
-              final value = event.snapshot.value as Map<dynamic, dynamic>;
-              // Check if the same id, if not same then logout and navigate to login screen
-              if (value['id'] != state.uuid) {
-                exitSession();
-               Future.delayed(const Duration(seconds: 1)).then((value){
-                 StarlinkDialog.show(
-                     context: NavigatorService.navigatorKey.currentState!.context,
-                     title: "Cierre de sesión",
-                     message: "Se ha abierto la aplicacion en otro dispositivo.\nRecuerde que solo puede tener una sesión abierta a la vez.",
-                     type: AlertType.warning,
-                     onTap: () {
-                       NavigatorService.goBack();
-                     },
-                     actions: [],
-                     error: null,
-                     metadata: {}
-                 );
-               });
-              }
-            }
-          });
-        }
-      });
-
-     emit(state.copyWith(listener: steam));
-    } catch (e) {
-      //
-      exitSession();
-    }
+    initData();
+    // try {
+    //   state.listener?.cancel();
+    //  var steam =  FirebaseAuth.instance
+    //       .authStateChanges()
+    //       .listen((User? user) {
+    //     if (user == null) {
+    //       emit(state.copyWith(sessionStatus: SessionStatus.finish));
+    //     } else {
+    //       emit(state.copyWith(firebaseID: user.uid));
+    //       initData();
+    //       final ref = FirebaseDatabase.instance.ref("users/${user.uid}");
+    //       ref.onValue.listen((event) async {
+    //         if (event.snapshot.value != null) {
+    //           final value = event.snapshot.value as Map<dynamic, dynamic>;
+    //           // Check if the same id, if not same then logout and navigate to login screen
+    //           if (value['id'] != state.uuid) {
+    //             exitSession();
+    //            Future.delayed(const Duration(seconds: 1)).then((value){
+    //              StarlinkDialog.show(
+    //                  context: NavigatorService.navigatorKey.currentState!.context,
+    //                  title: "Cierre de sesión",
+    //                  message: "Se ha abierto la aplicacion en otro dispositivo.\nRecuerde que solo puede tener una sesión abierta a la vez.",
+    //                  type: AlertType.warning,
+    //                  onTap: () {
+    //                    NavigatorService.goBack();
+    //                  },
+    //                  actions: [],
+    //                  error: null,
+    //                  metadata: {}
+    //              );
+    //            });
+    //           }
+    //         }
+    //       });
+    //     }
+    //   });
+    //
+    //  emit(state.copyWith(listener: steam));
+    // } catch (e) {
+    //   //
+    //   exitSession();
+    // }
   }
 
   @override
