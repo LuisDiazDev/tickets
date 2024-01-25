@@ -38,55 +38,51 @@ class _SettingsPageState extends State<SettingsPage> {
     final sessionBloc = BlocProvider.of<SessionCubit>(context);
     final alertBloc = BlocProvider.of<AlertCubit>(context);
 
-    return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
-      DatabaseFirebase databaseFirebase = DatabaseFirebase();
-      return Scaffold(
-        backgroundColor: StarlinkColors.black.withOpacity(.9),
-        drawer: const DrawerCustom(),
-        appBar:
-            customAppBar(title: "title_configuration".tr, saved: () async {}),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 200,
-              width: 200,
-              // Show
-              child: Image.asset(
-                imageToShow,
-                fit: BoxFit.contain,
-              ),
+    DatabaseFirebase databaseFirebase = DatabaseFirebase();
+    return Scaffold(
+      backgroundColor: StarlinkColors.black.withOpacity(.9),
+      drawer: const DrawerCustom(),
+      appBar:
+      customAppBar(title: "title_configuration".tr, saved: () async {}),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 200,
+            width: 200,
+            // Show
+            child: Image.asset(
+              imageToShow,
+              fit: BoxFit.contain,
             ),
-            Expanded(
-                child: StarlinkButtonGroup(
-                  labels: const ["IMPRESORA", "MIKROTIK", "OTROS"],
-                  widgets: [
-                    buildPrinterSettings(sessionBloc, alertBloc),
-                    buildMikrotikSettings(
-                        state, sessionBloc, context, alertBloc),
-                    buildCustomerSettings(
-                      state,
-                      sessionBloc,
-                      alertBloc,
-                      databaseFirebase,
-                    ),
-                  ],
-                  onChanged: (int index) {
-                    log("Index: $int");
-                    setState(() {
-                      if (index == 0) {
-                        imageToShow = "assets/printer.png";
-                      } else if (index == 1) {
-                        imageToShow = "assets/mikrotik.png";
-                      } else if (index == 2) {
-                        imageToShow = "assets/other.png";
-                      }
-                    });
-                  },
-                )),
-          ],
-        ),
-      );
-    });
+          ),
+          Expanded(
+              child: StarlinkButtonGroup(
+                labels: const ["IMPRESORA", "MIKROTIK", "OTROS"],
+                widgets: [
+                  buildPrinterSettings(sessionBloc, alertBloc),
+                  buildMikrotikSettings(sessionBloc, context, alertBloc),
+                  buildCustomerSettings(
+                    sessionBloc,
+                    alertBloc,
+                    databaseFirebase,
+                  ),
+                ],
+                onChanged: (int index) {
+                  log("Index: $int");
+                  setState(() {
+                    if (index == 0) {
+                      imageToShow = "assets/printer.png";
+                    } else if (index == 1) {
+                      imageToShow = "assets/mikrotik.png";
+                    } else if (index == 2) {
+                      imageToShow = "assets/other.png";
+                    }
+                  });
+                },
+              )),
+        ],
+      ),
+    );
   }
 
   Image imageFromBase64String(String base64String) {

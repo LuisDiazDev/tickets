@@ -77,8 +77,8 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                           return null;
                         },
                         keyboardType: TextInputType.emailAddress,
-                        // initialValue: loginBloc.state.user.value, // TODO descomentar
-                        initialValue: "dahu34@gmail.com",
+                        initialValue: loginBloc.state.user.value, // TODO descomentar
+                        // initialValue: "dahu34@gmail.com",
                         title: 'USUARIO',
                         textHint: 'Usuario de la app',
                       ),
@@ -93,8 +93,8 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                           return null;
                         },
                         obscureText: true,
-                        // initialValue: loginBloc.state.password.value, // TODO descomentar
-                        initialValue: "123456",
+                        initialValue: loginBloc.state.password.value, // TODO descomentar
+                        // initialValue: "123456",
                         title: 'CONTRASEÑA',
                         textHint: 'Contraseña de la app',
                       ),
@@ -103,10 +103,10 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               loginBloc.add(LogIn(
-                                // loginBloc.state.user.value,
-                                // loginBloc.state.password.value,
-                                "dahu34@gmail.com",
-                                "123456",
+                                loginBloc.state.user.value,
+                                loginBloc.state.password.value,
+                                // "dahu34@gmail.com",
+                                // "123456",
                               ));
                             }
 

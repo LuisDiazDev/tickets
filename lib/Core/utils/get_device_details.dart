@@ -17,7 +17,7 @@ Future<List<String?>> getDeviceDetails() async {
       var data = await deviceInfoPlugin.iosInfo;
       deviceName = data.name;
       deviceVersion = data.systemVersion;
-      identifier = data.utsname.machine;  //UUID for iOS
+      identifier = data.identifierForVendor;  //UUID for iOS
     }
   } on Exception {
     print('Failed to get platform version');

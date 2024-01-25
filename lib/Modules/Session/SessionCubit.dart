@@ -17,7 +17,6 @@ import '../../Data/Provider/MkProvider.dart';
 import '../../Data/Provider/restApiProvider.dart';
 import '../../Data/Services/ftp_service.dart';
 import '../../Data/Services/navigator_service.dart';
-import '../../Widgets/DialogApp.dart';
 import '../../Widgets/starlink/dialog.dart';
 import '../../models/config_model.dart';
 import '../Alerts/AlertCubit.dart';
@@ -34,14 +33,12 @@ class SessionCubit extends HydratedCubit<SessionState> {
     final database = DatabaseFirebase();
 
     if (await database.checkUUID()) {
-      var phone = await database.getContact();
-      var name = await database.getName();
-
+      var data = await database.getContact() as Map<dynamic, dynamic>;
       emit(state.copyWith(
         active: true,
         configModel: state.cfg!.copyWith(
-          contact: phone??"",
-          nameLocal: name??""
+          contact: data["phone"]??"",
+          nameLocal: data["name"]??""
         )
       ));
     } else {
@@ -52,7 +49,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future<void> verify() async {
     ConfigModel? cfg = state.cfg;
-    var isAuthenticated = state.isAuthenticated;
 
     var deviceDetails = await getDeviceDetails();
     var uuid = deviceDetails.last?.replaceAll(".", "-") ??
@@ -60,9 +56,14 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
     cfg ??= ConfigModel();
     changeState(state.copyWith(configModel: cfg,uuid: uuid));
+    User? user = FirebaseAuth.instance.currentUser;
 
-    authListener();
-    checkUserData();
+    if(user == null){
+      exitSession();
+    }else{
+      authListener();
+      checkUserData();
+    }
   }
 
   void loadSetting() async {
@@ -123,13 +124,12 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   void logOutMK(){
-    emit(SessionState(sessionStatus: SessionStatus.mikrotik,firebaseID:state.firebaseID,uuid: state.uuid,ip: state.ip,wifi: state.wifi));
+    emit(SessionState(sessionStatus: SessionStatus.mikrotik,firebaseID:state.firebaseID,uuid: state.uuid,ip: state.ip,wifi: state.wifi,cfg: ConfigModel()));
   }
 
   void exitSession()async {
     await FirebaseAuth.instance.signOut();
-    state.listener?.cancel();
-    emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip,wifi: state.wifi));
+    emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip,wifi: state.wifi,cfg: ConfigModel()));
   }
 
   Future<void> changeState(SessionState newState) async {
@@ -161,9 +161,11 @@ class SessionCubit extends HydratedCubit<SessionState> {
       emit(state.copyWith(sessionStatus: SessionStatus.started));
       loadSetting();
       // loginHotspot();
-    } else /*if(state.firebaseID != "")*/{
+    } else if(state.firebaseID != ""){
+      ProgressDialogUtils.showProgressDialog();
       var ip = await getIp();
-      if (ip["connect"]) {
+      ProgressDialogUtils.hideProgressDialog();
+      if (ip["connect"] && state.sessionStatus == SessionStatus.mikrotik) {
         MkProvider provider = MkProvider();
         var profilesH = await provider.allProfilesHotspot();
         if (profilesH.isNotEmpty) {
@@ -195,49 +197,50 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future<void> authListener() async {
-    initData();
-    // try {
-    //   state.listener?.cancel();
-    //  var steam =  FirebaseAuth.instance
-    //       .authStateChanges()
-    //       .listen((User? user) {
-    //     if (user == null) {
-    //       emit(state.copyWith(sessionStatus: SessionStatus.finish));
-    //     } else {
-    //       emit(state.copyWith(firebaseID: user.uid));
-    //       initData();
-    //       final ref = FirebaseDatabase.instance.ref("users/${user.uid}");
-    //       ref.onValue.listen((event) async {
-    //         if (event.snapshot.value != null) {
-    //           final value = event.snapshot.value as Map<dynamic, dynamic>;
-    //           // Check if the same id, if not same then logout and navigate to login screen
-    //           if (value['id'] != state.uuid) {
-    //             exitSession();
-    //            Future.delayed(const Duration(seconds: 1)).then((value){
-    //              StarlinkDialog.show(
-    //                  context: NavigatorService.navigatorKey.currentState!.context,
-    //                  title: "Cierre de sesión",
-    //                  message: "Se ha abierto la aplicacion en otro dispositivo.\nRecuerde que solo puede tener una sesión abierta a la vez.",
-    //                  type: AlertType.warning,
-    //                  onTap: () {
-    //                    NavigatorService.goBack();
-    //                  },
-    //                  actions: [],
-    //                  error: null,
-    //                  metadata: {}
-    //              );
-    //            });
-    //           }
-    //         }
-    //       });
-    //     }
-    //   });
-    //
-    //  emit(state.copyWith(listener: steam));
-    // } catch (e) {
-    //   //
-    //   exitSession();
-    // }
+    // initData();
+    try {
+      late StreamSubscription<User?> steam;
+      late StreamSubscription<DatabaseEvent> database;
+      steam =  FirebaseAuth.instance
+          .authStateChanges()
+          .listen((User? user) {
+        if (user == null) {
+          emit(state.copyWith(sessionStatus: SessionStatus.finish));
+        } else {
+          emit(state.copyWith(firebaseID: user.uid));
+          initData();
+          var ref = FirebaseDatabase.instance.ref("users/${user.uid}");
+          database = ref.onValue.listen((event) async {
+            if (event.snapshot.value != null) {
+              final value = event.snapshot.value as Map<dynamic, dynamic>;
+              // Check if the same id, if not same then logout and navigate to login screen
+              if (value['id'] != state.uuid) {
+               exitSession();
+               Future.delayed(const Duration(seconds: 1)).then((value){
+                 StarlinkDialog.show(
+                     context: NavigatorService.navigatorKey.currentState!.context,
+                     title: "Cierre de sesión",
+                     message: "Se ha abierto la aplicacion en otro dispositivo.\nRecuerde que solo puede tener una sesión abierta a la vez.",
+                     type: AlertType.warning,
+                     onTap: () {
+                       NavigatorService.goBack();
+                     },
+                     actions: [],
+                     error: null,
+                     metadata: {}
+                 );
+               });
+               database.cancel();
+               steam.cancel();
+              }
+            }
+          });
+        }
+      });
+    } catch (e) {
+      //
+      exitSession();
+    }
   }
 
   @override
