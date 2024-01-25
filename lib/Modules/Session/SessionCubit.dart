@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -24,6 +25,7 @@ import '../Alerts/AlertCubit.dart';
 part 'SessionState.dart';
 
 class SessionCubit extends HydratedCubit<SessionState> {
+
   SessionCubit() : super(const SessionState()) {
     RestApiProvider().sessionCubit = this;
   }
@@ -126,6 +128,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   void exitSession()async {
     await FirebaseAuth.instance.signOut();
+    state.listener?.cancel();
     emit(SessionState(sessionStatus: SessionStatus.finish,firebaseID:"",uuid: state.uuid,ip: state.ip,wifi: state.wifi));
   }
 
@@ -193,7 +196,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future<void> authListener() async {
     try {
-      FirebaseAuth.instance
+     var steam =  FirebaseAuth.instance
           .authStateChanges()
           .listen((User? user) {
         if (user == null) {
@@ -227,6 +230,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
           });
         }
       });
+
+     emit(state.copyWith(listener: steam));
     } catch (e) {
       //
       exitSession();

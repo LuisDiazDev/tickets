@@ -31,7 +31,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   socket_io_client: ^2.0.3+1
   image_picker: ^1.0.7
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^4.0.2
   flutter_launcher_icons: "^0.13.1"
   url_launcher: ^6.2.4
   ftpconnect: ^2.0.5
