@@ -340,7 +340,7 @@ class MkProvider {
           endpoint: "/system/routerboard",
           timeoutSecs: timeoutSecs,
         )
-            .then((e) {
+            .then((Response e) {
           internalCount++;
           if (internalCount % 10 == 0 || internalCount == 255) {
             count.value = internalCount;

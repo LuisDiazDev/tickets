@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../Widgets/starlink/button.dart';
 import '../../Widgets/starlink/dialog.dart';
-import '../../Widgets/starlink/progress_circle.dart';
+import '../../Widgets/starlink/percentage_progress_circle.dart';
 import '../Alerts/AlertCubit.dart';
 
 SingleChildScrollView buildDialogs(BuildContext context) {

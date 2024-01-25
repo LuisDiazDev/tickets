@@ -17,7 +17,9 @@ import 'Modules/Alerts/AlertCubit.dart';
 import 'Modules/Session/SessionCubit.dart';
 import 'Routes/Route.dart';
 import 'Widgets/DialogApp.dart';
+import 'Widgets/starlink/colors.dart';
 import 'Widgets/starlink/dialog.dart';
+import 'Widgets/starlink/text_style.dart';
 
 class App extends StatelessWidget {
   static const settingsiOS = OpenSettingsPlusIOS();
@@ -79,7 +81,7 @@ class _MyAppState extends State<MyApp> {
                   onPressed: () {
                     App.settingsAndroid.wifi();
                   },
-                  child: const Text("ABRIR AJUSTES DE WIFI"),
+                  child: StarlinkText("ABRIR AJUSTES DE WIFI", color: StarlinkColors.white,),
                 ),
               ]),
         );
@@ -108,7 +110,7 @@ class _MyAppState extends State<MyApp> {
                   onPressed: () {
                     App.settingsAndroid.wifi();
                   },
-                  child: const Text("ABRIR AJUSTES DE WIFI"),
+                  child: StarlinkText("ABRIR AJUSTES DE WIFI"),
                 ),
               ]),
         );

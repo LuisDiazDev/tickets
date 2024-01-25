@@ -52,7 +52,9 @@ class _BuildActiveTicketsPageState extends State<_BuildActiveTicketsPage> {
               ),
             ),
             subtitle: state.load
-                ? const CircularProgressIndicator()
+                ? const CircularProgressIndicator(
+              color: Colors.white,
+            )
                 : Text(
                     "${state.ticketsA.isNotEmpty ? state.ticketsA.length : "No hay usuarios conectados"}",
                     style: const TextStyle(

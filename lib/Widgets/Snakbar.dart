@@ -1,6 +1,7 @@
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/card.dart';
 import 'package:StarTickera/Widgets/starlink/colors.dart';
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,7 +22,7 @@ class SnackBarCustom {
             type: type,
             message: titleAction,
           ),
-          Text(title),
+          StarlinkText(title),
           const Spacer(),
           StarlinkButton(
             text: titleAction.toUpperCase(),

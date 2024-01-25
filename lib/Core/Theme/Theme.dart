@@ -15,14 +15,14 @@ class ThemeApp{
     colorScheme:const ColorScheme(
       primary: StarlinkColors.black,
       secondary: StarlinkColors.gray,
-      surface: Colors.black,
+      surface: StarlinkColors.black,
       background: _backgroundColorLight,
       error: StarlinkColors.red,
-      onPrimary: Colors.black,
-      onSecondary: ColorsApp.secondary,
-      onSurface: Colors.black,
-      onBackground: Colors.black,
-      onError: ColorsApp.alert,
+      onPrimary: StarlinkColors.black,
+      onSecondary: StarlinkColors.lightGray,
+      onSurface: StarlinkColors.black,
+      onBackground: StarlinkColors.black,
+      onError: StarlinkColors.red,
       brightness: Brightness.light,
     ),
     snackBarTheme: const SnackBarThemeData(
@@ -42,7 +42,7 @@ class ThemeApp{
           const TextStyle(
             fontFamily: 'DDIN-Bold',
             fontWeight: FontWeight.bold,
-            color: Colors.grey,
+            color: StarlinkColors.gray,
           ),
         ),
       ),
@@ -53,7 +53,7 @@ class ThemeApp{
         borderRadius: BorderRadius.circular(30.0),
         borderSide: BorderSide.none,
       ),
-      fillColor: Colors.white.withOpacity(.8),
+      fillColor: StarlinkColors.white.withOpacity(.8),
       filled: true,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 25.0,
@@ -65,12 +65,12 @@ class ThemeApp{
     appBarTheme: AppBarTheme(
       centerTitle: true,
       titleTextStyle: const TextStyle(
-        color: ColorsApp.primary,
+        color: StarlinkColors.white,
         fontFamily: 'DDIN-Bold',
         fontWeight: FontWeight.w600,
         fontSize: 26
       ),
-      backgroundColor: ColorsApp.secondary.withOpacity(.8),
+      backgroundColor: StarlinkColors.black,
     ),
     textTheme: const TextTheme(
       subtitle1: TextStyle(

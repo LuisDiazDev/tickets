@@ -7,9 +7,8 @@ import '../../../../Data/Provider/MkProvider.dart';
 import '../../../../Data/Services/navigator_service.dart';
 import '../../../../Widgets/starlink/button_card.dart';
 import '../../../../Widgets/starlink/colors.dart';
-import '../../../../Widgets/starlink/progress_circle.dart';
+import '../../../../Widgets/starlink/percentage_progress_circle.dart';
 import '../../../../Widgets/starlink/text_style.dart';
-
 
 class IpSearch {
   Future<FoundMikrotik?> showDialogSearch(
@@ -28,9 +27,10 @@ class IpSearch {
   }
 }
 
-class MergeResult{
+class MergeResult {
   final bool wasMerged;
   final FoundMikrotik value;
+
   MergeResult(this.wasMerged, this.value);
 }
 
@@ -76,7 +76,7 @@ class IpSearchDialogState extends State<IpSearchDialog> {
     });
     Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (scannedIPCount.value < 500) {
-        scannedIPCount.value+=10;
+        scannedIPCount.value += 10;
       } else {
         timer.cancel(); // Detener el temporizador después de 40 segundos
       }
@@ -137,7 +137,7 @@ class IpSearchDialogState extends State<IpSearchDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget bauild(BuildContext context) {
     // Tu código de diálogo aquí, con algunas modificaciones:
     return AlertDialog(
       contentPadding: const EdgeInsets.all(2),
@@ -169,65 +169,12 @@ class IpSearchDialogState extends State<IpSearchDialog> {
                 children: [
                   StarlinkText("MIKROTIKS ENCONTRADOS:"),
                   const SizedBox(height: 20),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: foundMikrotiksMap.values
-                          .map(
-                            (e) => Builder(
-                              builder: (context) {
-                                String title = e.ipv4 ?? e.ipv6 ?? e.mac ?? "";
-                                String subtitle = "";
-                                if (e.name != null) {
-                                  subtitle = e.name!;
-                                }
-                                if (e.boardName != null) {
-                                  if (subtitle.isNotEmpty) {
-                                    subtitle += "\n";
-                                  }
-                                  subtitle += e.boardName!;
-                                }
-                                if (e.mac != null) {
-                                  if (subtitle.isNotEmpty) {
-                                    subtitle += "\n";
-                                  }
-                                  subtitle += e.mac!;
-                                }
-                                late Widget suffixWidget;
-                                if (e.boardImageUrl != null) {
-
-                                  suffixWidget = Image.network(
-                                    e.boardImageUrl!,
-                                    width: 50,
-                                    height: 50,
-                                  );
-                                }else{
-                                  suffixWidget =const Icon(
-                                    Icons.router_outlined,
-                                    color: Colors.white,
-                                  );
-                                }
-                                return StarlinkButtonCard(
-                                  title: title,
-                                  subtitle: subtitle,
-                                  onPressed: ()async {
-                                    if(NavigatorService.navigatorKey.currentState!.canPop()){
-                                      NavigatorService.navigatorKey.currentState!
-                                          .pop(e);
-                                    }
-                                  },
-                                  suffixWidget: suffixWidget,
-                                );
-                              }
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
+                  _buildFoundMikrotiksList(),
                 ],
               );
             },
           ),
-          const Gap(50),
+          const Spacer(),
           StarlinkButton(
             text: "CERRAR",
             onPressed: () async {
@@ -238,5 +185,112 @@ class IpSearchDialogState extends State<IpSearchDialog> {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Tu código de diálogo aquí, con algunas modificaciones:
+    return AlertDialog(
+      contentPadding: const EdgeInsets.all(2),
+      title: StarlinkText("BUSCANDO UN MIKROTIK"),
+      backgroundColor: StarlinkColors.darkGray,
+      content: SingleChildScrollView( // Envolver en SingleChildScrollView
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Cambia a MainAxisSize.min
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ValueListenableBuilder<int>(
+              valueListenable: scannedIPCount,
+              builder: (context, value, child) {
+                return StarlinkProgressCircle(
+                  percent: ((scannedIPCount.value.floorToDouble() /
+                      500.floorToDouble()) *
+                      100.0)
+                      .toInt(),
+                );
+              },
+            ),
+            const Gap(20),
+            StatefulBuilder(
+              builder: (context, snapshot) {
+                if (foundMikrotiksMap.isEmpty) {
+                  // ... Tu código existente ...
+                }
+                return Column(
+                  children: [
+                    StarlinkText("MIKROTIKS ENCONTRADOS:"),
+                    const SizedBox(height: 20),
+                    SingleChildScrollView( // Hacer esta parte scrolleable
+                      child: _buildFoundMikrotiksList(),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const Spacer(),
+            StarlinkButton(
+              text: "CERRAR",
+              onPressed: () async {
+                // ... Tu código existente ...
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column _buildFoundMikrotiksList() {
+    return Column(
+                  children: foundMikrotiksMap.values
+                      .map(
+                        (e) => Builder(builder: (context) {
+                          String title = e.ipv4 ?? e.ipv6 ?? e.mac ?? "";
+                          String subtitle = "";
+                          if (e.name != null) {
+                            subtitle = e.name!;
+                          }
+                          if (e.boardName != null) {
+                            if (subtitle.isNotEmpty) {
+                              subtitle += "\n";
+                            }
+                            subtitle += e.boardName!;
+                          }
+                          if (e.mac != null) {
+                            if (subtitle.isNotEmpty) {
+                              subtitle += "\n";
+                            }
+                            subtitle += e.mac!;
+                          }
+                          late Widget suffixWidget;
+                          if (e.boardImageUrl != null) {
+                            suffixWidget = Image.network(
+                              e.boardImageUrl!,
+                              width: 50,
+                              height: 50,
+                            );
+                          } else {
+                            suffixWidget = const Icon(
+                              Icons.router_outlined,
+                              color: StarlinkColors.white,
+                            );
+                          }
+                          return StarlinkButtonCard(
+                            title: title,
+                            subtitle: subtitle,
+                            onPressed: () async {
+                              if (NavigatorService.navigatorKey.currentState!
+                                  .canPop()) {
+                                NavigatorService.navigatorKey.currentState!
+                                    .pop(e);
+                              }
+                            },
+                            suffixWidget: suffixWidget,
+                          );
+                        }),
+                      )
+                      .toList(),
+                );
   }
 }

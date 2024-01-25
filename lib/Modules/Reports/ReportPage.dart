@@ -69,7 +69,9 @@ class _BuildReportPageState extends State<_BuildReportPage> {
                           fontFamily: 'DDIN-Bold',
                         ),
                       ),
-                      subtitle:state.load ? const CircularProgressIndicator() : Text(
+                      subtitle:state.load ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      ): Text(
                         "${reportBloc.getTotal()}\$",
                         style: const TextStyle(
                             color: StarlinkColors.black,

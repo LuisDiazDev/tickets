@@ -44,7 +44,7 @@ class RestApiProvider {
     String password = pass ?? sessionCubit?.state.cfg?.password ?? "";
     String basicAuth =
         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-    var uri = Uri.parse('http://${host ?? sessionCubit?.state.cfg?.host}/rest$endpoint');
+    var uri = Uri.parse('http://${host ?? sessionCubit?.state.cfg?.host}:80/rest$endpoint');
     var headers = {
       'authorization': basicAuth,
       'Content-Type': 'application/json'

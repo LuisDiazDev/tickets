@@ -110,7 +110,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                 child: Center(
                   child: MaterialButton(
                     onPressed: () {},
-                    child: const Text("Crear Nuevo Ticket"),
+                    child: StarlinkText("Crear Nuevo Ticket"),
                   ),
                 ))
           ],
@@ -170,7 +170,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                 "Generar Tickets",
                                 style: TextStyle(
                                     color: ColorsApp.primary,
-                                    fontFamily: 'poppins_bold',
+                                    fontFamily: 'DDIN',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 26),
                               ),
@@ -186,10 +186,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Text(
+                              StarlinkText(
                                 "Planes disponibles",
-                                style: TextStyle(
-                                    fontSize: 18, color: ColorsApp.secondary),
+                                size: 18,
                               ),
                               DropdownButtonFormField2<ProfileModel>(
                                 isExpanded: true,
@@ -203,9 +202,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                   ),
                                   // Add more decoration..
                                 ),
-                                hint: const Text(
+                                hint: StarlinkText(
                                   'Selecciona un Plan',
-                                  style: TextStyle(fontSize: 14),
+                                  size: 18,
                                 ),
                                 items: state.profiles
                                     .where((p) => p.name != "default")
@@ -213,9 +212,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                                           value: p,
                                           child: Row(
                                             children: [
-                                              Text(p.name ?? ""),
+                                              StarlinkText(p.name ?? ""),
                                               const Spacer(),
-                                              Text(
+                                              StarlinkText(
                                                   // "${p.onLogin?.split(",")[4]}\$-${p.onLogin?.split(",")[3]}"),
                                                   "${p.metadata?.price.toString()}\$-${p.metadata?.usageTime}"),
                                               const Icon(

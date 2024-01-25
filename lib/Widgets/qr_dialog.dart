@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:StarTickera/models/config_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -91,14 +92,14 @@ class TicketDialogUtils {
                                 const Text(
                                   "Para navegar entra en",
                                   style: TextStyle(
-                                    fontFamily: 'poppins_regular',
+                                    fontFamily: 'DDIN',
                                     fontSize: 16,
                                   ),
                                 ),
                                 Text(
                                   configModel.dnsNamed,
                                   style: const TextStyle(
-                                    fontFamily: 'poppins_bold',
+                                    fontFamily: 'DDIN',
                                     fontSize: 18,
                                     color: Color(0xFF6565FF),
                                   ),
@@ -118,7 +119,7 @@ class TicketDialogUtils {
                                         const Text(
                                           "Clave",
                                           style: TextStyle(
-                                            fontFamily: 'poppins_regular',
+                                            fontFamily: 'DDIN',
                                             fontSize: 12,
                                           ),
                                         ),
@@ -126,7 +127,7 @@ class TicketDialogUtils {
                                           user,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
-                                            fontFamily: 'poppins_bold',
+                                            fontFamily: 'DDIN',
                                             fontSize: 14,
                                           ),
                                         )
@@ -148,7 +149,7 @@ class TicketDialogUtils {
                                       const Text(
                                         "Precio",
                                         style: TextStyle(
-                                          fontFamily: 'poppins_regular',
+                                          fontFamily: 'DDIN',
                                           fontSize: 12,
                                         ),
                                       ),
@@ -156,7 +157,7 @@ class TicketDialogUtils {
                                         price.replaceAll("S", "\$"),
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
-                                          fontFamily: 'poppins_bold',
+                                          fontFamily: 'DDIN',
                                           fontSize: 14,
                                         ),
                                       )
@@ -167,17 +168,13 @@ class TicketDialogUtils {
                                       const Text(
                                         "Duración",
                                         style: TextStyle(
-                                          fontFamily: 'poppins_regular',
+                                          fontFamily: 'DDIN',
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text(
+                                      StarlinkText(
                                         duration,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontFamily: 'poppins_bold',
-                                          fontSize: 14,
-                                        ),
+                                        size: 14,
                                       )
                                     ],
                                   )

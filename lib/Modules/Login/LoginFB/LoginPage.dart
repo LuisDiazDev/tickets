@@ -61,7 +61,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                         height: MediaQuery.of(context).size.height * .2,
                       ),
                       StarlinkText(
-                        'INICIAR SESIÓN APP',
+                        'INICIAR SESIÓN',
                         size: 32,
                         // color: ,
                       ),

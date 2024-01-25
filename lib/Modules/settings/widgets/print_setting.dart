@@ -332,7 +332,9 @@ class _PrintSettingsState extends State<PrintSettings> {
                           builder: (c, snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
                               );
                             }
                             var filtered = snapshot.data!.where((element) {

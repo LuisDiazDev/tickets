@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/colors.dart';
 import 'package:flutter/material.dart';
 import '../../Data/Services/navigator_service.dart';
 import '../Values/Colors.dart';
@@ -8,7 +9,7 @@ class ProgressDialogUtils {
   ///common method for showing progress dialog
   static void showProgressDialog(
       {BuildContext? context, isCancellable = false}) async {
-    if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
+    // if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
       showDialog(
           barrierDismissible: isCancellable,
           context: NavigatorService.navigatorKey.currentState!.overlay!.context,
@@ -17,13 +18,13 @@ class ProgressDialogUtils {
               child: CircularProgressIndicator.adaptive(
                 strokeWidth: 8,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  ColorsApp.secondary,
+                  StarlinkColors.white,
                 ),
               ),
             );
           });
       isProgressVisible = true;
-    }
+
   }
 
   ///common method for hiding progress dialog

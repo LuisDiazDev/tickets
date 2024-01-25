@@ -4,6 +4,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
+import '../../../Widgets/starlink/colors.dart';
 import '../../Session/SessionCubit.dart';
 import '../../settings/widgets/print_setting.dart';
 
@@ -40,7 +41,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
                 },
                 icon: const Icon(
                   EvaIcons.printer,
-                  color: Colors.red,
+                  color: StarlinkColors.red,
                 ));
           });
           break;
@@ -68,7 +69,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
                 },
                 icon: const Icon(
                   EvaIcons.printer,
-                  color: Colors.red,
+                  color: StarlinkColors.red,
                 ));
           });
           break;
@@ -190,7 +191,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
       return const Padding(
         padding: EdgeInsets.all(12.0),
         child: CircularProgressIndicator(
-          color: Colors.cyan,
+          color: StarlinkColors.white,
         ),
       );
     }

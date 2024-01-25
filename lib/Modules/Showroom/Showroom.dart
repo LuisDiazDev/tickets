@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
 import 'package:StarTickera/Widgets/starlink/dialog.dart';
-import 'package:StarTickera/Widgets/starlink/progress_circle.dart';
+import 'package:StarTickera/Widgets/starlink/percentage_progress_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -46,7 +46,7 @@ class _ShowRoomPageState extends State<ShowRoomPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: StarlinkButtonGroup(
-              labels: const ["Inputs","Cards", "Dialogs", ],
+              labels: const ["Inputs","Cards", "Dialogs"],
               onChanged: (index) {
                 log("Index: $index");
               },

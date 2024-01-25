@@ -71,7 +71,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               message: "No se ha encontrado el correo ingresado",
               type: AlertType.error,
             ));
-          } else if (e.code == 'wrong-password') {
+          } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
             alertCubit.showDialog(
               ShowDialogEvent(
                 title: "ERROR AL INICIAR SESIÓN",
