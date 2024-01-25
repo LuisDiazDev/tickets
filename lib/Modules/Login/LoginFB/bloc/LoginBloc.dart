@@ -65,7 +65,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           if (e.code == 'user-not-found') {
             alertCubit.showDialog(ShowDialogEvent(
               title: "ERROR AL INICIAR SESIÓN",
-              message: "No se ha encontrado el correo ingresado",
+              message: "No se ha encontrado el usuario ingresado",
               type: AlertType.error,
             ));
           } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {

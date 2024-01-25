@@ -61,7 +61,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                     ),
                     StarlinkText(
                       'INICIAR SESIÓN',
-                      size: 32,
+                      size: 28,
                       // color: ,
                     ),
                     const SizedBox(width: double.infinity, height: 15),
@@ -111,7 +111,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                       onChanged: (currentPassword) {
                         loginBloc.add(ChangePassword(currentPassword));
                       },
-                      validator: (value) {
+                      validator: (value) { // TODO: hacer que cuando se de clic en contraseña se scrollee hacia arriba
                         if (value == "") {
                           return "Ingrese una contraseña";
                         }

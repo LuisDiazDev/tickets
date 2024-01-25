@@ -137,7 +137,7 @@ class IpSearchDialogState extends State<IpSearchDialog> {
   }
 
   @override
-  Widget bauild(BuildContext context) {
+  Widget build(BuildContext context) {
     // Tu código de diálogo aquí, con algunas modificaciones:
     return AlertDialog(
       contentPadding: const EdgeInsets.all(2),
@@ -186,60 +186,55 @@ class IpSearchDialogState extends State<IpSearchDialog> {
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    // Tu código de diálogo aquí, con algunas modificaciones:
-    return AlertDialog(
-      contentPadding: const EdgeInsets.all(2),
-      title: StarlinkText("BUSCANDO UN MIKROTIK"),
-      backgroundColor: StarlinkColors.darkGray,
-      content: SingleChildScrollView( // Envolver en SingleChildScrollView
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Cambia a MainAxisSize.min
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ValueListenableBuilder<int>(
-              valueListenable: scannedIPCount,
-              builder: (context, value, child) {
-                return StarlinkProgressCircle(
-                  percent: ((scannedIPCount.value.floorToDouble() /
-                      500.floorToDouble()) *
-                      100.0)
-                      .toInt(),
-                );
-              },
-            ),
-            const Gap(20),
-            StatefulBuilder(
-              builder: (context, snapshot) {
-                if (foundMikrotiksMap.isEmpty) {
-                  // ... Tu código existente ...
-                }
-                return Column(
-                  children: [
-                    StarlinkText("MIKROTIKS ENCONTRADOS:"),
-                    const SizedBox(height: 20),
-                    SingleChildScrollView( // Hacer esta parte scrolleable
-                      child: _buildFoundMikrotiksList(),
-                    ),
-                  ],
-                );
-              },
-            ),
-            const Spacer(),
-            StarlinkButton(
-              text: "CERRAR",
-              onPressed: () async {
-                // ... Tu código existente ...
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //
+  // @override
+  // Widget build(BuildContext context) {
+  //   // Tu código de diálogo aquí, con algunas modificaciones:
+  //   return AlertDialog(
+  //     contentPadding: const EdgeInsets.all(2),
+  //     title: StarlinkText("BUSCANDO UN MIKROTIK"),
+  //     backgroundColor: StarlinkColors.darkGray,
+  //     content: SingleChildScrollView( // Envolver en SingleChildScrollView
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min, // Cambia a MainAxisSize.min
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           ValueListenableBuilder<int>(
+  //             valueListenable: scannedIPCount,
+  //             builder: (context, value, child) {
+  //               // ... Tu código existente ...
+  //             },
+  //           ),
+  //           const Gap(20),
+  //           StatefulBuilder(
+  //             builder: (context, snapshot) {
+  //               if (foundMikrotiksMap.isEmpty) {
+  //                 // ... Tu código existente ...
+  //               }
+  //               return Column(
+  //                 children: [
+  //                   StarlinkText("MIKROTIKS ENCONTRADOS:"),
+  //                   const SizedBox(height: 20),
+  //                   SingleChildScrollView( // Hacer esta parte scrolleable
+  //                     child: _buildFoundMikrotiksList(),
+  //                   ),
+  //                 ],
+  //               );
+  //             },
+  //           ),
+  //           const Spacer(),
+  //           StarlinkButton(
+  //             text: "CERRAR",
+  //             onPressed: () async {
+  //               // ... Tu código existente ...
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Column _buildFoundMikrotiksList() {
     return Column(
@@ -273,7 +268,7 @@ class IpSearchDialogState extends State<IpSearchDialog> {
                           } else {
                             suffixWidget = const Icon(
                               Icons.router_outlined,
-                              color: StarlinkColors.white,
+                              color: Colors.white,
                             );
                           }
                           return StarlinkButtonCard(
