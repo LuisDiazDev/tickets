@@ -50,9 +50,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
     ConfigModel? cfg = state.cfg;
 
     var deviceDetails = await getDeviceDetails();
-    var uuid = deviceDetails.last?.replaceAll(".", "-") ??
-        ""; //uuid: "TP1A.220624.014"
-
+    var uuid = deviceDetails.last?.replaceAll(".", "-") ?? "";
     cfg ??= ConfigModel();
     changeState(state.copyWith(configModel: cfg,uuid: uuid));
     User? user = FirebaseAuth.instance.currentUser;
@@ -167,32 +165,37 @@ class SessionCubit extends HydratedCubit<SessionState> {
       loadSetting();
       // loginHotspot();
     } else if(state.firebaseID != ""){
-      ProgressDialogUtils.showProgressDialog();
-      var ip = await getIp();
-      ProgressDialogUtils.hideProgressDialog();
-      if (ip["connect"] && state.sessionStatus == SessionStatus.mikrotik) {
-        MkProvider provider = MkProvider();
-        var profilesH = await provider.allProfilesHotspot();
-        if (profilesH.isNotEmpty) {
+      try{
+        ProgressDialogUtils.showProgressDialog();
+        var ip = await getIp();
+        if (ip["connect"] && state.sessionStatus == SessionStatus.mikrotik) {
+          MkProvider provider = MkProvider();
+          var profilesH = await provider.allProfilesHotspot();
+          if (profilesH.isNotEmpty) {
+            emit(state.copyWith(
+                configModel: state.cfg!.copyWith(
+                  dnsNamed: profilesH.last.dnsName,
+                )));
+          }
+
+          FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
+
           emit(state.copyWith(
-              configModel: state.cfg!.copyWith(
-            dnsNamed: profilesH.last.dnsName,
-          )));
+              configModel: state.cfg!
+                  .copyWith(host: ip["ip"], user: "admin", password: "1234"),
+              isAuthenticated: true,
+              sessionStatus: SessionStatus.started));
+
+          loadSetting();
+          // loginHotspot();
+        } else if (state.firebaseID != "") {
+          emit(state.copyWith(
+              sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
         }
-
-        FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
-
-        emit(state.copyWith(
-            configModel: state.cfg!
-                .copyWith(host: ip["ip"], user: "admin", password: "1234"),
-            isAuthenticated: true,
-            sessionStatus: SessionStatus.started));
-
-        loadSetting();
-        // loginHotspot();
-      } else if (state.firebaseID != "") {
-        emit(state.copyWith(
-            sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
+      }catch(e){
+        //todo
+      }finally{
+        ProgressDialogUtils.hideProgressDialog();
       }
       // // ip["connect"] ||
       // if(cfg != null){
@@ -203,6 +206,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future<void> authListener() async {
     try {
+
+
       late StreamSubscription<User?> steam;
       late StreamSubscription<DatabaseEvent> database;
       steam =  FirebaseAuth.instance

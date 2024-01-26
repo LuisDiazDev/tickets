@@ -12,8 +12,8 @@ Future<Map> getIp()async{
 
   int current = 0;
   var lst = localIp?.split(".") ?? [];
-  current = int.parse(lst.last);
-  var locate = lst[2];
+  current = int.tryParse(lst.last) ?? 0;
+  var locate = lst[2] ?? "";
   // if (locate == "20") {
   //   current = 5;
   // }
