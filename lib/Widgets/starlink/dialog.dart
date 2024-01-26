@@ -15,16 +15,28 @@ class StarlinkDialog {
     Exception? error,
     Map<String, dynamic>? metadata,
   }) async {
+    // Cierra el diálogo actual si está abierto
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
     return showDialog<T>(
       context: context,
+      barrierDismissible: actions == null || actions.isEmpty || actions.length == 1,
       builder: (BuildContext context) {
-        return _buildCustomDialog(
-            title: title,
-            message: message,
-            actions: actions,
-            onTap: onTap,
-            context: context,
-            type: type);
+        return GestureDetector(
+          onTap: () {
+            if (actions == null || actions.isEmpty || actions.length == 1) {
+              Navigator.pop(context);
+            }
+          },
+          child: _buildCustomDialog(
+              title: title,
+              message: message,
+              actions: actions,
+              onTap: onTap,
+              context: context,
+              type: type),
+        );
       },
     );
   }

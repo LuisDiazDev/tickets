@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'colors.dart';
 
 class StarlinkDropdown extends StatelessWidget {
@@ -11,50 +10,31 @@ class StarlinkDropdown extends StatelessWidget {
     Key? key,
     required this.onChanged,
     required this.values,
-    this.initialValue, // Parámetro adicional para el valor inicial
+    this.initialValue,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String? selectedValue = initialValue ??
-        values
-            .first; // Usa el valor inicial si está proporcionado, si no, el primer elemento de la lista
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
-        padding: const EdgeInsets.all(9),
-        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 9),
         decoration: BoxDecoration(
-          color: StarlinkColors.gray, // Color de fondo del dropdown
-          borderRadius: BorderRadius.circular(5), // Bordes redondeados
+          color: StarlinkColors.gray,
+          borderRadius: BorderRadius.circular(5),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             dropdownColor: StarlinkColors.gray,
-            // Color de fondo de la lista desplegable
-            value: selectedValue,
-            // Valor actual seleccionado
-            icon: Icon(Icons.arrow_drop_down, color: StarlinkColors.white),
-            // Icono del dropdown
-            onChanged: (String? newValue) {
-              onChanged(newValue);
-            },
-            items: values.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.height*.28,
-                  child: Text(
-                    value,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      color: StarlinkColors.white,
-                      fontFamily: 'DDIN-Bold',
-                    ), // Estilo de texto de los items
-                  ),
-                ),
-              );
-            }).toList(),
+            value: initialValue ?? values.first,
+            icon: const Icon(Icons.arrow_drop_down, color: StarlinkColors.white),
+            onChanged: onChanged,
+            items: values
+                .map((value) => DropdownMenuItem<String>(
+              value: value,
+              child: Text(value, style: const TextStyle(color: StarlinkColors.white, fontFamily: 'DDIN-Bold')),
+            ))
+                .toList(),
           ),
         ),
       ),

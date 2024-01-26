@@ -1,4 +1,3 @@
-
 import 'package:StarTickera/Widgets/starlink/button.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -11,6 +10,7 @@ import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text_field.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../../models/profile_model.dart';
+import '../../models/ticket_model.dart';
 import '../Alerts/AlertCubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/TicketsBloc.dart';
@@ -45,20 +45,52 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
     with AutomaticKeepAliveClientMixin<_BuildTicketsPage> {
   @override
   bool get wantKeepAlive => true;
+  List<TicketModel> tickets = [];
+  List<ProfileModel> profiles = [];
 
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<TicketsBloc>(context);
     super.build(context);
     return BlocBuilder<TicketsBloc, TicketsState>(builder: (context, state) {
+      tickets = state.tickets
+          .where((t) =>
+              t.profile != "" &&
+              t.profile != "default" &&
+              !t.name!.contains("-"))
+          .toList();
+      profiles = state.profiles
+          .where((t) =>
+              t.name != "" && t.name != "default" && !t.name!.contains("-"))
+          .toList();
       return Scaffold(
         backgroundColor: StarlinkColors.black,
         drawer: const DrawerCustom(),
         appBar: customAppBar(title: "TICKETS CREADOS"),
-        body: Stack(
+        body: Column(
           children: [
+            if (!state.load && tickets.isEmpty)
+              Center(
+                child: Column(
+                  children: [
+                    const Gap(100),
+                    StarlinkText(
+                    "No hay tickets creados",
+                    size: 18,
+                    isBold: true,
+                  )],
+                ),
+            ),
+            if (!state.load && profiles.isEmpty)
+              Center(
+                child: StarlinkText(
+                  "Debes crear un plan primero",
+                  size: 18,
+                  isBold: true,
+                ),
+              ),
             Visibility(
-              visible: state.tickets.isNotEmpty && !state.load,
+              visible: tickets.isNotEmpty && !state.load,
               child: Container(
                 color: Colors.transparent,
                 alignment: Alignment.topCenter,
@@ -66,24 +98,6 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
                   child: Builder(builder: (context) {
-                    var tickets = state.tickets.where((t) =>
-                        t.profile != "" &&
-                        t.profile != "default" &&
-                        !t.name!.contains("-"));
-                    if (tickets.isEmpty) {
-                      return Column(
-                        children: [
-                          const Gap(100),
-                          Center(
-                            child: StarlinkText(
-                              "No hay tickets creados",
-                              size: 18,
-                              isBold: true,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
                     return Wrap(
                       children: [
                         ...tickets.map((e) => Builder(builder: (context) {
@@ -105,27 +119,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                 ),
               ),
             ),
-            Visibility(
-                visible: state.tickets.isEmpty && !state.load,
-                child: Center(
-                  child: MaterialButton(
-                    onPressed: () {},
-                    child: StarlinkText("Crear Nuevo Ticket"),
-                  ),
-                ))
           ],
-        ),
-        bottomSheet: Visibility(
-          visible: state.tickets.isNotEmpty,
-          child: StarlinkButton(
-            onPressed: () {
-              showGlobalDrawer(
-                  context: context,
-                  builder: horizontalDrawerBuilder(state, homeBloc),
-                  direction: AxisDirection.right);
-            },
-            text: "CREAR NUEVO TICKET",
-          ),
         ),
       );
     });
@@ -282,13 +276,9 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                             }
                             Navigator.of(context).pop();
                           },
-                          child: const Text(
+                          child: StarlinkText(
                             'Generar Tickets',
-                            style: TextStyle(
-                                color: ColorsApp.primary,
-                                fontFamily: "poppins_bold",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18),
+                            size: 18,
                           ),
                         ),
                         const SizedBox(

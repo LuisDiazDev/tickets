@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
+import '../../Profiles/bloc/ProfileEvents.dart';
 export '/core/utils/size_utils.dart';
 
 class CustomClient extends StatelessWidget {
@@ -12,9 +13,10 @@ class CustomClient extends StatelessWidget {
   final SchedulerModel? task;
   final Function()? onTap;
   final Function()? copyTap;
+  final Function()? deleteTap;
 
   const CustomClient(
-      {super.key, required this.client, this.onTap, this.copyTap,this.task});
+      {super.key, required this.client, this.onTap, this.copyTap,this.task, this.deleteTap});
 
   Future<SchedulerModel?> getTaskData()async{
     SchedulerModel? current;
@@ -115,7 +117,7 @@ class CustomClient extends StatelessWidget {
                           IconButton(
                               constraints: const BoxConstraints(),
                               onPressed: () {
-                                // profileBloc.add(DeletedProfile(profile));
+                                deleteTap!();
                               },
                               icon: const Icon(
                                 Icons.delete_outline,
@@ -227,7 +229,7 @@ class CustomClient extends StatelessWidget {
                                 minHeight: 10,
                                 maxHeight: 20),
                             child: StarlinkText(
-                              "Plan: ${client.profile!.replaceAll("d-", "d_").split("_")[1]}",
+                              "Plan: ${client.profile!.split("-se")[0].replaceFirst("profile_", "")}",
                               size: 14,
                               isBold: true,
                             ),
@@ -249,7 +251,7 @@ class CustomClient extends StatelessWidget {
                       IconButton(
                           constraints: const BoxConstraints(),
                           onPressed: () {
-                            // profileBloc.add(DeletedProfile(profile));
+                            deleteTap!();
                           },
                           icon: const Icon(
                             Icons.delete_outline,

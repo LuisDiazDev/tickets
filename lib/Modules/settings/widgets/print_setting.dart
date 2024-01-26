@@ -15,6 +15,7 @@ import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../Core/Values/Colors.dart';
 import '../../../Widgets/starlink/button.dart';
+import '../../../Widgets/starlink/button_card.dart';
 import '../../../Widgets/starlink/checkbox.dart';
 import '../../../Widgets/starlink/colors.dart';
 import '../../Session/SessionCubit.dart';
@@ -97,19 +98,8 @@ class _PrintSettingsState extends State<PrintSettings> {
     if (widget.sessionBloc.state.cfg?.bluetoothDevice == null) {
       return Column(
         children: [
-          const Gap(10),
-          StarlinkCheckBox(
-            title: 'DESACTIVAR IMPRESIONES',
-            initialState: widget.sessionBloc.state.cfg?.disablePrint ?? false,
-            onChanged: (check) {
-              setState(() {
-                widget.sessionBloc.changeState(widget.sessionBloc.state
-                    .copyWith(
-                        configModel: widget.sessionBloc.state.cfg!
-                            .copyWith(disablePrint: check)));
-              });
-            },
-          ),
+          const Gap(20),
+          buildDisablePrinterCheckbox(),
           Visibility(
             visible: !(widget.sessionBloc.state.cfg?.disablePrint ?? true),
             child: Column(
@@ -144,14 +134,14 @@ class _PrintSettingsState extends State<PrintSettings> {
       );
     }
 
-    if (_connect) {
+    if (_connect)
       return const StarlinkCard(
         type: InfoContextType.info,
         title: "Conectando con la impresora",
         message:
-            "En algunos dispositivos puede tardar desde 1 a 30 segundos. Espere un momento",
+            "Puede tardar hasta 30 segundos. Espere un momento",
       );
-    }
+
 
     return StreamBuilder<BluetoothConnectionState>(
         stream: widget.sessionBloc.state.cfg!.bluetoothDevice!.connectionState,
@@ -181,6 +171,21 @@ class _PrintSettingsState extends State<PrintSettings> {
         });
   }
 
+  StarlinkCheckBox buildDisablePrinterCheckbox() {
+    return StarlinkCheckBox(
+          title: 'DESACTIVAR IMPRESIONES',
+          initialState: widget.sessionBloc.state.cfg?.disablePrint ?? false,
+          onChanged: (check) {
+            setState(() {
+              widget.sessionBloc.changeState(widget.sessionBloc.state
+                  .copyWith(
+                      configModel: widget.sessionBloc.state.cfg!
+                          .copyWith(disablePrint: check)));
+            });
+          },
+        );
+  }
+
   Column buildPrinterDisconnectedStateWidget(BuildContext context) {
     if (widget.sessionBloc.state.cfg!.bluetoothDevice?.advName == "") {
       widget.sessionBloc.state.cfg!.bluetoothDevice
@@ -191,6 +196,8 @@ class _PrintSettingsState extends State<PrintSettings> {
     }
     return Column(
       children: [
+        const Gap(20),
+        buildDisablePrinterCheckbox(),
         Row(
           children: [
             TextButton(
@@ -221,6 +228,8 @@ class _PrintSettingsState extends State<PrintSettings> {
   Column buildPrinterConnectedStateWidget(BuildContext context) {
     return Column(
       children: [
+        const Gap(20),
+        buildDisablePrinterCheckbox(),
         Row(
           children: [
             TextButton(
@@ -228,7 +237,7 @@ class _PrintSettingsState extends State<PrintSettings> {
                   await showBluetoothDevicesList(context);
                 },
                 child: StarlinkText(
-                  "Buscar mas impresoras",
+                  "Buscar más impresoras",
                   color: StarlinkColors.green,
                 )),
             const Gap(3),
@@ -291,89 +300,83 @@ class _PrintSettingsState extends State<PrintSettings> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(32.0))),
-            contentPadding: const EdgeInsets.only(top: 10.0),
-            content: SizedBox(
-              width: 300.0,
+            contentPadding: const EdgeInsets.all(2),
+            title: StarlinkText("IMPRESORAS"),
+            backgroundColor: StarlinkColors.darkGray,
+            content: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        "Dispositivos",
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                      Icon(
-                        EvaIcons.bluetooth,
-                        color: ColorsApp.green,
-                        size: 30.0,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
-                  const Divider(
-                    color: Colors.grey,
-                    height: 4.0,
-                  ),
-                  Container(
-                      padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-                      child: // get devices
-                          SingleChildScrollView(
-                        child: StreamBuilder<List<ScanResult>>(
-                          stream: FlutterBluePlus.scanResults,
-                          builder: (c, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
+                  StreamBuilder<List<ScanResult>>(
+                    stream: FlutterBluePlus.scanResults,
+                    builder: (c, snapshot) {
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        );
+                      }
+                      var filtered = snapshot.data!.where((element) {
+                        return element.device.advName.isNotEmpty;
+                      }).toList();
+                      if (filtered.isEmpty) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: filtered.map((ScanResult bluetooth) {
+                          String deviceName =
+                          bluetooth.device.advName.toString();
+                          return StarlinkButtonCard(
+                            title: deviceName,
+                            subtitle: bluetooth.device.remoteId.toString(),
+                            onPressed: () async {
+                              onBluetoothDeviceSelected(
+                                bluetooth,
+                                context,
                               );
-                            }
-                            var filtered = snapshot.data!.where((element) {
-                              return element.device.advName.isNotEmpty;
-                            }).toList();
-                            return Column(
-                              children: filtered.map((ScanResult bluetooth) {
-                                late Icon icon;
-                                late Widget title;
-                                String deviceName =
-                                    bluetooth.device.advName.toString();
-
-                                icon = const Icon(
-                                  EvaIcons.printerOutline,
-                                  color: ColorsApp.green,
-                                );
-                                // bold title
-                                title = Text(
-                                  deviceName,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                );
-                                return ListTile(
-                                  title: title,
-                                  subtitle: Text(
-                                      bluetooth.device.remoteId.toString()),
-                                  onTap: () async {
-                                    onBluetoothDeviceSelected(
-                                      bluetooth,
-                                      context,
-                                    );
-                                  },
-                                  trailing: icon,
-                                );
-                              }).toList(),
-                            );
-                          },
-                        ),
-                      )),
+                            },
+                            suffixWidget: const Icon(
+                             EvaIcons.printerOutline,
+                             color: StarlinkColors.white,
+                          ),
+                          );
+                          // late Icon icon;
+                          // late Widget title;
+                          // String deviceName =
+                          //     bluetooth.device.advName.toString();
+                          // icon = const Icon(
+                          //   EvaIcons.printerOutline,
+                          //   color: ColorsApp.green,
+                          // );
+                          // // bold title
+                          // title = Text(
+                          //   deviceName,
+                          //   style: const TextStyle(
+                          //       fontWeight: FontWeight.bold),
+                          // );
+                          // return ListTile(
+                          //   title: title,
+                          //   subtitle: Text(
+                          //       bluetooth.device.remoteId.toString()),
+                          //   onTap: () async {
+                          //     onBluetoothDeviceSelected(
+                          //       bluetooth,
+                          //       context,
+                          //     );
+                          //   },
+                          //   trailing: icon,
+                          // );
+                        }).toList(),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

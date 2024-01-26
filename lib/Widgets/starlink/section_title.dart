@@ -5,10 +5,12 @@ import 'colors.dart';
 class StarlinkSectionTitle extends StatelessWidget {
   final String title;
   final Alignment alignment;
+  final double size;
   const StarlinkSectionTitle({
     super.key,
     required this.title,
     this.alignment = Alignment.topLeft,
+    this.size = 14.0,
   });
 
   @override
@@ -23,10 +25,10 @@ class StarlinkSectionTitle extends StatelessWidget {
         child:
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: StarlinkColors.white,
-              fontSize: 14.0,
+              fontSize: size,
               // bold
               fontFamily: 'DDIN-Bold',
             ),

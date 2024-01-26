@@ -18,7 +18,7 @@ class UpdateProfile extends ProfileEvent {
 }
 
 class DeletedProfile extends ProfileEvent {
-  final ProfileModel deletedProfile;
-  DeletedProfile(this.deletedProfile);
+  final String id;
+  DeletedProfile(this.id);
 }
 

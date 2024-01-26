@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../Values/Colors.dart';
 
-class ThemeApp{
+class ThemeApp {
   static const _backgroundColorLight = Color(0xffEEEEEE);
 
   static ThemeData themeLight = ThemeData(
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: StarlinkColors.white,
+      selectionColor: StarlinkColors.gray,
+      selectionHandleColor: StarlinkColors.white,
+    ),
     bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: Color(0xff123258),
-
+      backgroundColor: StarlinkColors.black,
     ),
     fontFamily: 'DDIN',
-    colorScheme:const ColorScheme(
+    colorScheme: const ColorScheme(
       primary: StarlinkColors.black,
       secondary: StarlinkColors.gray,
       surface: StarlinkColors.black,
@@ -65,11 +69,10 @@ class ThemeApp{
     appBarTheme: AppBarTheme(
       centerTitle: true,
       titleTextStyle: const TextStyle(
-        color: StarlinkColors.white,
-        fontFamily: 'DDIN-Bold',
-        fontWeight: FontWeight.w600,
-        fontSize: 26
-      ),
+          color: StarlinkColors.white,
+          fontFamily: 'DDIN-Bold',
+          fontWeight: FontWeight.w600,
+          fontSize: 26),
       backgroundColor: StarlinkColors.black,
     ),
     textTheme: const TextTheme(
@@ -78,12 +81,8 @@ class ThemeApp{
         fontFamily: 'DDIN-Bold',
         fontWeight: FontWeight.w600,
       ),
-
     ),
   );
-
 }
 
-extension CustomTheme on ThemeData{
-
-}
+extension CustomTheme on ThemeData {}

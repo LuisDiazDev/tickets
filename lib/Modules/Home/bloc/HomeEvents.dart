@@ -14,11 +14,16 @@ class GeneratedTicket extends HomeEvent{
   final String duration;
   final String price;
   final int limitMb;
-  GeneratedTicket(this.profile,this.name,this.duration,this.price,{this.limitMb=0});
+  final bool isVirtualTicket;
+  GeneratedTicket(this.profile,this.name,this.duration,this.price,{this.limitMb=0, required this.isVirtualTicket});
 }
 
-class NewQr extends HomeEvent{
+class VirtualTicketScanned extends HomeEvent{
   final String qr;
-  NewQr(this.qr);
+  VirtualTicketScanned(this.qr);
 }
 
+
+class VirtualTicketDismissed extends HomeEvent{
+  VirtualTicketDismissed();
+}

@@ -24,7 +24,6 @@ import '../Alerts/AlertCubit.dart';
 part 'SessionState.dart';
 
 class SessionCubit extends HydratedCubit<SessionState> {
-
   SessionCubit() : super(const SessionState()) {
     RestApiProvider().sessionCubit = this;
   }
@@ -66,6 +65,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
     }
   }
 
+
+
   void loadSetting() async {
     var exist = await FtpService.checkFile(remoteName: "info.rsc");
 
@@ -76,43 +77,47 @@ class SessionCubit extends HydratedCubit<SessionState> {
       var d = await FtpService.downloadFile(file: file, remoteName: "info.rsc");
 
       if (d) {
-        List<WifiDataModels> wDetails = [];
+
         var data = await file.readAsString();
         var interfaces = data.split("/");
         var wifiInterface = interfaces
             .firstWhere((element) => element.contains("interface wifi"));
-        var wifiInterfaceDetails = wifiInterface.split("add");
-        for (var interfaceW in wifiInterfaceDetails) {
-          var details = interfaceW.split(" ");
-          if (!interfaceW.contains("interface")) {
-            try {
-              wDetails.add(WifiDataModels(
-                ssid: details
-                        .firstWhere((element) => element.contains("ssid"))
-                        .replaceAll(".ssid=", "")
-                        .replaceAll("\n", "")  ,
-                pass: details
-                        .firstWhere((element) => element.contains("pass"))
-                        .replaceAll(".passphrase=", "")
-                        .replaceAll("\n", ""),
-              ));
-            } catch (e) {
-              log(e.toString()); // TODO: emit domain error
-            }
+        RegExp ssidRegex = RegExp(r'\.ssid=([^\s]+)');
+        RegExp passphraseRegex = RegExp(r'\.passphrase=(\S+)');
+        List<WifiDataModels> wDetails = wifiInterface
+            .replaceAll("    ", "")
+            .replaceAll("\\\r\n", "")
+            .split("\n")
+            .where((x) => x.contains(".ssid") || x.contains(".passphrase"))
+            .map((String line) {
+          String ssid = '';
+          String passphrase = '';
+
+          var ssidMatch = ssidRegex.firstMatch(line);
+          var passphraseMatch = passphraseRegex.firstMatch(line);
+
+          if (ssidMatch != null) {
+            ssid = ssidMatch.group(1)!;
           }
+
+          if (passphraseMatch != null) {
+            passphrase = passphraseMatch.group(1)!;
+          }
+          return WifiDataModels(ssid: ssid, pass: passphrase);
+        }).toList();
+
+        if (state.cfg != null) {
+          emit(state.copyWith(
+              configModel: state.cfg!.copyWith(wifiCredentials: wDetails)));
+          var identity = interfaces
+              .firstWhere((element) => element.contains("system identity"));
+          var identitySplit = identity.split("=");
+          emit(state.copyWith(
+              configModel: state.cfg!.copyWith(
+                  identity: identitySplit.last
+                      .replaceAll("\n", "")
+                      .replaceAll("\r", ""))));
         }
-       if(state.cfg != null){
-         emit(state.copyWith(
-             configModel: state.cfg!.copyWith(wifiCredentials: wDetails)));
-         var identity = interfaces
-             .firstWhere((element) => element.contains("system identity"));
-         var identitySplit = identity.split("=");
-         emit(state.copyWith(
-             configModel: state.cfg!.copyWith(
-                 identity: identitySplit.last
-                     .replaceAll("\n", "")
-                     .replaceAll("\r", ""))));
-       }
       }
     } else {
       MkProvider provider = MkProvider();
@@ -136,15 +141,15 @@ class SessionCubit extends HydratedCubit<SessionState> {
     emit(newState);
   }
 
-  void initData()async{
+  void initData() async {
     if (state.isAuthenticated /*&& state.firebaseID != ""*/) {
       MkProvider provider = MkProvider();
       var profilesH = await provider.allProfilesHotspot();
       if (profilesH.isNotEmpty) {
         emit(state.copyWith(
             configModel: state.cfg!.copyWith(
-              dnsNamed: profilesH.last.dnsName,
-            )));
+          dnsNamed: profilesH.last.dnsName,
+        )));
       } else {
         emit(state.copyWith(
             sessionStatus: SessionStatus.mikrotik,
@@ -171,8 +176,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
         if (profilesH.isNotEmpty) {
           emit(state.copyWith(
               configModel: state.cfg!.copyWith(
-                dnsNamed: profilesH.last.dnsName,
-              )));
+            dnsNamed: profilesH.last.dnsName,
+          )));
         }
 
         FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
@@ -185,7 +190,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
         loadSetting();
         // loginHotspot();
-      } else if(state.firebaseID != ""){
+      } else if (state.firebaseID != "") {
         emit(state.copyWith(
             sessionStatus: SessionStatus.finish, configModel: ConfigModel()));
       }
@@ -197,7 +202,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future<void> authListener() async {
-    // initData();
     try {
       late StreamSubscription<User?> steam;
       late StreamSubscription<DatabaseEvent> database;
@@ -262,19 +266,18 @@ class SessionCubit extends HydratedCubit<SessionState> {
     if (r.isNotEmpty) {
       alertCubit.showDialog(
         ShowDialogEvent(
-            title: "CONECTADO",
-            message: "Se estableció la conexión con el mikrotik",
-            type: AlertType.success,
+          title: "CONECTADO",
+          message: "Se estableció la conexión con el mikrotik",
+          type: AlertType.success,
         ),
       );
     } else {
-      alertCubit.showDialog(
-        ShowDialogEvent(
-          title: "ERROR",
-          message: "1. revise si el mikrotik está encendido\n"
+      alertCubit.showDialog(ShowDialogEvent(
+        title: "ERROR",
+        message: "1. revise si el mikrotik está encendido\n"
             "2. chequee la direccion del mikrotik y que las credenciales sean correctas",
-          type: AlertType.success,
-        ));
+        type: AlertType.success,
+      ));
     }
   }
 
@@ -304,7 +307,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
       ProgressDialogUtils.hideProgressDialog();
     } else {
       ProgressDialogUtils.hideProgressDialog();
-    alertCubit.showDialog(
+      alertCubit.showDialog(
         ShowDialogEvent(
           title: "ERROR",
           message: "No se pudo realizar el backup",

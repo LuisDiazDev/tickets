@@ -1,3 +1,4 @@
+import 'package:StarTickera/Widgets/starlink/colors.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:StarTickera/models/config_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -93,14 +94,14 @@ class TicketDialogUtils {
                                   "Para navegar entra en",
                                   style: TextStyle(
                                     fontFamily: 'DDIN',
-                                    fontSize: 16,
+                                    fontSize: 20,
                                   ),
                                 ),
                                 Text(
                                   configModel.dnsNamed,
                                   style: const TextStyle(
                                     fontFamily: 'DDIN',
-                                    fontSize: 18,
+                                    fontSize: 20,
                                     color: Color(0xFF6565FF),
                                   ),
                                 ),
@@ -120,7 +121,7 @@ class TicketDialogUtils {
                                           "Clave",
                                           style: TextStyle(
                                             fontFamily: 'DDIN',
-                                            fontSize: 12,
+                                            fontSize: 20,
                                           ),
                                         ),
                                         Text(
@@ -128,7 +129,8 @@ class TicketDialogUtils {
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             fontFamily: 'DDIN',
-                                            fontSize: 14,
+                                            fontSize: 20,
+                                            color: StarlinkColors.black,
                                           ),
                                         )
                                       ],
@@ -146,35 +148,28 @@ class TicketDialogUtils {
                                 children: [
                                   Column(
                                     children: [
-                                      const Text(
+                                      StarlinkText(
                                         "Precio",
-                                        style: TextStyle(
-                                          fontFamily: 'DDIN',
-                                          fontSize: 12,
-                                        ),
+                                        color: StarlinkColors.black,
+                                        size: 20,
                                       ),
-                                      Text(
+                                      StarlinkText(
                                         price.replaceAll("S", "\$"),
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontFamily: 'DDIN',
-                                          fontSize: 14,
-                                        ),
+                                        color: StarlinkColors.black,
                                       )
                                     ],
                                   ),
                                   Column(
                                     children: [
-                                      const Text(
+                                      StarlinkText(
                                         "Duración",
-                                        style: TextStyle(
-                                          fontFamily: 'DDIN',
-                                          fontSize: 12,
-                                        ),
+                                        size: 20,
+                                        color: StarlinkColors.black,
                                       ),
                                       StarlinkText(
                                         duration,
-                                        size: 14,
+                                        size: 20,
+                                        color: StarlinkColors.black,
                                       )
                                     ],
                                   )

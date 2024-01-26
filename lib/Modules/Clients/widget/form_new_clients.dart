@@ -1,4 +1,6 @@
 import 'package:StarTickera/Modules/Clients/bloc/ClientsBloc.dart';
+import 'package:StarTickera/Widgets/starlink/card.dart';
+import 'package:StarTickera/Widgets/starlink/colors.dart';
 import 'package:StarTickera/Widgets/starlink/text_style.dart';
 import 'package:StarTickera/models/ticket_model.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ class FormClientWidget extends StatefulWidget {
 
 class _FormClientWidgetState extends State<FormClientWidget> {
   late TicketModel client;
-   late String profile;
+  late String profile;
 
   bool limitSpeed = false;
   final _formKey = GlobalKey<FormState>();
@@ -78,11 +80,17 @@ class _FormClientWidgetState extends State<FormClientWidget> {
                 onChanged: (str) {
                   client.name = str;
                 },
-                title: "Nombre del Cliente",
+                title: "Nombre y clave del Cliente",
                 initialValue: client.name ?? "",
                 textHint: "Nombre del Cliente",
               ),
               const Gap(8),
+              StarlinkCard(
+                title: "AVISO",
+                message: "El usuario y la clave seran los mismos.\n"
+                    "La clave del usuario será:\n'${client.name}'",
+                type: InfoContextType.info,
+              ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,12 +104,14 @@ class _FormClientWidgetState extends State<FormClientWidget> {
                     onChanged: (str) {
                       profile = str!;
                     },
-                    values: widget.bloc.state.profiles.map((e) => e.name ?? "").toList(),
+                    values: widget.bloc.state.profiles
+                        .map((e) => e.name ?? "")
+                        .toList(),
                     initialValue: profile,
                   ),
                 ],
               ),
-             Spacer(),
+              Spacer(),
               StarlinkButton(
                 text: widget.current != null && !widget.newClient
                     ? "Modificar"
@@ -111,19 +121,18 @@ class _FormClientWidgetState extends State<FormClientWidget> {
                     _formKey.currentState!.save();
                   }
 
-                  var p = widget.bloc.state.profiles.firstWhere((p) => p.name == profile);
+                  var p = widget.bloc.state.profiles
+                      .firstWhere((p) => p.name == profile);
 
                   var duration = p.metadata?.usageTime ?? "";
                   var price = p.metadata?.price ?? "";
                   var limit = p.metadata?.dataLimit ?? 0;
                   widget.bloc.add(GenerateClient(
-                      p.metadata!.toMikrotiketNameString(
-                          p.name ?? ""),
+                      p.metadata!.toMikrotiketNameString(p.name ?? ""),
                       client.name!.toLowerCase(),
                       duration,
                       price.toString(),
-                      limitMb: limit
-                  ));
+                      limitMb: limit));
 
                   Navigator.of(context).pop();
                 },

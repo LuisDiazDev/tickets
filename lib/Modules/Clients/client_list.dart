@@ -48,6 +48,7 @@ class _BuildListClientPageState extends State<_BuildListClientPage> {
   Widget build(BuildContext context) {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     final clientBloc = BlocProvider.of<ClientsBloc>(context);
+    final List<String> deletedIds = [];
     return BlocBuilder<ClientsBloc, ClientsState>(builder: (context, state) {
       return Scaffold(
           backgroundColor: StarlinkColors.black,
@@ -94,14 +95,22 @@ class _BuildListClientPageState extends State<_BuildListClientPage> {
                 const Gap(10),
                 Column(
                   children: state.clients
+                      .where((element) => !deletedIds.contains(element.id))
                       .map((c) => CustomClient(
                             client: c,
                             copyTap: () {
                               clientBloc.add(ResetClient(c));
                             },
+                            deleteTap: () {
+                              clientBloc.add(DeletedClient(c.id!));
+                              setState(() {
+                                deletedIds.add(c.id!);
+                              });
+                            },
                           ))
                       .toList(),
-                )
+                ),
+                const Gap(55),
               ],
             ),
           ),

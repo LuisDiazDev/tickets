@@ -66,6 +66,7 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  cursorColor: StarlinkColors.white,
                   obscureText: _passwordVisible,
                   readOnly: widget.readOnly,
                   key: Key(widget.initialValue.toString()),
@@ -83,6 +84,8 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                     fontFamily: 'DDIN-Bold',
                   ),
                   decoration: InputDecoration(
+                    focusColor: StarlinkColors.white,
+                    hoverColor: StarlinkColors.white,
                     hintText: widget.textHint,
                     suffixIcon: widget.obscureText ? IconButton(
                       icon: Icon(
@@ -105,11 +108,14 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                       // bold
                       fontFamily: 'DDIN-Bold',
                     ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: StarlinkColors.white),
+                    ),
                     errorBorder:const OutlineInputBorder(
                       borderSide: BorderSide(color: StarlinkColors.red),
                     ),
                     border: const OutlineInputBorder(),
-                    fillColor: StarlinkColors.transparent,
+                    fillColor: StarlinkColors.darkGray,
                     enabledBorder: widget.errorText.isNotEmpty
                         ? const OutlineInputBorder(
                             borderSide: BorderSide(color: StarlinkColors.red),

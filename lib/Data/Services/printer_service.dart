@@ -36,10 +36,7 @@ class PrinterService {
       // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
     }
     var ticketBytes = await buildTicketBody(
-        user: user,
-        configModel: configModel,
-        price: price,
-        duration: duration);
+        user: user, configModel: configModel, price: price, duration: duration);
     await printTicketInBTPrinter(configModel, ticketBytes);
     // await configModel.bluetoothCharacteristic!
     //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
@@ -78,62 +75,106 @@ class PrinterService {
     //     'http://${configModel.dnsNamed}/login?user=$user&password=$user',
     //     size: const QRSize(8));
     // bytes += generator.feed(1);
-    if(configModel?.nameLocal != "" || configModel?.contact != ""){
+    if (configModel?.nameLocal != "" || configModel?.contact != "") {
       var strContact = "";
-      if(configModel?.nameLocal != "" && configModel?.contact != ""){
+      if (configModel?.nameLocal != "" && configModel?.contact != "") {
         strContact = "${configModel?.nameLocal} - ${configModel?.contact}";
-      }else if(configModel?.nameLocal == "" && configModel?.contact != ""){
+      } else if (configModel?.nameLocal == "" && configModel?.contact != "") {
         strContact = "${configModel?.contact}";
-      }else if(configModel?.nameLocal != "" && configModel?.contact == ""){
+      } else if (configModel?.nameLocal != "" && configModel?.contact == "") {
         strContact = "${configModel?.nameLocal}";
       }
       bytes += generator.text(strContact, styles: styles);
       bytes += generator.feed(1);
     }
-    bytes += generator.text('Clave: $spacedPassword',
+    bytes += generator.text('PIN: $spacedPassword',
         styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
             bold: true));
     bytes += generator.feed(1);
-    String priceAndDurationLine = "";
-    if (price != "") {
-      priceAndDurationLine += "Precio: $price";
-    }
-    if (duration != "") {
-      priceAndDurationLine += "  |  Duracion: ${formatDuration(duration)}";
-    }
-    bytes += generator.text(priceAndDurationLine);
 
-    // Time in format "day/month/year hh:mm:ss"
-    var now = DateTime.now();
-    String day = now.day.toString().padLeft(2, '0');
-    String month = now.month.toString().padLeft(2, '0');
-    String hour = now.hour.toString().padLeft(2, '0');
-    String minute = now.minute.toString().padLeft(2, '0');
-    String second = now.second.toString().padLeft(2, '0');
-    String currentDateTime = "$day/$month/${now.year} - $hour:$minute:$second";
-    bytes += generator.text('Fecha: $currentDateTime', styles: styles);
+    if (configModel!.wifiCredentials.isNotEmpty &&
+        (configModel.wifiCredentials.first.ssid != "" ||
+            configModel.wifiCredentials.last.ssid != "")) {
+      var sameSSID = false;
+      if (configModel.wifiCredentials.first.ssid ==
+          configModel.wifiCredentials.last.ssid) {
+        sameSSID = true;
+      }
+      var samePass = false;
+      if (configModel.wifiCredentials.first.pass ==
+          configModel.wifiCredentials.last.pass) {
+        samePass = true;
+      }
 
-    bytes += generator.text('1- Conectate al wifi:', styles: styles);
-    if (configModel!.wifiCredentials.isNotEmpty) {
-      bytes += generator.text(
-          "Nombre: ${configModel.wifiCredentials.first.ssid} Clave:${configModel
-              .wifiCredentials.first.pass.replaceAll("\n", "")}",
-          styles: styles);
-      if (configModel.wifiCredentials.length > 1) {
-        bytes += generator.text(
-            "Nombre: ${configModel.wifiCredentials.last.ssid} Clave:${configModel
-                .wifiCredentials.last.pass.replaceAll("\n", "")}",
-            styles: styles);
+
+      if (!sameSSID &&
+          configModel.wifiCredentials.first.ssid != "" &&
+          configModel.wifiCredentials.last.ssid != "") {
+        bytes +=
+            generator.text('1- Entra a uno de estos WiFis:', styles: styles);
+      } else {
+        bytes += generator.text('1-Conectate a este wifi:', styles: styles);
+      }
+
+      String fssid = configModel.wifiCredentials.first.ssid.replaceAll(
+          "\n", "");
+      String lssid = configModel.wifiCredentials.last.ssid.replaceAll("\n", "");
+      String fpass = configModel.wifiCredentials.first.pass.replaceAll(
+          "\n", "");
+      String lpass = configModel.wifiCredentials.last.pass.replaceAll("\n", "");
+      List<String> a = [];
+      if (sameSSID && !samePass) {
+        if (fpass != "" && lpass == "") {
+          a = ["Nombre WIFI: $fssid", "Clave WIFI: $fpass"];
+        } else if (fpass == "" && lpass != "") {
+          a = ["Nombre WIFI: $fssid", "Clave WIFI: $lpass"];
+        } else if (fpass != "" && lpass != "") {
+          a = [
+            "Nombre WIFI: $fssid",
+            "Clave WIFI 1: $fpass",
+            "Clave WIFI 2: $lpass"
+          ];
+        }
+      } else if (sameSSID && samePass) {
+        a = ["Nombre WIFI: $fssid", "Clave WIFI: $fpass"];
+      } else if (!sameSSID && samePass) {
+        a = [
+          "Nombre WIFI 1: $fssid",
+          "Nombre WIFI 2: $lssid",
+          "Clave WIFI: $fpass"
+        ];
+      } else if (!sameSSID && !samePass) {
+        a = [
+          "Nombre WIFI 1: $fssid",
+          "Clave WIFI 1: $fpass",
+          "Nombre WIFI 2: $lssid",
+          "Clave WIFI 2: $lpass"
+        ];
+      }
+
+      for (var item in a) {
+        bytes += generator.text(item, styles: styles);
       }
     }
-    bytes += generator.text('2- Abre tu navegador y entra en', styles: styles);
-    bytes += generator.text(configModel.dnsNamed, styles: styles);
-    bytes += generator.text('--------------------------------');
-    bytes += generator.feed(1);
 
-    return bytes;
+      var now = DateTime.now();
+      String day = now.day.toString().padLeft(2, '0');
+      String month = now.month.toString().padLeft(2, '0');
+      String hour = now.hour.toString().padLeft(2, '0');
+      String minute = now.minute.toString().padLeft(2, '0');
+      String currentDateTime = "$day/$month/${now.year} - $hour:$minute";
+      bytes += generator.text('Fecha: $currentDateTime', styles: styles);
+      String priceAndDurationLine = "";
+      if (duration != "") {
+        priceAndDurationLine += "Duracion: ${formatDuration(duration)}";
+      }
+      bytes += generator.text(priceAndDurationLine);
+      bytes += generator.text(".                startickera.com");
+      bytes += generator.text('--------------------------------');
+      bytes += generator.feed(1);
+      return bytes;
+    }
   }
-}

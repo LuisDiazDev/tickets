@@ -65,7 +65,15 @@ class _BuildClientsProfilePageState extends State<_BuildClientsProfilePage>
                   child: Column(
                     children: [
                       ...state.profiles
-                          .where((p) => p.name != "default")
+                          .where((p) {
+                            if (p.metadata == null) {
+                              return false;
+                            }
+                            if (p.metadata!.type !=  null && p.metadata!.type != "2") {
+                              return false;
+                            }
+                            return p.name != "default";
+                          })
                           .map((e) => CustomProfile(
                         profile: e,
                         onTap: () {

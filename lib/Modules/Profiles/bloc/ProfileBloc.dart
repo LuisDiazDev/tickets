@@ -80,7 +80,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       (event, emit) async {
         emit(state.copyWith(load: true));
 
-        var r = await provider.removeProfile(event.deletedProfile.id!);
+        var r = await provider.removeProfile(event.id);
         if (r.statusCode <= 205) {
           add(FetchData());
           alertCubit.showDialog(

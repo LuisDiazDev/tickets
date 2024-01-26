@@ -30,14 +30,14 @@ enum InfoContextType { error, warning, info, success }
 const Map<InfoContextType, Color> cardColor = {
   InfoContextType.error: Color.fromARGB(100, 120, 30, 35),
   InfoContextType.warning: Color.fromARGB(100, 120, 90, 36),
-  InfoContextType.info: Color.fromARGB(100, 0, 60, 120),
+  InfoContextType.info: StarlinkColors.gray,
   InfoContextType.success: Color.fromARGB(100, 0, 120, 0),
 };
 
 const Map<InfoContextType, Color> boxDecorationColor = {
   InfoContextType.error: Color.fromARGB(255, 191, 52, 61),
   InfoContextType.warning: Color.fromARGB(200, 210, 166, 51),
-  InfoContextType.info: Color.fromARGB(200, 0, 122, 255),
+  InfoContextType.info: StarlinkColors.lightGray,
   InfoContextType.success: Color.fromARGB(150, 0, 255, 0),
 };
 

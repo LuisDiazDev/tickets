@@ -39,53 +39,69 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(load: false, profiles: profiles));
       },
     );
-    on<NewQr>(
+    on<VirtualTicketScanned>(
       (event, emit) async {
         emit(state.copyWith(currentUser: event.qr));
-        alertCubit.showDialog(
-          ShowDialogEvent(
-            title: "SELECCIONE UN PLAN",
-            message: "Clave: ${event.qr}",
-            type: AlertType.info,
-          ),
-        );
+        // alertCubit.showDialog(
+        //   // ShowDialogEvent(
+        //   //   title: "SELECCIONE UN PLAN",
+        //   //   message: "Clave: ${event.qr}",
+        //   //   type: AlertType.info,
+        //   // ),
+        // );
+      },
+    );
+    on<VirtualTicketDismissed>(
+          (event, emit) async {
+        emit(state.copyWith(currentUser: null));
       },
     );
     on<GeneratedTicket>(
       (event, emit) async {
-        DatabaseFirebase databaseFirebase = DatabaseFirebase();
-        if (state.currentUser == "" &&
-            (!sessionCubit.state.cfg!.disablePrint &&
-                sessionCubit.state.cfg?.bluetoothDevice != null &&
-                !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ??
-                    false))) {
-          await sessionCubit.state.cfg?.bluetoothDevice
-              ?.connect(timeout: const Duration(seconds: 20));
-        }
+        if (!event.isVirtualTicket && !sessionCubit.state.cfg!.disablePrint) {
+          if ((!sessionCubit.state.cfg!.disablePrint &&
+              sessionCubit.state.cfg?.bluetoothDevice != null &&
+              !(sessionCubit.state.cfg?.bluetoothDevice?.isConnected ??
+                  false))) {
+            await sessionCubit.state.cfg?.bluetoothDevice
+                ?.connect(timeout: const Duration(seconds: 20));
+          }
 
-        if (!sessionCubit.state.cfg!.disablePrint) {
-          if (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false) {
-            sessionCubit.changeState(sessionCubit.state.copyWith(
-                configModel: sessionCubit.state.cfg!.copyWith(
-                    bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
-          } else {
-            alertCubit.showDialog(ShowDialogEvent(
-              title: "ERROR",
-              message: "No se ha detectado ninguna impresora",
-              type: AlertType.warning,
-            ));
-            NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-            return;
+          if (!sessionCubit.state.cfg!.disablePrint) {
+            if (sessionCubit.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+              sessionCubit.changeState(sessionCubit.state.copyWith(
+                  configModel: sessionCubit.state.cfg!.copyWith(
+                      bluetoothDevice: sessionCubit.state.cfg?.bluetoothDevice)));
+            } else {
+              alertCubit.showDialog(ShowDialogEvent(
+                title: "ERROR",
+                message: "No se ha detectado ninguna impresora",
+                type: AlertType.warning,
+              ));
+              NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+              return;
+            }
           }
         }
 
-        final user = state.currentUser != "" ? state.currentUser : event.name;
+
+
+        String user="";
+        if (event.isVirtualTicket) {
+          user = state.currentUser;
+        } else {
+          user = event.name;
+        }
+
+        emit(state.copyWith(currentUser: null));
+
         late Response r;
         try {
           r = await provider.newTicket(
               user.toLowerCase(), event.profile, event.duration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
+
           alertCubit.showDialog(
             ShowDialogEvent(
               title: "USUARIO YA EXISTE",
@@ -108,6 +124,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         if (r.statusCode == 200 || r.statusCode == 201) {
           // alertCubit.showDialog("Exito","Se ha creado un nuevo ticket");
+          DatabaseFirebase databaseFirebase = DatabaseFirebase();
           databaseFirebase.updateSeller(
               user, event.price, event.duration, event.profile);
           TicketDialogUtils.showNewTicketDetailDialog(
@@ -116,13 +133,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               price: event.price,
               duration: formatDuration(event.duration));
           if (state.currentUser == "") {
-            alertCubit.showDialog(
-              ShowDialogEvent(
-                title: "TICKET GENERADO",
-                message: "Imprimiendo el ticket",
-                type: AlertType.success,
-              ),
-            );
+            // alertCubit.showDialog(
+            //   ShowDialogEvent(
+            //     title: "TICKET GENERADO",
+            //     message: "Imprimiendo el ticket",
+            //     type: AlertType.success,
+            //   ),
+            // );
           }
         } else {
           alertCubit.showDialog(
@@ -140,7 +157,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               price: event.price,
               duration: event.duration);
         }
-        emit(state.copyWith(currentUser: ""));
       },
     );
 

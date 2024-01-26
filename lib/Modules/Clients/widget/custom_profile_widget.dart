@@ -52,7 +52,7 @@ class CustomProfile extends StatelessWidget {
                             maxWidth: 140,),
                           child: StarlinkText(
                             profile.name ?? "",
-                            size: 16,
+                            size: 18,
                             isBold: true,
                           ),
                         ),
@@ -66,7 +66,7 @@ class CustomProfile extends StatelessWidget {
                                 maxHeight: 60),
                             child: StarlinkText(
                               "Limite: ${profile.metadata?.dataLimit.toString()}Mbs",
-                              size: 16,
+                              size: 18,
                               isBold: true,
                             ),
                           ),

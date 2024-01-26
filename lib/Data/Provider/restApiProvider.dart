@@ -39,7 +39,9 @@ class RestApiProvider {
         String? pass,
         String? host,
         Map? body = const {},
-        int? timeoutSecs}) async {
+        int? timeoutSecs,
+        int attempt=1
+      }) async {
     String username = user ?? sessionCubit?.state.cfg?.user ?? "";
     String password = pass ?? sessionCubit?.state.cfg?.password ?? "";
     String basicAuth =
@@ -50,36 +52,46 @@ class RestApiProvider {
       'Content-Type': 'application/json'
     };
     var timeout = Duration(seconds: timeoutSecs ?? 5);
+    late http.Response response;
     try {
       if (method == "get") {
-        return await http.get(
+        response = await http.get(
           uri,
           headers: headers,
         ).timeout(timeout);
       } else if (method == "post") {
-        return await http.post(
+        response = await http.post(
           uri,
           body: jsonEncode(body),
           headers: headers,
         ).timeout(timeout);
       } else if (method == "put") {
-        return await http.put(
+        response = await http.put(
           uri,
           body: jsonEncode(body),
           headers: headers,
         ).timeout(timeout);
       } else if (method == "delete") {
-        return await http.delete(
+        response = await http.delete(
           uri,
           body: jsonEncode(body),
           headers: headers,
         ).timeout(timeout);
       }
-      throw Exception("method not found: $method");
     } catch (e) {
       log(e.toString()); // TODO: emit domain error
+      if (response.statusCode > 205) {
+        if (response.body.isNotEmpty && response.body.toString().contains("Connection reset by peer")) {
+          if (attempt > 3) {
+            return response;
+          }
+          return _req(method, endpoint: endpoint, user: user, pass: pass, host: host, body: body, timeoutSecs: timeoutSecs, attempt: attempt+1);
+        }
+      }
       return http.Response(e.toString(), 500);
     }
+
+    return response;
   }
 
   Future<http.Response> get(

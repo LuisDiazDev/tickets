@@ -57,6 +57,7 @@ class MkProvider {
         var decode = jsonDecode(response.body)["name"] ?? "";
         return decode;
       } catch (e) {
+        log(e.toString());
         return "";
       }
     }
@@ -71,6 +72,7 @@ class MkProvider {
         var decode = ticketModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -85,6 +87,7 @@ class MkProvider {
         var decode = schedulerModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -99,6 +102,7 @@ class MkProvider {
         var decode = activeModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -113,6 +117,7 @@ class MkProvider {
         var decode = hotspotFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -127,6 +132,7 @@ class MkProvider {
         var decode = profileModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -144,6 +150,7 @@ class MkProvider {
         var decode = dhcpServerModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     } else {
@@ -164,6 +171,7 @@ class MkProvider {
         var decode = profileHotspotModelFromJson(response.body);
         return decode;
       } catch (e) {
+        log(e.toString());
         return [];
       }
     }
@@ -226,8 +234,7 @@ class MkProvider {
   }
 
   Future<Response> disconnectTicket(String id) async {
-    var result = await restApi.delete(url: "/ip/hotspot/active/$id");
-    return result;
+    return  await restApi.delete(url: "/ip/hotspot/active/$id");
   }
 
   Future<Response> removeProfile(String id) async {

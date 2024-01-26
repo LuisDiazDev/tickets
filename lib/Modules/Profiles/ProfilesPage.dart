@@ -64,28 +64,33 @@ class _BuildHomePageState extends State<_BuildHomePage>
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      ...state.profiles
-                          .where((p) => p.name != "default")
-                          .map((e) => CustomProfile(
-                                profile: e,
-                                onTap: () {
-                                  showGlobalDrawer(
-                                      context: context,
-                                      builder: horizontalDrawerBuilder(
-                                          profileBloc,
-                                          profileModel: e),
-                                      direction: AxisDirection.right);
-                                },
-                                copyTap: () {
-                                  showGlobalDrawer(
-                                      context: context,
-                                      builder: horizontalDrawerBuilder(
-                                          profileBloc,
-                                          newProfile: true,
-                                          profileModel: e),
-                                      direction: AxisDirection.right);
-                                },
-                              )),
+                      ...state.profiles.where((p) {
+                        if (p.metadata == null) {
+                          return false;
+                        }
+                        if (p.metadata!.type != null &&
+                            p.metadata!.type != "1") {
+                          return false;
+                        }
+                        return p.name != "default";
+                      }).map((e) => CustomProfile(
+                            profile: e,
+                            onTap: () {
+                              showGlobalDrawer(
+                                  context: context,
+                                  builder: horizontalDrawerBuilder(
+                                      profileBloc,
+                                      profileModel: e),
+                                  direction: AxisDirection.right);
+                            },
+                            copyTap: () {
+                              showGlobalDrawer(
+                                  context: context,
+                                  builder: horizontalDrawerBuilder(profileBloc,
+                                      newProfile: true, profileModel: e),
+                                  direction: AxisDirection.right);
+                            },
+                          )),
                       const Gap(45)
                     ],
                   ),

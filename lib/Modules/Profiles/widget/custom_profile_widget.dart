@@ -87,7 +87,7 @@ class CustomProfile extends StatelessWidget {
                       IconButton(
                           constraints: const BoxConstraints(),
                           onPressed: () {
-                            profileBloc.add(DeletedProfile(profile));
+                            profileBloc.add(DeletedProfile(profile.id!));
                           },
                           icon: const Icon(
                             Icons.delete_outline,
