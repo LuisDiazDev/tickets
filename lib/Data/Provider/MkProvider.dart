@@ -238,7 +238,11 @@ class MkProvider {
   }
 
   Future<Response> removeProfile(String id) async {
-    return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
+    try{
+      return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
+    }catch (e){
+      return Response("", 205);
+    }
   }
 
   Future<Response> resetClient(String id) async {

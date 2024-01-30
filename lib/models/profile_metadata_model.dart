@@ -185,6 +185,25 @@ class ProfileMetadata {
         ));
   }
 
+  static String _parseDuration(String duration){
+
+    if(duration.contains("_") || duration.contains("-")){
+      return duration;
+    }
+
+    String days="0d",hours="00",min="00";
+
+    if(duration.contains("m")){
+      min = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("h")){
+      hours = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("d")){
+      days = duration;
+    }
+
+    return "$days-$hours:$min:00";
+  }
+
   String toMikrotiketNameString(String profileName) {
     String startMark = "profile_";
 
@@ -196,7 +215,7 @@ class ProfileMetadata {
     String userLength = "lu:${this.userLength}";
     String passwordLength = "lp:${this.passwordLength}";
     String usageTime =
-        "ut:${parseDateToMkDate(this.usageTime.replaceAll("-", "_"))}";
+        "ut:${parseDateToMkDate(this.usageTime).replaceAll("-", "_")}";
     String dataLimit = "bt:${this.dataLimit}";
     String durationType = "kt:${this.durationType == DurationType.SaveTime}";
     String isNumericUser = "nu:${this.isNumericUser}";
@@ -240,29 +259,30 @@ class ProfileMetadata {
   }
 
   static String parseDateToMkDate(String valor) {
-    RegExp exp = RegExp(r'(\d+)([dhm])');
-    Match match = exp.firstMatch(valor) as Match;
+    return _parseDuration(valor);
+    // RegExp exp = RegExp(r'(\d+)([dhm])');
+    // Match match = exp.firstMatch(valor) as Match;
 
-    int cantidad = int.tryParse(match.group(1)!) ?? 0;
-    String unidad = match.group(2)!;
+    // int cantidad = int.tryParse(match.group(1)!) ?? 0;
+    // String unidad = match.group(2)!;
 
-    int dias = 0, horas = 0, minutos = 0;
+    // int dias = 0, horas = 0, minutos = 0;
 
-    switch (unidad) {
-      case 'd':
-        dias = cantidad;
-        break;
-      case 'h':
-        horas = cantidad;
-        break;
-      case 'm':
-        minutos = cantidad;
-        break;
-      default:
-        throw Exception("Unidad de tiempo no válida");
-    }
-
-    return "${dias.toString()}d-${horas.toString().padLeft(2, '0')}:"
-        "${minutos.toString().padLeft(2, '0')}:00";
+    // switch (unidad) {
+    //   case 'd':
+    //     dias = cantidad;
+    //     break;
+    //   case 'h':
+    //     horas = cantidad;
+    //     break;
+    //   case 'm':
+    //     minutos = cantidad;
+    //     break;
+    //   default:
+    //     throw Exception("Unidad de tiempo no válida");
+    // }
+    return valor;
+    // return "${dias.toString()}d-${horas.toString().padLeft(2, '0')}:"
+    //     "${minutos.toString().padLeft(2, '0')}:00";
   }
 }

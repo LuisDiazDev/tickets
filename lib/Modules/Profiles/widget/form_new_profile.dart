@@ -29,7 +29,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   String numberOfSharedUserPerTicket = "1",
       initialDurationUnit = "d",
       initialCurrency = "S",
-      durationT = "1",
+      durationT = "",
       price = "1",
       currency = "\$",
       limitUpload = "1",
@@ -142,19 +142,48 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         const Gap(20),
                         StarlinkDropdown(
                           onChanged: (str) {
-                            initialDurationUnit = str![0].toLowerCase();
+                            setState(() {
+                              initialDurationUnit = str![0].toLowerCase();
+                            });
                           },
-                          values: const ["Minutos", "Horas", "Días", "Semanas"],
+                          values: const ["Minutos", "Horas", "Días"],
                           initialValue: mapDurationUnit(initialDurationUnit),
                         ),
                       ]),
                     ],
                   ),
+                  // const Gap(1),
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Visibility(
+                  //       visible: durationT != "",
+                  //         child: Expanded(
+                  //       child: StarlinkTextField(
+                  //         title: "Duración",
+                  //         onChanged: (str) {},
+                  //         readOnly: true,
+                  //         initialValue: durationT,
+                  //         keyboardType: TextInputType.number,
+                  //         textHint: "Duración del plan",
+                  //       ),
+                  //     )),
+                  //     Column(children: [
+                  //       SizedBox(
+                  //         width: 200,
+                  //         child: StarlinkButton(
+                  //           text: durationT != "" ? "Modificar" : 'Nueva',
+                  //           onPressed: () {},
+                  //         ),
+                  //       ),
+                  //     ]),
+                  //   ],
+                  // ),
                   const Gap(1),
                   Container(
                     alignment: Alignment.centerLeft,
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width/2.2,
+                      width: MediaQuery.of(context).size.width / 2.2,
                       child: StarlinkTextField(
                         title: "Usuarios por ticket",
                         onChanged: (str) {
@@ -228,7 +257,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                       }
-                      if (durationT == "1") {
+                      if (durationT+initialDurationUnit == "1") {
                         durationT = "1d";
                       }
                       if (price == "1") {
@@ -236,7 +265,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       }
 
                       profile.onLogin =
-                          '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval=$durationT on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
+                          '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval="${parseDuration(durationT+initialDurationUnit)}" on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
 
                       profile.sharedUsers = numberOfSharedUserPerTicket;
                       profile.rateLimit = limitSpeed
@@ -253,12 +282,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                             passwordLength: 5,
                             dataLimit: int.tryParse(limitData) ?? 0,
                             price: double.parse(p),
-                            usageTime: durationT,
+                            usageTime: parseDuration(durationT+initialDurationUnit),
                             durationType: DurationType.SaveTime,
                             isNumericUser: true,
                             isNumericPassword: true,
                           );
-                          widget.bloc.add(NewProfile(profile, durationT));
+                          widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
                         } else {
                           var p = price.substring(0, price.length - 1);
                           profile.metadata = ProfileMetadata(
@@ -269,7 +298,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                             passwordLength: 5,
                             dataLimit: int.tryParse(limitData) ?? 0,
                             price: double.parse(p),
-                            usageTime: durationT,
+                            usageTime: parseDuration(durationT+initialDurationUnit),
                             durationType: DurationType.SaveTime,
                             isNumericUser: true,
                             isNumericPassword: true,
@@ -286,12 +315,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           passwordLength: 5,
                           dataLimit: int.tryParse(limitData) ?? 0,
                           price: double.parse(p),
-                          usageTime: durationT,
+                          usageTime: parseDuration(durationT+initialDurationUnit),
                           durationType: DurationType.SaveTime,
                           isNumericUser: true,
                           isNumericPassword: true,
                         );
-                        widget.bloc.add(NewProfile(profile, durationT));
+                        widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
                       }
                       Navigator.of(context).pop();
                     },
@@ -301,6 +330,20 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
             ),
           )),
     );
+  }
+
+  String parseDuration(String duration){
+    String days="0d",hours="00",min="00";
+
+    if(duration.contains("m")){
+      min = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("h")){
+      hours = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("d")){
+      days = duration;
+    }
+
+    return "$days-$hours:$min:00";
   }
 
   String mapDurationUnit(String str) {

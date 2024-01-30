@@ -32,12 +32,12 @@ class SessionCubit extends HydratedCubit<SessionState> {
     final database = DatabaseFirebase();
 
     if (await database.checkUUID()) {
-      var data = await database.getContact() as Map<dynamic, dynamic>;
+      var data = await database.getContact() as Map<dynamic, dynamic>?;
       emit(state.copyWith(
         active: true,
         configModel: state.cfg!.copyWith(
-          contact: data["phone"]??"",
-          nameLocal: data["name"]??""
+          contact: data?["phone"]??"",
+          nameLocal: data?["name"]??""
         )
       ));
     } else {

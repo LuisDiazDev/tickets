@@ -97,8 +97,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         late Response r;
         try {
+          String validDuration = _validDuration(event.duration);
           r = await provider.newTicket(
-              user.toLowerCase(), event.profile, event.duration,
+              user.toLowerCase(), event.profile, validDuration,
               limitBytesTotal: event.limitMb);
         } on UserAlreadyExist {
 
@@ -184,4 +185,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   init() {
     add(FetchData());
   }
+
+  String _validDuration(String duration) {
+    String days="0d",hours="00",min="00";
+
+    if(duration.contains("m")){
+      min = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("h")){
+      hours = duration.substring(0,duration.length - 1);
+    }else if(duration.contains("d")){
+      days = duration;
+    }
+
+    return "$days-$hours:$min:00";
+  }
 }
+

@@ -8,7 +8,6 @@ import '../../Routes/Route.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../../Widgets/starlink/text_style.dart';
 import '../Session/SessionCubit.dart';
-import 'widget/header_drawer.dart';
 import 'widget/tiled_drawer.dart';
 
 class DrawerCustom extends StatelessWidget {
@@ -36,59 +35,73 @@ class DrawerCustom extends StatelessWidget {
               NavigatorService.pushNamedAndRemoveUntil(Routes.home);
             },
           ),
-          ExpansionTile(
-              leading: const Icon(EvaIcons.personOutline, color: StarlinkColors.white),
-              backgroundColor: StarlinkColors.darkGray,
-              title: StarlinkText(
-                "CLIENTES",
-                size: 22,
-                isBold: true,
-              ),
-              collapsedIconColor: StarlinkColors.white,
-              iconColor:  StarlinkColors.white,
-            children: [
-              TileDrawer(
-                icon: EvaIcons.peopleOutline,
-                title: "LISTADO",
-                onTap: (){
-                  NavigatorService.pushNamedAndRemoveUntil(Routes.clientList);
-                },
-              ),
-              TileDrawer(
-                icon: EvaIcons.clockOutline,
-                title: "PLANES",
-                onTap: (){
-                  NavigatorService.pushNamedAndRemoveUntil(Routes.clientProfile);
-                },
-              ),
-            ],
+          // ExpansionTile(
+          //     leading: const Icon(EvaIcons.personOutline, color: StarlinkColors.white),
+          //     backgroundColor: StarlinkColors.darkGray,
+          //     title: StarlinkText(
+          //       "CLIENTES",
+          //       size: 22,
+          //       isBold: true,
+          //     ),
+          //     collapsedIconColor: StarlinkColors.white,
+          //     iconColor:  StarlinkColors.white,
+          //   children: [
+          //     TileDrawer(
+          //       icon: EvaIcons.peopleOutline,
+          //       title: "LISTADO",
+          //       onTap: (){
+          //         NavigatorService.pushNamedAndRemoveUntil(Routes.clientList);
+          //       },
+          //     ),
+          //     TileDrawer(
+          //       icon: EvaIcons.clockOutline,
+          //       title: "PLANES",
+          //       onTap: (){
+          //         NavigatorService.pushNamedAndRemoveUntil(Routes.clientProfile);
+          //       },
+          //     ),
+          //   ],
+          // ),
+          // ExpansionTile(
+          //   leading: const Icon(EvaIcons.peopleOutline, color: StarlinkColors.white),
+          //   backgroundColor: StarlinkColors.darkGray,
+          //   title: StarlinkText(
+          //     "TICKETS",
+          //     size: 22,
+          //     isBold: true,
+          //   ),
+          //   collapsedIconColor: StarlinkColors.white,
+          //   iconColor:  StarlinkColors.white,
+          //   children: [
+          //     TileDrawer(
+          //       icon: EvaIcons.list,
+          //       title: "GENERADOS",
+          //       onTap: (){
+          //         NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
+          //       },
+          //     ),
+          //     TileDrawer(
+          //       icon: EvaIcons.pricetags,
+          //       title: "PLANES",
+          //       onTap: (){
+          //         NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
+          //       },
+          //     ),
+          //   ],
+          // ),
+          TileDrawer(
+            icon: EvaIcons.list,
+            title: "T. GENERADOS",
+            onTap: (){
+              NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
+            },
           ),
-          ExpansionTile(
-            leading: const Icon(EvaIcons.peopleOutline, color: StarlinkColors.white),
-            backgroundColor: StarlinkColors.darkGray,
-            title: StarlinkText(
-              "TICKETS",
-              size: 22,
-              isBold: true,
-            ),
-            collapsedIconColor: StarlinkColors.white,
-            iconColor:  StarlinkColors.white,
-            children: [
-              TileDrawer(
-                icon: EvaIcons.list,
-                title: "GENERADOS",
-                onTap: (){
-                  NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
-                },
-              ),
-              TileDrawer(
-                icon: EvaIcons.pricetags,
-                title: "PLANES",
-                onTap: (){
-                  NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
-                },
-              ),
-            ],
+          TileDrawer(
+            icon: EvaIcons.pricetags,
+            title: "T. PLANES",
+            onTap: (){
+              NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
+            },
           ),
           // TileDrawer(
           //   icon: EvaIcons.bookOpen,
