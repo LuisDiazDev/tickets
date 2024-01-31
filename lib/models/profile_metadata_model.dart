@@ -187,21 +187,47 @@ class ProfileMetadata {
 
   static String _parseDuration(String duration){
 
-    if(duration.contains("_") || duration.contains("-")){
-      return duration;
+    if(!duration.contains(":")){
+
+      String days="",hours="00",min="00";
+
+      RegExp exp = RegExp(r'(\d+)([dhm])');
+      Match match = exp.firstMatch(duration) as Match;
+
+      int cantidad = int.tryParse(match.group(1)!) ?? 0;
+      String unidad = match.group(2)!;
+
+      int dias = 0, horas = 0, minutos = 0;
+
+      switch (unidad) {
+        case 'd':
+          dias = cantidad;
+          break;
+        case 'h':
+          horas = cantidad;
+          break;
+        case 'm':
+          minutos = cantidad;
+          break;
+        default:
+          throw Exception("Unidad de tiempo no válida");
+      }
+
+      if(duration.contains("d")){
+          days = "${dias}d-";
+      }
+
+      if(duration.contains("m")){
+        min = "$minutos";
+      }else if(duration.contains("h")){
+        hours = "$horas";
+      }else if(duration.contains("d")){
+        days = "$duration-";
+      }
+
+      return "$days$hours:$min:00";
     }
-
-    String days="0d",hours="00",min="00";
-
-    if(duration.contains("m")){
-      min = duration.substring(0,duration.length - 1);
-    }else if(duration.contains("h")){
-      hours = duration.substring(0,duration.length - 1);
-    }else if(duration.contains("d")){
-      days = duration;
-    }
-
-    return "$days-$hours:$min:00";
+    return duration;
   }
 
   String toMikrotiketNameString(String profileName) {
@@ -225,36 +251,58 @@ class ProfileMetadata {
   }
 
   static String parseMkDateToDate(String formatoFecha) {
-    List<String> partes = formatoFecha.split("-");
-
-    if (partes.length != 2) {
-      throw Exception("Formato de fecha incorrecto");
-    }
-
     int dias = 0, horas = 0, minutos = 0;
+    if(formatoFecha.contains("-")){
+      List<String> partes = formatoFecha.split("-");
 
-    // Procesar días
-    if (partes[0].endsWith("d")) {
-      dias = int.parse(partes[0].substring(0, partes[0].length - 1));
-    } else {
-      throw Exception("Formato de días incorrecto");
+      if (partes.length != 2) {
+        throw Exception("Formato de fecha incorrecto");
+      }
+
+      // Procesar días
+      if (partes[0].endsWith("d")) {
+        dias = int.parse(partes[0].substring(0, partes[0].length - 1));
+      } else {
+        throw Exception("Formato de días incorrecto");
+      }
+
+      // Procesar horas, minutos y segundos
+      List<String> tiempo = partes[1].split(":");
+      if (tiempo.length != 3) {
+        throw Exception("Formato de tiempo incorrecto");
+      }
+
+      horas = int.parse(tiempo[0]);
+      minutos = int.parse(tiempo[1]);
+      // Elegir la unidad más grande posible
+      if (dias > 0) {
+        return "${dias}d";
+      } else if (horas > 0) {
+        return "${horas}h";
+      } else {
+        return "${minutos}m";
+      }
     }
 
-    // Procesar horas, minutos y segundos
-    List<String> tiempo = partes[1].split(":");
-    if (tiempo.length != 3) {
-      throw Exception("Formato de tiempo incorrecto");
-    }
+    if(formatoFecha.split(":").length == 3){
+      // Procesar horas, minutos y segundos
+      List<String> tiempo = formatoFecha.split(":");
+      if (tiempo.length != 3) {
+        throw Exception("Formato de tiempo incorrecto");
+      }
 
-    horas = int.parse(tiempo[0]);
-    minutos = int.parse(tiempo[1]);
-    // Elegir la unidad más grande posible
-    if (dias > 0) {
-      return "${dias}d";
-    } else if (horas > 0) {
-      return "${horas}h";
-    } else {
-      return "${minutos}m";
+      horas = int.parse(tiempo[0]);
+      minutos = int.parse(tiempo[1]);
+      // Elegir la unidad más grande posible
+      if (dias > 0) {
+        return "${dias}d";
+      } else if (horas > 0) {
+        return "${horas}h";
+      } else {
+        return "${minutos}m";
+      }
+    }else{
+      throw Exception("Formato de fecha incorrecto");
     }
   }
 

@@ -187,17 +187,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   String _validDuration(String duration) {
-    String days="0d",hours="00",min="00";
+    String days="",hours="00",min="00";
 
     if(duration.contains("m")){
       min = duration.substring(0,duration.length - 1);
     }else if(duration.contains("h")){
       hours = duration.substring(0,duration.length - 1);
     }else if(duration.contains("d")){
-      days = duration;
+      days = "$duration-";
     }
 
-    return "$days-$hours:$min:00";
+    return "$days$hours:$min:00";
   }
 }
 
