@@ -91,14 +91,14 @@ class DrawerCustom extends StatelessWidget {
           // ),
           TileDrawer(
             icon: EvaIcons.list,
-            title: "T. GENERADOS",
+            title: "VENDIDOS",
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.tickets);
             },
           ),
           TileDrawer(
             icon: EvaIcons.pricetags,
-            title: "T. PLANES",
+            title: "PLANES",
             onTap: (){
               NavigatorService.pushNamedAndRemoveUntil(Routes.profiles);
             },
