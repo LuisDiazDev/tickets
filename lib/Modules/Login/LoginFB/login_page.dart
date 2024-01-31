@@ -35,7 +35,6 @@ class _BuildLoginPage extends StatefulWidget {
 class _BuildLoginPageState extends State<_BuildLoginPage>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  int _viewShowRoomCounter = 0;
   @override
   Widget build(BuildContext context) {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
@@ -125,11 +124,6 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
     return GestureDetector(
                     onTap: () {
                       // show the
-                      _viewShowRoomCounter++;
-                      if (_viewShowRoomCounter == 10) {
-                        NavigatorService.pushNamedAndRemoveUntil(
-                            Routes.showroom);
-                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20),
