@@ -222,7 +222,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                   ),
                   const Gap(8),
                   StarlinkCheckBox(
-                    title: 'Limitar',
+                    title: 'Limitar velocidad',
                     initialState: limitSpeed,
                     onChanged: (check) {
                       setState(() {
