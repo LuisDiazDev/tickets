@@ -29,7 +29,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
   String numberOfSharedUserPerTicket = "1",
       initialDurationUnit = "d",
       initialCurrency = "S",
-      durationT = "",
+      durationT = "1",
       price = "1",
       currency = "\$",
       limitUpload = "1",
@@ -90,6 +90,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                     onChanged: (str) {
                       profile.name = str;
                     },
+                    validator: (value) {
+                      if (value == "") {
+                        return "*requerido";
+                      }
+                      return null;
+                    },
                     title: "Nombre del plan",
                     initialValue: profile.name ?? "",
                     textHint: "Nombre del plan",
@@ -103,6 +109,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           title: "Precio",
                           onChanged: (str) {
                             price = str ?? "1";
+                          },
+                          validator: (value) {
+                            if (value == "") {
+                              return "*requerido";
+                            }
+                            return null;
                           },
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
@@ -118,6 +130,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           onChanged: (str) {
                             currency = str;
                           },
+                          readOnly: true,
                           initialValue: currency,
                           textHint: "Moneda del plan",
                         ),
@@ -132,6 +145,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           title: "Duración",
                           onChanged: (str) {
                             durationT = str;
+                          },
+                          validator: (value) {
+                            if (value == "") {
+                              return "*requerido";
+                            }
+                            return null;
                           },
                           initialValue: durationT,
                           keyboardType: TextInputType.number,
@@ -189,6 +208,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         onChanged: (str) {
                           numberOfSharedUserPerTicket = str ?? "1";
                         },
+                        validator: (value) {
+                          if (value == "") {
+                            return "*requerido";
+                          }
+                          return null;
+                        },
                         keyboardType: TextInputType.number,
                         initialValue: numberOfSharedUserPerTicket,
                         textHint: "Número de usuarios por ticket",
@@ -213,6 +238,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       onChanged: (str) {
                         limitDownload = str;
                       },
+                      validator: (value) {
+                        if (value == "") {
+                          return "*requerido";
+                        }
+                        return null;
+                      },
                       keyboardType: TextInputType.number,
                       initialValue: limitDownload,
                       textHint: 'Velocidad de bajada',
@@ -226,6 +257,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       onChanged: (str) {
                         limitUpload = str;
                       },
+                      validator: (value) {
+                        if (value == "") {
+                          return "*requerido";
+                        }
+                        return null;
+                      },
                       keyboardType: TextInputType.number,
                       initialValue: limitUpload,
                       textHint: 'Velocidad de subida',
@@ -238,6 +275,12 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       textSuffix: "MBs",
                       onChanged: (str) {
                         limitData = str;
+                      },
+                      validator: (value) {
+                        if (value == "") {
+                          return "*requerido";
+                        }
+                        return null;
                       },
                       keyboardType: TextInputType.number,
                       initialValue: limitData,
@@ -255,39 +298,54 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         : 'Crear',
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                      }
-                      if (durationT+initialDurationUnit == "1") {
-                        durationT = "1d";
-                      }
-                      if (price == "1") {
-                        price = "1S";
-                      }
+                        if (durationT+initialDurationUnit == "1") {
+                          durationT = "1d";
+                        }
+                        if (price == "1") {
+                          price = "1S";
+                        }
 
-                      profile.onLogin =
-                          '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval="${parseDuration(durationT+initialDurationUnit)}" on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
+                        profile.onLogin =
+                        '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval="${parseDuration(durationT+initialDurationUnit)}" on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
 
-                      profile.sharedUsers = numberOfSharedUserPerTicket;
-                      profile.rateLimit = limitSpeed
-                          ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
-                          : "";
-                      if (widget.current != null) {
-                        if (widget.newProfile) {
-                          var p = price.substring(0, price.length - 1);
-                          profile.metadata = ProfileMetadata(
-                            hotspot: "",
-                            type: "1",
-                            prefix: price.replaceAll(RegExp(r"\D"), ""),
-                            userLength: 5,
-                            passwordLength: 5,
-                            dataLimit: int.tryParse(limitData) ?? 0,
-                            price: double.parse(p),
-                            usageTime: parseDuration(durationT+initialDurationUnit),
-                            durationType: DurationType.SaveTime,
-                            isNumericUser: true,
-                            isNumericPassword: true,
-                          );
-                          widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
+                        profile.sharedUsers = numberOfSharedUserPerTicket;
+                        profile.rateLimit = limitSpeed
+                            ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
+                            : "";
+                        if (widget.current != null) {
+                          if (widget.newProfile) {
+                            var p = price.substring(0, price.length - 1);
+                            profile.metadata = ProfileMetadata(
+                              hotspot: "",
+                              type: "1",
+                              prefix: price.replaceAll(RegExp(r"\D"), ""),
+                              userLength: 5,
+                              passwordLength: 5,
+                              dataLimit: int.tryParse(limitData) ?? 0,
+                              price: double.parse(p),
+                              usageTime: parseDuration(durationT+initialDurationUnit),
+                              durationType: DurationType.SaveTime,
+                              isNumericUser: true,
+                              isNumericPassword: true,
+                            );
+                            widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
+                          } else {
+                            var p = price.substring(0, price.length - 1);
+                            profile.metadata = ProfileMetadata(
+                              hotspot: "",
+                              type: "1",
+                              prefix: price.replaceAll(RegExp(r"\D"), ""),
+                              userLength: 5,
+                              passwordLength: 5,
+                              dataLimit: int.tryParse(limitData) ?? 0,
+                              price: double.parse(p),
+                              usageTime: parseDuration(durationT+initialDurationUnit),
+                              durationType: DurationType.SaveTime,
+                              isNumericUser: true,
+                              isNumericPassword: true,
+                            );
+                            widget.bloc.add(UpdateProfile(profile));
+                          }
                         } else {
                           var p = price.substring(0, price.length - 1);
                           profile.metadata = ProfileMetadata(
@@ -303,26 +361,10 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                             isNumericUser: true,
                             isNumericPassword: true,
                           );
-                          widget.bloc.add(UpdateProfile(profile));
+                          widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
                         }
-                      } else {
-                        var p = price.substring(0, price.length - 1);
-                        profile.metadata = ProfileMetadata(
-                          hotspot: "",
-                          type: "1",
-                          prefix: price.replaceAll(RegExp(r"\D"), ""),
-                          userLength: 5,
-                          passwordLength: 5,
-                          dataLimit: int.tryParse(limitData) ?? 0,
-                          price: double.parse(p),
-                          usageTime: parseDuration(durationT+initialDurationUnit),
-                          durationType: DurationType.SaveTime,
-                          isNumericUser: true,
-                          isNumericPassword: true,
-                        );
-                        widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
+                        Navigator.of(context).pop();
                       }
-                      Navigator.of(context).pop();
                     },
                   ),
                 ],
