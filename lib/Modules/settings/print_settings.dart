@@ -36,6 +36,7 @@ Widget buildPrinterSettings(sessionBloc, alertBloc) {
           onPressed: () async {
             ProgressDialogUtils.showProgressDialog();
             generateTickets(10);
+            ProgressDialogUtils.hideProgressDialog();
             // sessionBloc.backUp(alertBloc);
           },
         ),
