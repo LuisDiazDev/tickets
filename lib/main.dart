@@ -12,8 +12,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'firebase_options.dart';
 
-import 'Data/Provider/restApiProvider.dart';
-import 'MyApp.dart';
+import 'Data/Provider/rest_api_provider.dart';
+import 'my_app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

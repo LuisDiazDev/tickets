@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../../../Widgets/starlink/colors.dart';
-import '../../Session/SessionCubit.dart';
+import '../../Session/session_cubit.dart';
 import '../../settings/widgets/print_setting.dart';
 
 
@@ -129,27 +129,27 @@ class _BtStateWidgetState extends State<BtStateWidget> {
           _connect = !_connect;
           attempts = attempts++;
         });
-        BluetoothDevice _bt = bt ?? widget.bluetoothDevice!;
+        BluetoothDevice btDevice = bt ?? widget.bluetoothDevice!;
         widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
             configModel: widget.sessionBloc.state.cfg!
-                .copyWith(bluetoothDevice: _bt,
-                lastIdBtPrint: _bt.remoteId.str
+                .copyWith(bluetoothDevice: btDevice,
+                lastIdBtPrint: btDevice.remoteId.str
             )));
         widget.sessionBloc.state.cfg!.bluetoothDevice =
             bt ?? widget.bluetoothDevice;
 
-        await _bt.connect(timeout: const Duration(seconds: 30));
+        await btDevice.connect(timeout: const Duration(seconds: 30));
 
         for (var i = 0; i < 20; i++) {
-          if (!_bt.isConnected) {
+          if (!btDevice.isConnected) {
             await Future.delayed(const Duration(seconds: 1));
           } else {
             break;
           }
         }
         widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
-            configModel: widget.sessionBloc.state.cfg!.copyWith(bluetoothDevice: _bt,
-                lastIdBtPrint: _bt.remoteId.str)));
+            configModel: widget.sessionBloc.state.cfg!.copyWith(bluetoothDevice: btDevice,
+                lastIdBtPrint: btDevice.remoteId.str)));
         var service = await widget.bluetoothDevice!.discoverServices();
         for (BluetoothService service in service) {
           if (!service.isPrimary) {
@@ -163,7 +163,7 @@ class _BtStateWidgetState extends State<BtStateWidget> {
                 widget.sessionBloc.changeState(widget.sessionBloc.state.copyWith(
                     configModel: widget.sessionBloc.state.cfg!
                         .copyWith(bluetoothCharacteristic: c)));
-                stream = _bt.connectionState.listen(check);
+                stream = btDevice.connectionState.listen(check);
                 setState(() {
                   _connect = !_connect;
                   attempts = 0;

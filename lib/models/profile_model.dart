@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:StarTickera/models/profile_metadata_model.dart';
+import 'package:startickera/models/profile_metadata_model.dart';
 
 List<ProfileModel> profileModelFromJson(String str) {
   var m = json.decode(str);

@@ -1,9 +1,9 @@
 enum DurationType {
-  Unknown,
+  unknown,
   // Tiempo corrido
-  RunningTime,
+  runningTime,
   // Guardar tiempo
-  SaveTime
+  saveTime
 }
 
 class ParseResult {
@@ -90,7 +90,7 @@ class ProfileMetadata {
     int passwordLength = 0;
     String usageTime = "";
     int dataLimit = 0;
-    DurationType durationType = DurationType.RunningTime;
+    DurationType durationType = DurationType.runningTime;
     bool isNumericUser = false;
     bool isNumericPassword = false;
     String type = "1";
@@ -139,8 +139,8 @@ class ProfileMetadata {
 
     if (map.containsKey("kt")) {
       durationType = map["kt"] == "true"
-          ? DurationType.SaveTime
-          : DurationType.RunningTime;
+          ? DurationType.saveTime
+          : DurationType.runningTime;
     } else {
       warnings.add("No se ha especificado el tipo de duración");
     }
@@ -243,7 +243,7 @@ class ProfileMetadata {
     String usageTime =
         "ut:${parseDateToMkDate(this.usageTime).replaceAll("-", "_")}";
     String dataLimit = "bt:${this.dataLimit}";
-    String durationType = "kt:${this.durationType == DurationType.SaveTime}";
+    String durationType = "kt:${this.durationType == DurationType.saveTime}";
     String isNumericUser = "nu:${this.isNumericUser}";
     String isNumericPassword = "np:${this.isNumericPassword}";
     String type = "tp:${this.type}";
@@ -308,29 +308,5 @@ class ProfileMetadata {
 
   static String parseDateToMkDate(String valor) {
     return _parseDuration(valor);
-    // RegExp exp = RegExp(r'(\d+)([dhm])');
-    // Match match = exp.firstMatch(valor) as Match;
-
-    // int cantidad = int.tryParse(match.group(1)!) ?? 0;
-    // String unidad = match.group(2)!;
-
-    // int dias = 0, horas = 0, minutos = 0;
-
-    // switch (unidad) {
-    //   case 'd':
-    //     dias = cantidad;
-    //     break;
-    //   case 'h':
-    //     horas = cantidad;
-    //     break;
-    //   case 'm':
-    //     minutos = cantidad;
-    //     break;
-    //   default:
-    //     throw Exception("Unidad de tiempo no válida");
-    // }
-    return valor;
-    // return "${dias.toString()}d-${horas.toString().padLeft(2, '0')}:"
-    //     "${minutos.toString().padLeft(2, '0')}:00";
   }
 }

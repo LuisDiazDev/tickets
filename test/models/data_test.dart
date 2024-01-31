@@ -1,4 +1,4 @@
-import 'package:StarTickera/models/profile_metadata_model.dart';
+import 'package:startickera/models/profile_metadata_model.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -16,7 +16,7 @@ void main() {
       expect(result.profile!.passwordLength, 7);
       expect(result.profile!.usageTime, '3d-00:00:00');
       expect(result.profile!.dataLimit, 200);
-      expect(result.profile!.durationType, DurationType.SaveTime);
+      expect(result.profile!.durationType, DurationType.saveTime);
       expect(result.profile!.isNumericUser, true);
       expect(result.profile!.isNumericPassword, true);
       expect(result.profile!.onLogin, isNotEmpty);
@@ -48,7 +48,7 @@ void main() {
       expect(result.profile!.passwordLength, 7);
       expect(result.profile!.usageTime, '3d-00:00:00');
       expect(result.profile!.dataLimit, 200);
-      expect(result.profile!.durationType, DurationType.SaveTime);
+      expect(result.profile!.durationType, DurationType.saveTime);
       expect(result.profile!.isNumericUser, true);
       expect(result.profile!.isNumericPassword, true);
       expect(result.profile!.onLogin, isNotEmpty);

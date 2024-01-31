@@ -4,23 +4,6 @@ import 'colors.dart';
 // Define un enum con los tipos de tarjetas
 enum ButtonCardType { error, warning, info, success }
 
-// Define un mapa para los colores asociados a cada tipo de tarjeta
-const Map<ButtonCardType, Color> _cardColor = {
-  ButtonCardType.error: Colors.red,
-  ButtonCardType.warning: Colors.orange,
-  ButtonCardType.info: Colors.blue,
-  ButtonCardType.success: Colors.green,
-};
-
-// Define un mapa para los iconos asociados a cada tipo de tarjeta
-const Map<ButtonCardType, IconData> _cardIcon = {
-  ButtonCardType.error: Icons.error_outline,
-  ButtonCardType.warning: Icons.warning_amber_outlined,
-  ButtonCardType.info: Icons.info_outline,
-  ButtonCardType.success: Icons.check_circle_outline,
-};
-
-
 class StarlinkButtonCard extends StatelessWidget {
   final String title;
   final String? subtitle;

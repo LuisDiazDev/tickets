@@ -1,7 +1,7 @@
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
+import 'package:startickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
-import '../../Modules/Alerts/AlertCubit.dart';
+import '../../Modules/Alerts/alert_cubit.dart';
 import 'colors.dart';
 
 class StarlinkDialog {

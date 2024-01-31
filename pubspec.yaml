@@ -1,4 +1,4 @@
-name: StarTickera
+name: startickera
 description: app hotspot controller
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -50,6 +50,8 @@ dependencies:
   firebase_database: ^10.4.0
   sentry_flutter: ^7.15.0
   firebase_auth: ^4.16.0
+  device_info_plus: ^9.1.2
+  bloc: ^8.1.2
 
 dev_dependencies:
   flutter_test:

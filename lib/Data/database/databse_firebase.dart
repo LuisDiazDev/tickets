@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 
-import '../../Modules/Alerts/AlertCubit.dart';
-import '../../Modules/Session/SessionCubit.dart';
+import '../../Modules/Alerts/alert_cubit.dart';
+import '../../Modules/Session/session_cubit.dart';
 
 class DatabaseFirebase {
   static DatabaseFirebase? _instance;

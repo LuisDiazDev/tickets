@@ -1,4 +1,4 @@
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
+import 'package:startickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 
 import 'colors.dart';

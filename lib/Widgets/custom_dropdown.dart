@@ -1,9 +1,7 @@
-import 'package:StarTickera/Widgets/starlink/text_field.dart';
+import 'package:startickera/Widgets/starlink/text_field.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
-import '../Core/Values/Colors.dart';
 import 'custom_text_field.dart';
 
 class CustomDropDown extends StatefulWidget {
@@ -86,7 +84,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                   items: widget.item
                       .map((p) => DropdownMenuItem<String>(
                             value: p ?? "",
-                            child: Text(p == "S" ? p.replaceAll("S", "\$") : formatString(p) ?? ""),
+                            child: Text(p == "S" ? p.replaceAll("S", "\$") : formatString(p)),
                           ))
                       .toList(),
                   onChanged: (str) {

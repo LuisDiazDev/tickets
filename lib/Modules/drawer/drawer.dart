@@ -1,13 +1,12 @@
-import 'package:StarTickera/Core/localization/app_localization.dart';
+import 'package:startickera/Core/localization/app_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import '../../Data/Services/navigator_service.dart';
-import '../../Routes/Route.dart';
+import '../../Routes/route.dart';
 import '../../Widgets/starlink/colors.dart';
-import '../../Widgets/starlink/text_style.dart';
-import '../Session/SessionCubit.dart';
+import '../Session/session_cubit.dart';
 import 'widget/tiled_drawer.dart';
 
 class DrawerCustom extends StatelessWidget {
@@ -19,9 +18,9 @@ class DrawerCustom extends StatelessWidget {
       backgroundColor: StarlinkColors.lightBlack,
       child: ListView(
         children: [
-          Container(
+          const SizedBox(
             width: double.infinity,
-            child: const Column(
+            child: Column(
               children: [
                 SizedBox(height: 100),
                 Gap(45),

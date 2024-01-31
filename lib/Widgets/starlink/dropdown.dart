@@ -7,11 +7,11 @@ class StarlinkDropdown extends StatelessWidget {
   final String? initialValue;
 
   const StarlinkDropdown({
-    Key? key,
+    super.key,
     required this.onChanged,
     required this.values,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

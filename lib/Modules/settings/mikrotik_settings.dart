@@ -1,4 +1,4 @@
-import 'package:StarTickera/Modules/settings/widgets/form_new_password.dart';
+import 'package:startickera/Modules/settings/widgets/form_new_password.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

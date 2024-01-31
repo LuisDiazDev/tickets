@@ -1,6 +1,6 @@
-import 'package:StarTickera/Widgets/starlink/colors.dart';
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
-import 'package:StarTickera/models/config_model.dart';
+import 'package:startickera/Widgets/starlink/colors.dart';
+import 'package:startickera/Widgets/starlink/text_style.dart';
+import 'package:startickera/models/config_model.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

@@ -1,8 +1,6 @@
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
+import 'package:startickera/Widgets/starlink/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
-import '../Core/Values/Colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final String initialValue, title, leathig;

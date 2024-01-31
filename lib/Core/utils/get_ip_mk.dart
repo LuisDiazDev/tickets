@@ -1,11 +1,9 @@
 //required network_info_plus: ^3.0.5
 
-import 'dart:developer';
-
 import 'package:http/http.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-import '../../Data/Provider/MkProvider.dart';
+import '../../Data/Provider/mk_provider.dart';
 
 Future<Map> getIp()async{
   var localIp = await NetworkInfo().getWifiIP();
@@ -13,10 +11,7 @@ Future<Map> getIp()async{
   int current = 0;
   var lst = localIp?.split(".") ?? [];
   current = int.tryParse(lst.last) ?? 0;
-  var locate = lst[2] ?? "";
-  // if (locate == "20") {
-  //   current = 5;
-  // }
+  var locate = lst[2];
   return _check(current,locate);
 }
 

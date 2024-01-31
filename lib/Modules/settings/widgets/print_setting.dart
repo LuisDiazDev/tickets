@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:StarTickera/Modules/Alerts/AlertCubit.dart';
-import 'package:StarTickera/Widgets/starlink/card.dart';
-import 'package:StarTickera/Widgets/starlink/section_title.dart';
-import 'package:StarTickera/Widgets/starlink/text_style.dart';
+import 'package:startickera/Modules/Alerts/alert_cubit.dart';
+import 'package:startickera/Widgets/starlink/card.dart';
+import 'package:startickera/Widgets/starlink/section_title.dart';
+import 'package:startickera/Widgets/starlink/text_style.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +13,11 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../Core/Values/Colors.dart';
 import '../../../Widgets/starlink/button.dart';
 import '../../../Widgets/starlink/button_card.dart';
 import '../../../Widgets/starlink/checkbox.dart';
 import '../../../Widgets/starlink/colors.dart';
-import '../../Session/SessionCubit.dart';
+import '../../Session/session_cubit.dart';
 import 'package:location/location.dart' as loc2;
 
 const validBluetoothCharacteristics = [
@@ -134,13 +133,14 @@ class _PrintSettingsState extends State<PrintSettings> {
       );
     }
 
-    if (_connect)
+    if (_connect) {
       return const StarlinkCard(
         type: InfoContextType.info,
         title: "Conectando con la impresora",
         message:
             "Puede tardar hasta 30 segundos. Espere un momento",
       );
+    }
 
 
     return StreamBuilder<BluetoothConnectionState>(

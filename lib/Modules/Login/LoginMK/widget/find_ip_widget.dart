@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:StarTickera/Widgets/starlink/button.dart';
+import 'package:startickera/Widgets/starlink/button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../../../../Data/Provider/MkProvider.dart';
+import '../../../../Data/Provider/mk_provider.dart';
 import '../../../../Data/Services/navigator_service.dart';
 import '../../../../Widgets/starlink/button_card.dart';
 import '../../../../Widgets/starlink/colors.dart';

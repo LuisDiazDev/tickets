@@ -1,4 +1,4 @@
-import 'package:StarTickera/models/profile_metadata_model.dart';
+import 'package:startickera/models/profile_metadata_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -9,8 +9,8 @@ import '../../../Widgets/starlink/dropdown.dart';
 import '../../../Widgets/starlink/section_title.dart';
 import '../../../Widgets/starlink/text_field.dart';
 import '../../../models/profile_model.dart';
-import '../bloc/ProfileBloc.dart';
-import '../bloc/ProfileEvents.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_events.dart';
 
 class FormNewProfileWidget extends StatefulWidget {
   final ProfileModel? current;
@@ -108,7 +108,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         child: StarlinkTextField(
                           title: "Precio",
                           onChanged: (str) {
-                            price = str ?? "1";
+                            price = str;
                           },
                           validator: (value) {
                             if (value == "") {
@@ -206,7 +206,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                       child: StarlinkTextField(
                         title: "Usuarios por ticket",
                         onChanged: (str) {
-                          numberOfSharedUserPerTicket = str ?? "1";
+                          numberOfSharedUserPerTicket = str;
                         },
                         validator: (value) {
                           if (value == "") {
@@ -324,7 +324,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                               dataLimit: int.tryParse(limitData) ?? 0,
                               price: double.parse(p),
                               usageTime: parseDuration(durationT+initialDurationUnit),
-                              durationType: DurationType.SaveTime,
+                              durationType: DurationType.saveTime,
                               isNumericUser: true,
                               isNumericPassword: true,
                             );
@@ -340,7 +340,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                               dataLimit: int.tryParse(limitData) ?? 0,
                               price: double.parse(p),
                               usageTime: parseDuration(durationT+initialDurationUnit),
-                              durationType: DurationType.SaveTime,
+                              durationType: DurationType.saveTime,
                               isNumericUser: true,
                               isNumericPassword: true,
                             );
@@ -357,7 +357,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                             dataLimit: int.tryParse(limitData) ?? 0,
                             price: double.parse(p),
                             usageTime: parseDuration(durationT+initialDurationUnit),
-                            durationType: DurationType.SaveTime,
+                            durationType: DurationType.saveTime,
                             isNumericUser: true,
                             isNumericPassword: true,
                           );

@@ -4,9 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/profile_model.dart';
-import '../bloc/ProfileBloc.dart';
-import '../bloc/ProfileEvents.dart';
-export '/core/utils/size_utils.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_events.dart';
 
 class CustomProfile extends StatelessWidget {
   final ProfileModel profile;

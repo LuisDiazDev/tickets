@@ -1,7 +1,7 @@
 
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'ErrorHandler.dart';
+import 'error_handler.dart';
 
 abstract class SentryErrorHandler implements ErrorHandler {
 

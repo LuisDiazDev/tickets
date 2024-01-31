@@ -1,7 +1,6 @@
-import 'package:StarTickera/Widgets/starlink/colors.dart';
+import 'package:startickera/Widgets/starlink/colors.dart';
 import 'package:flutter/material.dart';
 import '../../Data/Services/navigator_service.dart';
-import '../Values/Colors.dart';
 
 class ProgressDialogUtils {
   static bool isProgressVisible = false;
@@ -9,7 +8,6 @@ class ProgressDialogUtils {
   ///common method for showing progress dialog
   static void showProgressDialog(
       {BuildContext? context, isCancellable = false}) async {
-    // if (NavigatorService.navigatorKey.currentState?.overlay?.context != null) {
       showDialog(
           barrierDismissible: isCancellable,
           context: NavigatorService.navigatorKey.currentState!.overlay!.context,

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -6,7 +7,7 @@ Future<List<String?>> getDeviceDetails() async {
   String? deviceName;
   String? deviceVersion;
   String? identifier;
-  final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   try {
     if (Platform.isAndroid) {
       var build = await deviceInfoPlugin.androidInfo;
@@ -20,7 +21,7 @@ Future<List<String?>> getDeviceDetails() async {
       identifier = data.identifierForVendor;  //UUID for iOS
     }
   } on Exception {
-    print('Failed to get platform version');
+    log('Failed to get platform version');
     return [];
   }
   //if (!mounted) return;

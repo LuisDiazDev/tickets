@@ -1,7 +1,7 @@
-import 'package:StarTickera/Data/Provider/MkProvider.dart';
-import 'package:StarTickera/Data/Services/ftp_service.dart';
-import 'package:StarTickera/Data/Services/navigator_service.dart';
-import 'package:StarTickera/Modules/Session/SessionCubit.dart';
+import 'package:startickera/Data/Provider/mk_provider.dart';
+import 'package:startickera/Data/Services/ftp_service.dart';
+import 'package:startickera/Data/Services/navigator_service.dart';
+import 'package:startickera/Modules/Session/session_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:gap/gap.dart';
 
