@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import '../../Modules/Home/HomePage.dart';
 import '../../Modules/MyTickets/MyTickesPage.dart';
 import '../../Modules/settings/SettingsPage.dart';
-import '../Modules/Clients/client_list.dart';
-import '../Modules/Clients/client_profiles.dart';
 import '../Modules/Initial/Initial.dart';
 import '../Modules/Login/LoginFB/LoginPage.dart';
 import '../Modules/Profiles/ProfilesPage.dart';
@@ -64,16 +62,6 @@ Route Function(RouteSettings) get routes => (RouteSettings settings) {
         case Routes.report:
           route = MaterialPageRoute(
               builder: (_) => const ReportPage(),
-              settings: RouteSettings(name: settings.name));
-          break;
-        case Routes.clientList:
-          route = MaterialPageRoute(
-              builder: (_) => const ListClientPage(),
-              settings: RouteSettings(name: settings.name));
-          break;
-        case Routes.clientProfile:
-          route = MaterialPageRoute(
-              builder: (_) => const ClientsProfilePage(),
               settings: RouteSettings(name: settings.name));
           break;
         default:
