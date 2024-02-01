@@ -30,7 +30,7 @@ class StarlinkProgressCircleState extends State<StarlinkProgressCircle> {
           painter: CircleProgressPainter(percent.floorToDouble(), 155),
           child: Center(
             child: Text(
-              '${widget.percent}%',
+              '$percent%',
               style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,

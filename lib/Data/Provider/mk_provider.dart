@@ -197,7 +197,7 @@ class MkProvider {
     if (r.body.contains("already have user with this name for this server")) {
       throw UserAlreadyExist(name);
     }
-    throw Exception("Ah ocurrido un error");
+    throw Exception("Ha ocurrido un error");
   }
 
   String getLatinDate() {
