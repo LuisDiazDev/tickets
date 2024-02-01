@@ -91,7 +91,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                                   direction: AxisDirection.right);
                             },
                           )),
-                      const Gap(45)
+                      const Gap(60)
                     ],
                   ),
                 ),

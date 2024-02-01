@@ -120,32 +120,34 @@ class _BuildHomePageState extends State<_BuildHomePage>
                         height: MediaQuery.of(context).size.height * .591,
                         width: MediaQuery.of(context).size.width,
                         child: SingleChildScrollView(
-                          child: Wrap(
-                            children: filteredProfiles
-                                .map((e) => CustomPlanWidget(
-                                      profile: e,
-                                      generatedUser: (user) {
-                                        var duration =
-                                            e.metadata?.usageTime ?? "";
-                                        var price = e.metadata?.price ?? "";
-                                        var limit = e.metadata?.dataLimit ?? 0;
-                                        home.add(GeneratedTicket(
-                                            e.metadata!.toMikrotiketNameString(
-                                                e.name ?? ""),
-                                            user,
-                                            duration,
-                                            price.toString(),
-                                            limitMb: limit,
-                                            isVirtualTicket: needSelectPlan
-                                        ));
-                                        setState(() {
-                                          if (needSelectPlan) {
-                                            needSelectPlan = false;
-                                          }
-                                        });
-                                      },
-                                    ))
-                                .toList(),
+                          child: Column(
+                            children: [
+                              ...filteredProfiles
+                                  .map((e) => CustomPlanWidget(
+                                profile: e,
+                                generatedUser: (user) {
+                                  var duration =
+                                      e.metadata?.usageTime ?? "";
+                                  var price = e.metadata?.price ?? "";
+                                  var limit = e.metadata?.dataLimit ?? 0;
+                                  home.add(GeneratedTicket(
+                                      e.metadata!.toMikrotiketNameString(
+                                          e.name ?? ""),
+                                      user,
+                                      duration,
+                                      price.toString(),
+                                      limitMb: limit,
+                                      isVirtualTicket: needSelectPlan
+                                  ));
+                                  setState(() {
+                                    if (needSelectPlan) {
+                                      needSelectPlan = false;
+                                    }
+                                  });
+                                },
+                              )),
+                              const Gap(25)
+                            ],
                           ),
                         ),
                       );
