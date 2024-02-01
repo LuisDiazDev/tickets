@@ -43,7 +43,7 @@ generate_keys: create_key_prop_file
 		-validity 10000 -alias ${KEY_ALIAS}  -storepass ${STORE_PASS} -keypass ${KEY_PASS} \
 		-dname "CN=${ORGANIZATION_DOMAIN}, OU=${ORGANIZATION_UNIT}, O=${ORGANIZATION_NAME}, L=${LOCATION}, S=${STATE}, C=${COUNTRY}"
 
-build_bundle:
+build:
 	 @flutter build appbundle --target-platform android-arm,android-arm64,android-x64
 
 test_bundle:

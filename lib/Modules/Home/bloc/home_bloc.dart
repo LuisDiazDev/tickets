@@ -117,7 +117,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ShowDialogEvent(
               title: "ERROR",
               message:
-                  "Ha ocurrido un error inesperado resgistrando el usuario",
+                  "Ha ocurrido un error inesperado registrando el usuario",
               type: AlertType.error,
             ),
           );
