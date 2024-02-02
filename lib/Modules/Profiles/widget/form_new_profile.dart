@@ -312,55 +312,27 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         profile.rateLimit = limitSpeed
                             ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
                             : "";
+
+                        profile.metadata = ProfileMetadata(
+                          hotspot: "",
+                          type: "1",
+                          prefix: price.replaceAll(RegExp(r"\D"), ""),
+                          userLength: 5,
+                          passwordLength: 5,
+                          dataLimit: int.tryParse(limitData) ?? 0,
+                          price: double.parse(price),
+                          usageTime: parseDuration(durationT+initialDurationUnit),
+                          durationType: DurationType.saveTime,
+                          isNumericUser: true,
+                          isNumericPassword: true,
+                        );
                         if (widget.current != null) {
                           if (widget.newProfile) {
-                            var p = price.substring(0, price.length - 1);
-                            profile.metadata = ProfileMetadata(
-                              hotspot: "",
-                              type: "1",
-                              prefix: price.replaceAll(RegExp(r"\D"), ""),
-                              userLength: 5,
-                              passwordLength: 5,
-                              dataLimit: int.tryParse(limitData) ?? 0,
-                              price: double.parse(p),
-                              usageTime: parseDuration(durationT+initialDurationUnit),
-                              durationType: DurationType.saveTime,
-                              isNumericUser: true,
-                              isNumericPassword: true,
-                            );
                             widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
                           } else {
-                            var p = price.substring(0, price.length - 1);
-                            profile.metadata = ProfileMetadata(
-                              hotspot: "",
-                              type: "1",
-                              prefix: price.replaceAll(RegExp(r"\D"), ""),
-                              userLength: 5,
-                              passwordLength: 5,
-                              dataLimit: int.tryParse(limitData) ?? 0,
-                              price: double.parse(p),
-                              usageTime: parseDuration(durationT+initialDurationUnit),
-                              durationType: DurationType.saveTime,
-                              isNumericUser: true,
-                              isNumericPassword: true,
-                            );
                             widget.bloc.add(UpdateProfile(profile));
                           }
                         } else {
-                          var p = price.substring(0, price.length - 1);
-                          profile.metadata = ProfileMetadata(
-                            hotspot: "",
-                            type: "1",
-                            prefix: price.replaceAll(RegExp(r"\D"), ""),
-                            userLength: 5,
-                            passwordLength: 5,
-                            dataLimit: int.tryParse(limitData) ?? 0,
-                            price: double.parse(p),
-                            usageTime: parseDuration(durationT+initialDurationUnit),
-                            durationType: DurationType.saveTime,
-                            isNumericUser: true,
-                            isNumericPassword: true,
-                          );
                           widget.bloc.add(NewProfile(profile, durationT+initialDurationUnit));
                         }
                         Navigator.of(context).pop();
