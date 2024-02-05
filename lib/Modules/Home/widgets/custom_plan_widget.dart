@@ -96,7 +96,7 @@ class CustomPlanWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: StarlinkText(
-                  "${profile.metadata?.price.toString().replaceAll(".0", "") ?? ""}\$",
+                  "${profile.metadata?.price.toString().replaceAll(".0", "") ?? ""}${profile.metadata?.prefix??"\$"}",
                   size: 18,
                 ),
               ),

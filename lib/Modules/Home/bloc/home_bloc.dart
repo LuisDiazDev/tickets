@@ -93,8 +93,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           user = event.name;
         }
 
-        emit(state.copyWith(currentUser: null));
-
         late Response r;
         try {
           String validDuration = _validDuration(event.duration);
@@ -158,6 +156,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               price: event.price,
               duration: event.duration);
         }
+        emit(state.copyWith(currentUser: ""));
       },
     );
 

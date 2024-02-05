@@ -110,7 +110,7 @@ class CustomProfile extends StatelessWidget {
                   ),
                   const Spacer(),
                   StarlinkText(
-                    "Precio: $price\$",
+                    "Precio: $price${profile.metadata?.prefix??"\$"}",
                     size: 18,
                     isBold: true,
                   ),

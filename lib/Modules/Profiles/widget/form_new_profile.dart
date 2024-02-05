@@ -130,7 +130,15 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                           onChanged: (str) {
                             currency = str;
                           },
-                          readOnly: true,
+                          validator: (value) {
+                            if (value == "") {
+                              return "*requerido";
+                            }
+                            if (value!.length >= 3) {
+                              return "max 3";
+                            }
+                            return null;
+                          },
                           initialValue: currency,
                           textHint: "Moneda del plan",
                         ),
@@ -301,10 +309,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         if (durationT+initialDurationUnit == "1") {
                           durationT = "1d";
                         }
-                        if (price == "1") {
-                          price = "1S";
-                        }
-
+                        
                         profile.onLogin =
                         '{local voucher \$user; :if ([/system scheduler find name=\$voucher]="") do={/system scheduler add comment=\$voucher name=\$voucher interval="${parseDuration(durationT+initialDurationUnit)}" on-event="/ip hotspot active remove [find user=\$voucher]\r\n/ip hotspot user remove [find name=\$voucher]\r\n/system schedule remove [find name=\$voucher]"}}';
 
@@ -316,7 +321,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         profile.metadata = ProfileMetadata(
                           hotspot: "",
                           type: "1",
-                          prefix: price.replaceAll(RegExp(r"\D"), ""),
+                          prefix: currency,
                           userLength: 5,
                           passwordLength: 5,
                           dataLimit: int.tryParse(limitData) ?? 0,

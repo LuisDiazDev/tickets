@@ -20,7 +20,7 @@ class RestApiProvider {
       'Content-Type': 'application/json'
     };
     var timeout = Duration(seconds: timeoutSecs ?? 5);
-    late http.Response response;
+    http.Response? response;
     try {
       if (method == "get") {
         response = await http
@@ -56,7 +56,7 @@ class RestApiProvider {
       }
     } catch (e) {
       log(e.toString()); // TODO: emit domain error
-      if (response.statusCode > 205) {
+      if (response != null && response.statusCode > 205) {
         if (response.body.isNotEmpty &&
             response.body.toString().contains("Connection reset by peer")) {
           if (attempt > 3) {
@@ -77,7 +77,7 @@ class RestApiProvider {
       return http.Response(e.toString(), 500);
     }
 
-    return response;
+    return response!;
   }
   //
   // Future<http.Response> get({
