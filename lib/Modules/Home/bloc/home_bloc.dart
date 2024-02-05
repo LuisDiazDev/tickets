@@ -8,7 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/format.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../../Routes/route.dart';
 import '../../../Widgets/qr_dialog.dart';
 import '../../Alerts/alert_cubit.dart';

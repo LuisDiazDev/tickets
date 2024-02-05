@@ -4,7 +4,7 @@ import 'package:startickera/Widgets/starlink/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/qr_scan.dart';
 import '../../Widgets/starlink/colors.dart';
@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          HomeBloc(alertCubit, sessionCubit, provider: MkProvider())..init(),
+          HomeBloc(alertCubit, sessionCubit, provider: MkProvider(sessionCubit))..init(),
       child: const _BuildHomePage(),
     );
   }
@@ -81,20 +81,23 @@ class _BuildHomePageState extends State<_BuildHomePage>
                   visible: filteredProfiles.isNotEmpty && !state.load,
                   child: Column(children: [
                     const Gap(12),
-                    ScanVirtualTicketButton(
-                      onPressed: () async {
-                        String? user = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ScanQrScreen()),
-                        );
-                        if (user != null) {
-                          setState(() {
-                            needSelectPlan = true;
-                          });
-                          home.add(VirtualTicketScanned(user));
-                        }
-                      },
+                    Visibility(
+                      visible: !needSelectPlan,
+                      child: ScanVirtualTicketButton(
+                        onPressed: () async {
+                          String? user = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ScanQrScreen()),
+                          );
+                          if (user != null) {
+                            setState(() {
+                              needSelectPlan = true;
+                            });
+                            home.add(VirtualTicketScanned(user));
+                          }
+                        },
+                      ),
                     ),
                     const Gap(30),
                     Visibility(
@@ -124,6 +127,7 @@ class _BuildHomePageState extends State<_BuildHomePage>
                             children: [
                               ...filteredProfiles
                                   .map((e) => CustomPlanWidget(
+                                flipColor: needSelectPlan,
                                 profile: e,
                                 generatedUser: (user) {
                                   var duration =

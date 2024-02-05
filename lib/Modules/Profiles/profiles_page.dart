@@ -5,11 +5,12 @@ import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../../models/profile_model.dart';
 import '../Alerts/alert_cubit.dart';
+import '../Session/session_cubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/profile_bloc.dart';
 import 'bloc/profile_state.dart';
@@ -22,9 +23,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
+    final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          ProfileBloc(alertCubit, provider: MkProvider())..init(),
+          ProfileBloc(alertCubit, provider: MkProvider(sessionCubit))..init(),
       child: const _BuildHomePage(),
     );
   }

@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:startickera/Modules/Session/session_cubit.dart';
 import 'package:startickera/Widgets/starlink/button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../../../../Data/Provider/mk_provider.dart';
+import '../../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../../../Data/Services/navigator_service.dart';
 import '../../../../Widgets/starlink/button_card.dart';
 import '../../../../Widgets/starlink/colors.dart';
@@ -11,6 +12,10 @@ import '../../../../Widgets/starlink/percentage_progress_circle.dart';
 import '../../../../Widgets/starlink/text_style.dart';
 
 class IpSearch {
+  SessionCubit sessionCubit;
+
+  IpSearch(this.sessionCubit);
+
   Future<FoundMikrotik?> showDialogSearch(
       {BuildContext? context, isCancellable = true, String ip = ""}) async {
     if (NavigatorService.navigatorKey.currentState?.overlay?.context == null) {
@@ -20,7 +25,7 @@ class IpSearch {
       barrierDismissible: false,
       context: NavigatorService.navigatorKey.currentState!.overlay!.context,
       builder: (context) {
-        return const IpSearchDialog();
+        return IpSearchDialog(sessionCubit: sessionCubit);
       },
     );
     return foudMikrotik;
@@ -36,17 +41,24 @@ class MergeResult {
 
 // Asegúrate de que tu clase de diálogo sea un StatefulWidget
 class IpSearchDialog extends StatefulWidget {
-  const IpSearchDialog({super.key});
+  final SessionCubit sessionCubit;
+
+  const IpSearchDialog({super.key, required this.sessionCubit});
 
   @override
-  IpSearchDialogState createState() => IpSearchDialogState();
+  IpSearchDialogState createState() => IpSearchDialogState(sessionCubit);
 }
 
 class IpSearchDialogState extends State<IpSearchDialog> {
-  MkProvider mkProvider = MkProvider();
+  SessionCubit sessionCubit;
+  late MkProvider mkProvider;
   late Stream<FoundMikrotik> result;
   final ValueNotifier<int> scannedIPCount = ValueNotifier<int>(0);
   Map<String, FoundMikrotik> foundMikrotiksMap = {};
+
+  IpSearchDialogState(this.sessionCubit) {
+    mkProvider = MkProvider(sessionCubit);
+  }
 
   @override
   void initState() {
@@ -194,7 +206,6 @@ class IpSearchDialogState extends State<IpSearchDialog> {
       ),
     );
   }
-
 
   Column _buildFoundMikrotiksList() {
     return Column(

@@ -2,10 +2,11 @@ import 'package:startickera/Modules/Reports/widgets/line_chart.dart';
 import 'package:startickera/Modules/Reports/widgets/UserActive/active_users_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/starlink/colors.dart';
 import '../Alerts/alert_cubit.dart';
+import '../Session/session_cubit.dart';
 import '../drawer/drawer.dart';
 import 'bloc/report_bloc.dart';
 import 'bloc/report_state.dart';
@@ -17,9 +18,10 @@ class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
+    final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) =>
-          ReportBloc(alertCubit, provider: MkProvider())..init(),
+          ReportBloc(alertCubit, provider: MkProvider(sessionCubit))..init(),
       child: const _BuildReportPage(),
     );
   }

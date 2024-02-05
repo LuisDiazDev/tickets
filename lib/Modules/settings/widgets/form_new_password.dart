@@ -1,4 +1,4 @@
-import 'package:startickera/Data/Provider/mk_provider.dart';
+import 'package:startickera/Data/Provider/mikrotik/mk_provider.dart';
 import 'package:startickera/Data/Services/ftp_service.dart';
 import 'package:startickera/Data/Services/navigator_service.dart';
 import 'package:startickera/Modules/Session/session_cubit.dart';
@@ -72,7 +72,7 @@ class _FormNewPassWordState extends State<FormNewPassWord> {
                   text: "Confirmar",
                   onPressed: ()async{
                     if (_formKey.currentState!.validate()){
-                      MkProvider provider = MkProvider();
+                      MkProvider provider = MkProvider(widget.session);
                       var r = await provider.changePass( widget.session.state.cfg!.password,_newPass ,_repeatPass);
                       if(r.statusCode <= 205){
                         widget.session.changeState( widget.session.state.copyWith(

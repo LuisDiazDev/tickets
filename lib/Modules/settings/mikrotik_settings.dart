@@ -72,6 +72,7 @@ Widget buildMikrotikSettings( sessionBloc, context, alertBloc) {
                 });
           },
         ),
+        const Gap(16),
         StarlinkTextField(
           initialValue: sessionBloc.state.cfg?.dnsNamed ?? "",
           onChanged: (str) {

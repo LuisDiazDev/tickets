@@ -154,8 +154,9 @@ class TicketDialogUtils {
                                         size: 20,
                                       ),
                                       StarlinkText(
-                                        price.replaceAll("S", "\$"),
+                                        price,
                                         color: StarlinkColors.black,
+                                        size: 20,
                                       )
                                     ],
                                   ),

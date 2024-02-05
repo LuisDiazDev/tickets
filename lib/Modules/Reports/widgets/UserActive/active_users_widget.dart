@@ -2,8 +2,9 @@ import 'package:startickera/Modules/Reports/widgets/UserActive/bloc/active_ticke
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Values/colors.dart';
-import '../../../../Data/Provider/mk_provider.dart';
+import '../../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../../../Widgets/starlink/colors.dart';
+import '../../../Session/session_cubit.dart';
 import 'bloc/active_tickets_bloc.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
@@ -12,8 +13,9 @@ class ActiveTicketsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
-      create: (context) => ActiveTicketsBloc(provider: MkProvider())..init(),
+      create: (context) => ActiveTicketsBloc(provider: MkProvider(sessionCubit))..init(),
       child: const _BuildActiveTicketsPage(),
     );
   }

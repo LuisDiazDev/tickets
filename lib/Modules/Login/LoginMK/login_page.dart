@@ -21,13 +21,15 @@ class LoginPageMK extends StatelessWidget {
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
     return BlocProvider(
       create: (context) => LoginBloc(alertCubit, sessionCubit),
-      child: const _BuildLoginPage(),
+      child: _BuildLoginPage(sessionCubit),
     );
   }
 }
 
 class _BuildLoginPage extends StatefulWidget {
-  const _BuildLoginPage();
+  final SessionCubit sessionCubit;
+
+  const _BuildLoginPage(this.sessionCubit);
 
   @override
   State<_BuildLoginPage> createState() => _BuildLoginPageState();
@@ -83,7 +85,7 @@ class _BuildLoginPageState extends State<_BuildLoginPage>
                             text: "BUSCAR UN MIKROTIK EN LA RED",
                             type: ButtonType.secondary,
                             onPressed: () async {
-                              var fhost = await IpSearch().showDialogSearch();
+                              var fhost = await IpSearch(widget.sessionCubit).showDialogSearch();
                               if (fhost != null) {
                                 setState(() {
                                   loginBloc.add(ChangeHost(fhost.ipv4??""));

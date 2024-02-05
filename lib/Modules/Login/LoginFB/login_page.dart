@@ -2,8 +2,6 @@ import 'package:startickera/Widgets/starlink/button.dart';
 import 'package:startickera/Widgets/starlink/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Data/Services/navigator_service.dart';
-import '../../../Routes/route.dart';
 import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 import '../../Alerts/alert_cubit.dart';

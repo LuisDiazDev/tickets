@@ -312,7 +312,7 @@ class _FormNewProfileWidgetState extends State<FormNewProfileWidget> {
                         profile.rateLimit = limitSpeed
                             ? "${limitDownload.toUpperCase()}M/${limitUpload.toUpperCase()}M"
                             : "";
-
+                        price = price.replaceAll(RegExp(r"\D"), "");
                         profile.metadata = ProfileMetadata(
                           hotspot: "",
                           type: "1",

@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:gap/gap.dart';
 import '../../../Core/Values/colors.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../../Data/Services/navigator_service.dart';
 import '../../../Data/Services/printer_service.dart';
 import '../../../Routes/route.dart';
@@ -30,7 +30,9 @@ class CustomTicketWidget extends StatelessWidget {
 
   Future<SchedulerModel?> getTaskData()async{
     SchedulerModel? current;
-    var task =await MkProvider().allScheduler();
+    var context = NavigatorService.navigatorKey.currentState?.overlay?.context;
+    final sessionCubit = BlocProvider.of<SessionCubit>(context!);
+    var task =await MkProvider(sessionCubit).allScheduler();
     for (var t in task){
       if(t.name == ticket.name){
         return t;

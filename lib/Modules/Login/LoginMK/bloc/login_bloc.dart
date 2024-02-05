@@ -1,7 +1,7 @@
 import '../../../../Core/Values/enums.dart';
 import '../../../../Core/utils/texts_inputs.dart';
 import '../../../../Core/utils/progress_dialog_utils.dart';
-import '../../../../Data/Provider/mk_provider.dart';
+import '../../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../../../Data/Services/ftp_service.dart';
 import '../../../../models/config_model.dart';
 import '../../../../models/dhcp_server_model.dart';
@@ -78,13 +78,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         try {
           ProgressDialogUtils.showProgressDialog();
-          MkProvider provider = MkProvider();
+          MkProvider provider = MkProvider(sessionCubit);
           var host = event.host == "" ? "192.168.20.5" : event.host;
-          var r = await provider.allDhcpServer(
-            user: event.user,
-            pass: event.password,
-            host: host
-          );
+          var r = await provider.allDhcpServer();
 
           emit(state.copyWith(
             isLoading: false,

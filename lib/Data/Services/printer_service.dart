@@ -26,20 +26,10 @@ class PrinterService {
     String duration = ""}) async {
     price = price.replaceAll("S", "\$");
 
-    // if (configModel!.bluetoothCharacteristic == null) {
-    //   throw PrinterNotSelectedException();
-    // }
-
     isProgress = true;
-    if (configModel!.nameLocal != "") {
-      // TODO: Add path logo
-      // list.add(LineText(type: LineText.TYPE_IMAGE, content: configModel!.pathLogo, align: LineText.ALIGN_CENTER, linefeed: 1));
-    }
     var ticketBytes = await buildTicketBody(
         user: user, configModel: configModel, price: price, duration: duration);
     await printTicketInBTPrinter(configModel, ticketBytes);
-    // await configModel.bluetoothCharacteristic!
-    //     .write(ticketBytes, withoutResponse: false, allowLongWrite: true );
 
     isProgress = !isProgress;
   }

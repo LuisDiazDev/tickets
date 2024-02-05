@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:startickera/Modules/Session/session_cubit.dart';
+import 'package:startickera/models/auth_model.dart';
 import 'package:startickera/models/scheduler_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -10,13 +12,13 @@ import 'package:mikrotik_mndp/listener.dart';
 import 'package:mikrotik_mndp/product_info_provider.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-import '../../models/active_user_models.dart';
-import '../../models/dhcp_server_model.dart';
-import '../../models/hotspot_model.dart';
-import '../../models/profile_hotspot_model.dart';
-import '../../models/profile_model.dart';
-import '../../models/ticket_model.dart';
-import 'rest_api_provider.dart';
+import '../../../models/active_user_models.dart';
+import '../../../models/dhcp_server_model.dart';
+import '../../../models/hotspot_model.dart';
+import '../../../models/profile_hotspot_model.dart';
+import '../../../models/profile_model.dart';
+import '../../../models/ticket_model.dart';
+import '../rest_api_provider.dart';
 
 class UserAlreadyExist implements Exception {
   final String message;
@@ -47,10 +49,14 @@ class FoundMikrotik {
 }
 
 class MkProvider {
-  final restApi = RestApiProvider();
+  RestApiProvider restApi = RestApiProvider();
+
+  SessionCubit sessionCubit;
+
+  MkProvider(this.sessionCubit);
 
   Future<String> identity() async {
-    var response = await restApi.get(endpoint: "/system/identity");
+    var response = await _get("/system/identity");
 
     if (response.statusCode == 200) {
       try {
@@ -65,7 +71,7 @@ class MkProvider {
   }
 
   Future<List<TicketModel>> allTickets() async {
-    var response = await restApi.get(endpoint: "/ip/hotspot/user");
+    var response = await _get("/ip/hotspot/user");
 
     if (response.statusCode == 200) {
       try {
@@ -80,7 +86,7 @@ class MkProvider {
   }
 
   Future<List<SchedulerModel>> allScheduler() async {
-    var response = await restApi.get(endpoint: "/system/scheduler");
+    var response = await _get("/system/scheduler");
 
     if (response.statusCode == 200) {
       try {
@@ -95,7 +101,7 @@ class MkProvider {
   }
 
   Future<List<ActiveModel>> allActiveTickets() async {
-    var response = await restApi.get(endpoint: "/ip/hotspot/active");
+    var response = await _get("/ip/hotspot/active");
 
     if (response.statusCode == 200) {
       try {
@@ -110,7 +116,7 @@ class MkProvider {
   }
 
   Future<List<Hotspot>> allHotspot() async {
-    var response = await restApi.get(endpoint: "/ip/hotspot");
+    var response = await _get("/ip/hotspot");
 
     if (response.statusCode == 200) {
       try {
@@ -125,7 +131,7 @@ class MkProvider {
   }
 
   Future<List<ProfileModel>> allProfiles() async {
-    var response = await restApi.get(endpoint: "/ip/hotspot/user/profile");
+    var response = await _get("/ip/hotspot/user/profile");
 
     if (response.statusCode == 200) {
       try {
@@ -140,10 +146,8 @@ class MkProvider {
     return [];
   }
 
-  Future<Object> allDhcpServer(
-      {String? user, String? pass, String? host}) async {
-    var response = await restApi.get(
-        endpoint: "/ip/dhcp-server", user: user, pass: pass, host: host);
+  Future<Object> allDhcpServer() async {
+    var response = await _get("/ip/dhcp-server");
 
     if (response.statusCode == 200) {
       try {
@@ -158,13 +162,70 @@ class MkProvider {
     }
   }
 
+  Future<Response> _post(String endpoint, Map body) async {
+    return await restApi.sendRequest(
+      "post",
+      endpoint: endpoint,
+      body: body,
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: sessionCubit.state.cfg!.host,
+    );
+  }
+
+  Future<Response> _get(String endpoint, {String? host}) async {
+    return await restApi.sendRequest(
+      "get",
+      endpoint: endpoint,
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: host ?? sessionCubit.state.cfg!.host,
+    );
+  }
+
+  Future<AuthResponse> auth(String host, String user, String password) async {
+    Response resp = await restApi.sendRequest(
+      "get",
+      endpoint: "/system/routerboard",
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: host,
+    );
+    var r = AuthResponse.fromJson(jsonDecode(resp.body), resp);
+    r.rawResponse = resp;
+    return r;
+  }
+
+  Future<Response> _put(String endpoint, Map body) async {
+    return await restApi.sendRequest(
+      "put",
+      endpoint: endpoint,
+      body: body,
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: sessionCubit.state.cfg!.host,
+    );
+  }
+
+  Future<Response> _delete(String endpoint) async {
+    return await restApi.sendRequest(
+      "delete",
+      endpoint: endpoint,
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: sessionCubit.state.cfg!.host,
+    );
+  }
+
   Future<Response> exportData({String file = "default"}) async {
-    return await restApi
-        .post(endpoint: "/export", body: {"file": file, "show-sensitive": true});
+    return await _post(
+      "/export",
+      {"file": file, "show-sensitive": true},
+    );
   }
 
   Future<List<ProfileHotspotModel>> allProfilesHotspot() async {
-    var response = await restApi.get(endpoint: "/ip/hotspot/profile");
+    var response = await _get("/ip/hotspot/profile");
 
     if (response.statusCode == 200) {
       try {
@@ -180,7 +241,7 @@ class MkProvider {
 
   Future<Response> newTicket(String name, String profile, String duration,
       {int limitBytesTotal = 0}) async {
-    var r = await restApi.post(endpoint: "/ip/hotspot/user/add", body: {
+    var r = await _post("/ip/hotspot/user/add", {
       "server": "hotspot1",
       "name": name,
       "password": name,
@@ -212,7 +273,7 @@ class MkProvider {
   }
 
   Future<Response> backup(String name, String pass) async {
-    return await restApi.post(endpoint: "/system/backup/load", body: {
+    return await _post("/system/backup/load", {
       "name": name,
       "password": pass,
       "force-v6-to-v7-configuration-upgrade": true
@@ -221,7 +282,7 @@ class MkProvider {
 
   Future<Response> changePass(
       String oldPass, String newPass, String verifyPass) async {
-    return await restApi.post(endpoint: "/password", body: {
+    return await _post("/password", {
       "new-password": newPass,
       "confirm-new-password": verifyPass,
       "old-password": oldPass
@@ -229,25 +290,27 @@ class MkProvider {
   }
 
   Future<Response> removeTicket(String id) async {
-    var result = await restApi.delete(url: "/ip/hotspot/user/$id");
+    var result = await _delete("/ip/hotspot/user/$id");
     return result;
   }
 
   Future<Response> disconnectTicket(String id) async {
-    return  await restApi.delete(url: "/ip/hotspot/active/$id");
+    return await _delete("/ip/hotspot/active/$id");
   }
 
   Future<Response> removeProfile(String id) async {
-    try{
-      return await restApi.delete(url: "/ip/hotspot/user/profile/$id");
-    }catch (e){
+    try {
+      return await _delete("/ip/hotspot/user/profile/$id");
+    } catch (e) {
       return Response("", 205);
     }
   }
 
   Future<Response> resetClient(String id) async {
-    return await restApi
-        .post(endpoint: "/ip/hotspot/user/reset-counters", body: {".id": id});
+    return await _post(
+      "/ip/hotspot/user/reset-counters",
+      {".id": id},
+    );
   }
 
   Future<Response> newProfile(ProfileModel profile, String duration) async {
@@ -259,11 +322,11 @@ class MkProvider {
     profile.metadata!.hotspot = h[0].name; // TODO
     for (var i = 0; i < p.length; i++) {
       if (p[i].name == profile.name) {
-        profile.name = "${profile.name} (copy)";
+        profile.name = "${profile.name} (copia)";
         return newProfile(profile, duration);
       }
     }
-    return await restApi.post(endpoint: "/ip/hotspot/user/profile/add", body: {
+    return await _post("/ip/hotspot/user/profile/add", {
       "name": profile.metadata!.toMikrotiketNameString(profile.name ?? ""),
       // TODO mover toMikrotiketNameString a esta clase
       "address-pool": "dhcp",
@@ -277,8 +340,7 @@ class MkProvider {
   }
 
   Future<Response> updateProfile(ProfileModel profile) async {
-    return await restApi
-        .put(url: "/ip/hotspot/user/profile/${profile.id}", body: {
+    return await _put("/ip/hotspot/user/profile/${profile.id}", {
       "name": profile.metadata!.toMikrotiketNameString(profile.name ?? ""),
       "address-pool": "dhcp",
       "rate-limit": profile.rateLimit,
@@ -288,25 +350,23 @@ class MkProvider {
     });
   }
 
-  Future<Response> reactiveUserHotspot(TicketModel t) async {
+  Future<Response> enableUserHotspot(TicketModel t) async {
     t.disabled = "false";
-    return await restApi
-        .put(url: "/ip/hotspot/user/${t.id}", body: {
-          "disabled":"false",
-          "name":t.name,
-          ".id":t.id,
-          "profile":t.profile,
-          "comment":t.comment,
-          "password": t.password,
-          "limit-uptime": t.limitUptime,
+    return await _put("/ip/hotspot/user/${t.id}", {
+      "disabled": "false",
+      "name": t.name,
+      ".id": t.id,
+      "profile": t.profile,
+      "comment": t.comment,
+      "password": t.password,
+      "limit-uptime": t.limitUptime,
     });
   }
 
   Stream<FoundMikrotik> findMikrotiksInLocalNetwork(
       ValueNotifier<int> progressNotifier,
       {int timeoutSecs = 5}) {
-    var poolStream = _findMikrotiksInLocalNetworkByPolling(
-        progressNotifier,
+    var poolStream = _findMikrotiksInLocalNetworkByPolling(progressNotifier,
         timeoutSecs: timeoutSecs);
 
     var productProvider = MikrotikProductInfoProviderImpl();
@@ -345,13 +405,10 @@ class MkProvider {
       var internalCount = 0;
       for (int i = 1; i < 255; i++) {
         var ip = "$ipRange.$i";
-        restApi
-            .get(
+        _get(
+          "/system/routerboard",
           host: ip,
-          endpoint: "/system/routerboard",
-          timeoutSecs: timeoutSecs,
-        )
-            .then((Response e) {
+        ).then((Response e) {
           internalCount++;
           if (internalCount % 10 == 0 || internalCount == 255) {
             count.value = internalCount;

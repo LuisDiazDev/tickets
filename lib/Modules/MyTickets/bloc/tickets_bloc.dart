@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/rand.dart';
-import '../../../Data/Provider/mk_provider.dart';
+import '../../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../Alerts/alert_cubit.dart';
 import 'tickets_events.dart';
 import 'tickets_state.dart';

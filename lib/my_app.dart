@@ -11,7 +11,6 @@ import 'Core/Theme/theme.dart';
 import 'Core/Values/enums.dart';
 import 'Core/localization/app_localization.dart';
 import 'Data/Services/navigator_service.dart';
-import 'Data/Provider/rest_api_provider.dart';
 import 'Data/database/databse_firebase.dart';
 import 'Modules/Alerts/alert_cubit.dart';
 import 'Modules/Session/session_cubit.dart';
@@ -59,7 +58,6 @@ class _MyAppState extends State<MyApp> {
     final alertCubit = BlocProvider.of<AlertCubit>(context);
     final sessionCubit = BlocProvider.of<SessionCubit>(context);
 
-    RestApiProvider().init(alertCubit, sessionCubit);
     DatabaseFirebase().init(alertCubit, sessionCubit);
 
     subscription = Connectivity()
@@ -172,32 +170,6 @@ class _MyAppState extends State<MyApp> {
                   metadata: state.metadata,
                 );
               }
-              // if (state is AlertAction) {
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(SnackBarCustom.snackBarCustom(
-              //     title: 'title',
-              //     onTap: () {
-              //       state.onTap();
-              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              //     },
-              //     titleAction: 'Action',
-              //     type: CardType.error,
-              //   ));
-              // }
-              // if (state is AlertInfo) {
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(SnackBarCustom.snackBarStatusCustom(
-              //     onTap: () {
-              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              //     },
-              //     title: state.title,
-              //     subtitle: state.subtitle,
-              //     hideSnackBar: () {
-              //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              //     },
-              //     type: CardType.info,
-              //   ));
-              // }
             },
           ),
           BlocListener<SessionCubit, SessionState>(

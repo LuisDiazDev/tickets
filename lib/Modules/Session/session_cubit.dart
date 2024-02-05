@@ -13,8 +13,7 @@ import '../../Core/Values/enums.dart';
 import '../../Core/utils/get_device_details.dart';
 import '../../Core/utils/get_ip_mk.dart';
 import '../../Core/utils/progress_dialog_utils.dart';
-import '../../Data/Provider/mk_provider.dart';
-import '../../Data/Provider/rest_api_provider.dart';
+import '../../Data/Provider/mikrotik/mk_provider.dart';
 import '../../Data/Services/ftp_service.dart';
 import '../../Data/Services/navigator_service.dart';
 import '../../Widgets/starlink/dialog.dart';
@@ -24,9 +23,7 @@ import '../Alerts/alert_cubit.dart';
 part 'session_state.dart';
 
 class SessionCubit extends HydratedCubit<SessionState> {
-  SessionCubit() : super(const SessionState()) {
-    RestApiProvider().sessionCubit = this;
-  }
+  SessionCubit() : super(const SessionState());
 
   Future checkUserData() async {
     final database = DatabaseFirebase();
@@ -40,9 +37,6 @@ class SessionCubit extends HydratedCubit<SessionState> {
           nameLocal: data?["name"]??""
         )
       ));
-    } else {
-      // await database.updateLicense("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
-      // emit(state.copyWith(active: false));
     }
   }
 
@@ -75,7 +69,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
       var d = await FtpService.downloadFile(file: file, remoteName: "info.rsc");
 
       if (d) {
-
+        // TODO: move to provider
         var data = await file.readAsString();
         var interfaces = data.split("/");
         var wifiInterface = interfaces
@@ -118,7 +112,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
         }
       }
     } else {
-      MkProvider provider = MkProvider();
+      MkProvider provider = MkProvider(this);
       var r = await provider.exportData(file: "info.rsc");
       if (r.statusCode == 200 || r.statusCode == 201) {
         loadSetting();
@@ -141,7 +135,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   void initData() async {
     if (state.isAuthenticated /*&& state.firebaseID != ""*/) {
-      MkProvider provider = MkProvider();
+      MkProvider provider = MkProvider(this);
       var profilesH = await provider.allProfilesHotspot();
       if (profilesH.isNotEmpty) {
         emit(state.copyWith(
@@ -167,9 +161,9 @@ class SessionCubit extends HydratedCubit<SessionState> {
     } else if(state.firebaseID != ""){
       try{
         ProgressDialogUtils.showProgressDialog();
-        var ip = await getIp();
+        var ip = await getIp(this);
         if (ip["connect"] && state.sessionStatus == SessionStatus.mikrotik) {
-          MkProvider provider = MkProvider();
+          MkProvider provider = MkProvider(this);
           var profilesH = await provider.allProfilesHotspot();
           if (profilesH.isNotEmpty) {
             emit(state.copyWith(
@@ -264,7 +258,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   Future checkConnection(AlertCubit alertCubit) async {
     ProgressDialogUtils.showProgressDialog();
-    MkProvider provider = MkProvider();
+    MkProvider provider = MkProvider(this);
 
     var r = await provider.allProfilesHotspot();
     ProgressDialogUtils.hideProgressDialog();
@@ -304,7 +298,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   Future backUp(AlertCubit alertCubit) async {
-    MkProvider provider = MkProvider();
+    MkProvider provider = MkProvider(this);
 
     var r = await provider.backup("backup.backup", "");
     if (r.statusCode == 200) {

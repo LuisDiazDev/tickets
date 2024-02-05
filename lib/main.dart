@@ -10,9 +10,9 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'Data/Provider/http_override.dart';
 import 'firebase_options.dart';
 
-import 'Data/Provider/rest_api_provider.dart';
 import 'my_app.dart';
 
 Future<void> main() async {

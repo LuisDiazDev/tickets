@@ -6,12 +6,15 @@ import '../../../Widgets/starlink/colors.dart';
 import '../../../Widgets/starlink/text_style.dart';
 import '../../../models/profile_model.dart';
 
+
+
 class CustomPlanWidget extends StatelessWidget {
   final ProfileModel profile;
   final Function(String) generatedUser;
+  final bool flipColor;
 
   const CustomPlanWidget(
-      {super.key, required this.generatedUser, required this.profile});
+      {super.key, required this.generatedUser, required this.profile, required this.flipColor});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class CustomPlanWidget extends StatelessWidget {
         generatedUser(user);
       },
       child: Card(
-        color: StarlinkColors.blue.withOpacity(.4),
+        color: flipColor?StarlinkColors.blue.withOpacity(.9):StarlinkColors.blue.withOpacity(.4),
         child: Container(
           padding: const EdgeInsets.all(12.0),
           width: MediaQuery.of(context).size.width - 20,
@@ -40,8 +43,8 @@ class CustomPlanWidget extends StatelessWidget {
                           minWidth: 40,
                           maxWidth: 140,),
                       child: StarlinkText(
-                        profile.name ?? "",
-                        size: 16,
+                        "${profile.name}" ?? "",
+                        size: 20,
                         isBold: true,
                       ),
                     ),
