@@ -64,7 +64,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
       const filename = 'qr_code.png';
       final tempDir =
-          await getApplicationDocumentsDirectory(); // Get temporary directory to store the generated image
+          await getTemporaryDirectory(); // Get temporary directory to store the generated image
       final file = await File('${tempDir.path}/$filename')
           .create(); // Create a file to store the generated image
       var bytes = image!.buffer.asUint8List(); // Get the image bytes

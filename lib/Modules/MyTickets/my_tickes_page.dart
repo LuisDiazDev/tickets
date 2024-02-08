@@ -101,7 +101,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
               height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: Builder(builder: (context) {
-                  return Wrap(
+                  return Column(
                     children: [
                       ...tickets.map((e) => Builder(builder: (context) {
                             var profile = state.profiles.firstWhere(

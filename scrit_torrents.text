@@ -1,0 +1,15 @@
+{
+/ip firewall layer7-protocol add comment="Block Torrents" name=torrent regexp="^(\\x13bittorrent protocol|azver\\x01\$|get /scrape\\\?info_hash=get /announce\\\?info_hash=|get /client/bitcomet/|GET /data\\\?fid=)|d1:ad2:id20:|\\x08'7P\\)[RP]"
+
+/ip firewall filter add chain=forward in-interface-list=LAN src-address-list=!allow-bit layer7-protocol=torrent action=add-src-to-address-list address-list=Torrents address-list-timeout=30s comment="Block Torrents"
+
+/ip firewall filter add chain=forward protocol=tcp dst-port=!0-1023,1723,5900,5800,3389,8728,8291,14147,5222,59905 src-address-list=Torrents action=drop comment="Block Torrents"
+
+/ip firewall filter add chain=forward src-address="192.168.20.10-192.168.20.254" protocol=tcp dst-port=!0-1023,1723,5900,5800,3389,8728,8291,14147,5222,59905 src-address-list=Torrents action=drop comment="Block Torrents"
+
+/ip firewall address-list
+add address=gamestorrents.com list=Torrents
+add address=gamestorrents.fm list=Torrents
+add address=cinecalidad.gg list=Torrents
+
+}

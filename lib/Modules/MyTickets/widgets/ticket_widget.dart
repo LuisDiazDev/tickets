@@ -97,67 +97,398 @@ class CustomTicketWidget extends StatelessWidget {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          TicketDialogUtils.showNewTicketDetailDialog(
-              configModel: session.state.cfg!,
-              user: ticket.name!.toUpperCase(),
-              duration: duration,
-              price: price,
-              shareF: () {
-                homeBloc.add(
-                    ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
-              },
-              printF: () {
-                if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
-                  if (!PrinterService.isProgress) {
-                    PrinterService().printTicket(
-                        user: ticket.name ?? "",
-                        configModel: session.state.cfg,
-                        duration: duration,
-                        price: price);
-                  }
+    return FutureBuilder(future: getTaskData(), builder: (BuildContext context, snapshot){
+      switch(snapshot.connectionState){
+        case ConnectionState.none:{
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                TicketDialogUtils.showNewTicketDetailDialog(
+                    configModel: session.state.cfg!,
+                    user: ticket.name!.toUpperCase(),
+                    duration: duration,
+                    price: price,
+                    shareF: () {
+                      homeBloc.add(
+                          ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+                    },
+                    printF: () {
+                      if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                        if (!PrinterService.isProgress) {
+                          PrinterService().printTicket(
+                              user: ticket.name ?? "",
+                              configModel: session.state.cfg,
+                              duration: duration,
+                              price: price);
+                        }
 
-                  alertCubit.showDialog(
-                    ShowDialogEvent(
-                      title: "IMPRIMIENDO",
-                      message: "Espere un momento",
-                      type: AlertType.info,
-                    ),
-                  );
-                } else {
-                  NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
-                  alertCubit.showDialog(
-                    ShowDialogEvent(
-                      title: "ERROR",
-                      message: "No hay impresora conectada",
-                      type: AlertType.error,
-                    ),
-                  );
-                }
-              });
-        },
-        child: ClipPath(
-          clipper: CustomTicketClipper(), // <-- CustomClipper
-          child: Container(
-              color: valid()
-                  ? StarlinkColors.blue.withOpacity(.7)
-                  : Colors.grey, // <-- background color
-              height: 115, // <-- height
-              width: 215, // <-- width
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  buildFirstRow(date, hour, homeBloc),
-                  buildSecondRow(session, duration, price, alertCubit, homeBloc)
-                ],
-              )),
-        ),
-      ),
-    );
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "IMPRIMIENDO",
+                            message: "Espere un momento",
+                            type: AlertType.info,
+                          ),
+                        );
+                      } else {
+                        NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "ERROR",
+                            message: "No hay impresora conectada",
+                            type: AlertType.error,
+                          ),
+                        );
+                      }
+                    });
+              },
+              child: ClipPath(
+                clipper: CustomTicketClipper(), // <-- CustomClipper
+                child: Container(
+                    color: valid()
+                        ? StarlinkColors.blue.withOpacity(.7)
+                        : Colors.grey, // <-- background color
+                    height: 115, // <-- height
+                    width: 215, // <-- width
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        buildFirstRow(date, hour, homeBloc),
+                        buildSecondRow(session, duration, price, alertCubit, homeBloc)
+                      ],
+                    )),
+              ),
+            ),
+          );
+        }
+        case ConnectionState.waiting:{
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                TicketDialogUtils.showNewTicketDetailDialog(
+                    configModel: session.state.cfg!,
+                    user: ticket.name!.toUpperCase(),
+                    duration: duration,
+                    price: price,
+                    shareF: () {
+                      homeBloc.add(
+                          ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+                    },
+                    printF: () {
+                      if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                        if (!PrinterService.isProgress) {
+                          PrinterService().printTicket(
+                              user: ticket.name ?? "",
+                              configModel: session.state.cfg,
+                              duration: duration,
+                              price: price);
+                        }
+
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "IMPRIMIENDO",
+                            message: "Espere un momento",
+                            type: AlertType.info,
+                          ),
+                        );
+                      } else {
+                        NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "ERROR",
+                            message: "No hay impresora conectada",
+                            type: AlertType.error,
+                          ),
+                        );
+                      }
+                    });
+              },
+              child: ClipPath(
+                clipper: CustomTicketClipper(), // <-- CustomClipper
+                child: Container(
+                    color: valid()
+                        ? StarlinkColors.blue.withOpacity(.7)
+                        : Colors.grey, // <-- background color
+                    height: 115, // <-- height
+                    width: 215, // <-- width
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        buildFirstRow(date, hour, homeBloc),
+                        buildSecondRow(session, duration, price, alertCubit, homeBloc)
+                      ],
+                    )),
+              ),
+            ),
+          );
+        }
+        case ConnectionState.active:{
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                TicketDialogUtils.showNewTicketDetailDialog(
+                    configModel: session.state.cfg!,
+                    user: ticket.name!.toUpperCase(),
+                    duration: duration,
+                    price: price,
+                    shareF: () {
+                      homeBloc.add(
+                          ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+                    },
+                    printF: () {
+                      if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                        if (!PrinterService.isProgress) {
+                          PrinterService().printTicket(
+                              user: ticket.name ?? "",
+                              configModel: session.state.cfg,
+                              duration: duration,
+                              price: price);
+                        }
+
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "IMPRIMIENDO",
+                            message: "Espere un momento",
+                            type: AlertType.info,
+                          ),
+                        );
+                      } else {
+                        NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "ERROR",
+                            message: "No hay impresora conectada",
+                            type: AlertType.error,
+                          ),
+                        );
+                      }
+                    });
+              },
+              child: ClipPath(
+                clipper: CustomTicketClipper(), // <-- CustomClipper
+                child: Container(
+                    color: valid()
+                        ? StarlinkColors.blue.withOpacity(.7)
+                        : Colors.grey, // <-- background color
+                    height: 115, // <-- height
+                    width: 215, // <-- width
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        buildFirstRow(date, hour, homeBloc),
+                        buildSecondRow(session, duration, price, alertCubit, homeBloc)
+                      ],
+                    )),
+              ),
+            ),
+          );
+        }
+        case ConnectionState.done:{
+          if(snapshot.hasData){
+            return  Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  TicketDialogUtils.showNewTicketDetailDialog(
+                      configModel: session.state.cfg!,
+                      user: ticket.name!.toUpperCase(),
+                      duration: duration,
+                      price: price,
+                      shareF: () {
+                        homeBloc.add(
+                            ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+                      },
+                      printF: () {
+                        if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                          if (!PrinterService.isProgress) {
+                            PrinterService().printTicket(
+                                user: ticket.name ?? "",
+                                configModel: session.state.cfg,
+                                duration: duration,
+                                price: price);
+                          }
+
+                          alertCubit.showDialog(
+                            ShowDialogEvent(
+                              title: "IMPRIMIENDO",
+                              message: "Espere un momento",
+                              type: AlertType.info,
+                            ),
+                          );
+                        } else {
+                          NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                          alertCubit.showDialog(
+                            ShowDialogEvent(
+                              title: "ERROR",
+                              message: "No hay impresora conectada",
+                              type: AlertType.error,
+                            ),
+                          );
+                        }
+                      });
+                },
+                child: ClipPath(
+                  clipper: CustomTicketClipper(), // <-- CustomClipper
+                  child: Container(
+                      color: valid()
+                          ? StarlinkColors.white.withOpacity(.7)
+                          : Colors.grey, // <-- background color
+                      height: 115, // <-- height
+                      width: 215, // <-- width
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          buildFirstRow(date, hour, homeBloc),
+                          buildSecondRow(session, duration, price, alertCubit, homeBloc)
+                        ],
+                      )),
+                ),
+              ),
+            );
+            // return Row(
+            //   children: [
+            //     // SizedBox(
+            //     //   width: MediaQuery.of(context).size.width*.3,
+            //     //   child: Column(
+            //     //     children: [
+            //     //       StarlinkText("${snapshot.data?.startDate.toString().substring(0,10)}"),
+            //     //     ],
+            //     //   ),
+            //     // ),
+            //     Padding(
+            //       padding: const EdgeInsets.all(8.0),
+            //       child: GestureDetector(
+            //         onTap: () {
+            //           TicketDialogUtils.showNewTicketDetailDialog(
+            //               configModel: session.state.cfg!,
+            //               user: ticket.name!.toUpperCase(),
+            //               duration: duration,
+            //               price: price,
+            //               shareF: () {
+            //                 homeBloc.add(
+            //                     ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+            //               },
+            //               printF: () {
+            //                 if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+            //                   if (!PrinterService.isProgress) {
+            //                     PrinterService().printTicket(
+            //                         user: ticket.name ?? "",
+            //                         configModel: session.state.cfg,
+            //                         duration: duration,
+            //                         price: price);
+            //                   }
+            //
+            //                   alertCubit.showDialog(
+            //                     ShowDialogEvent(
+            //                       title: "IMPRIMIENDO",
+            //                       message: "Espere un momento",
+            //                       type: AlertType.info,
+            //                     ),
+            //                   );
+            //                 } else {
+            //                   NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+            //                   alertCubit.showDialog(
+            //                     ShowDialogEvent(
+            //                       title: "ERROR",
+            //                       message: "No hay impresora conectada",
+            //                       type: AlertType.error,
+            //                     ),
+            //                   );
+            //                 }
+            //               });
+            //         },
+            //         child: ClipPath(
+            //           clipper: CustomTicketClipper(), // <-- CustomClipper
+            //           child: Container(
+            //               color: valid()
+            //                   ? StarlinkColors.white.withOpacity(.7)
+            //                   : Colors.grey, // <-- background color
+            //               height: 115, // <-- height
+            //               width: 215, // <-- width
+            //               child: Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 mainAxisAlignment: MainAxisAlignment.start,
+            //                 children: [
+            //                   buildFirstRow(date, hour, homeBloc),
+            //                   buildSecondRow(session, duration, price, alertCubit, homeBloc)
+            //                 ],
+            //               )),
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                TicketDialogUtils.showNewTicketDetailDialog(
+                    configModel: session.state.cfg!,
+                    user: ticket.name!.toUpperCase(),
+                    duration: duration,
+                    price: price,
+                    shareF: () {
+                      homeBloc.add(
+                          ShareQRImage(ticket.name ?? "", ticket.password ?? "",session.state.cfg?.host?? ""));
+                    },
+                    printF: () {
+                      if (session.state.cfg?.bluetoothDevice?.isConnected ?? false) {
+                        if (!PrinterService.isProgress) {
+                          PrinterService().printTicket(
+                              user: ticket.name ?? "",
+                              configModel: session.state.cfg,
+                              duration: duration,
+                              price: price);
+                        }
+
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "IMPRIMIENDO",
+                            message: "Espere un momento",
+                            type: AlertType.info,
+                          ),
+                        );
+                      } else {
+                        NavigatorService.pushNamedAndRemoveUntil(Routes.settings);
+                        alertCubit.showDialog(
+                          ShowDialogEvent(
+                            title: "ERROR",
+                            message: "No hay impresora conectada",
+                            type: AlertType.error,
+                          ),
+                        );
+                      }
+                    });
+              },
+              child: ClipPath(
+                clipper: CustomTicketClipper(), // <-- CustomClipper
+                child: Container(
+                    color: valid()
+                        ? StarlinkColors.blue.withOpacity(.7)
+                        : Colors.grey, // <-- background color
+                    height: 115, // <-- height
+                    width: 215, // <-- width
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        buildFirstRow(date, hour, homeBloc),
+                        buildSecondRow(session, duration, price, alertCubit, homeBloc)
+                      ],
+                    )),
+              ),
+            ),
+          );
+        }
+      }
+    });
   }
 
   Row buildSecondRow(SessionCubit session, String duration, String price,

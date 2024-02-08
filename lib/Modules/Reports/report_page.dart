@@ -52,7 +52,7 @@ class _BuildReportPageState extends State<_BuildReportPage> {
           height: MediaQuery.of(context).size.height,
           child: Column(
             children: [
-              const CustomLineChart(isShowingMainData: true,),
+              // const CustomLineChart(isShowingMainData: true,),
               Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Card(
@@ -74,7 +74,7 @@ class _BuildReportPageState extends State<_BuildReportPage> {
                       subtitle:state.load ? const CircularProgressIndicator(
                         color: Colors.white,
                       ): Text(
-                        "${reportBloc.getTotal()}\$",
+                        "${reportBloc.state.sellers.length}",
                         style: const TextStyle(
                             color: StarlinkColors.black,
                             fontFamily: 'DDIN',
