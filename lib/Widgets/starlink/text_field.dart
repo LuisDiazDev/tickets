@@ -69,6 +69,7 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                   cursorColor: StarlinkColors.white,
                   obscureText: _passwordVisible,
                   readOnly: widget.readOnly,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   key: Key(widget.initialValue.toString()),
                   validator: widget.validator,
                   initialValue: widget.initialValue,
@@ -108,6 +109,7 @@ class _StarlinkTextFieldState extends State<StarlinkTextField> {
                       // bold
                       fontFamily: 'DDIN-Bold',
                     ),
+
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: StarlinkColors.white),
                     ),

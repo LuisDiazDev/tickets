@@ -20,7 +20,7 @@ dependencies:
   equatable: ^2.0.5
   formz: ^0.6.0
   hydrated_bloc: ^9.1.2
-  http: ^1.2.0
+  http: ^1.2.1
   eva_icons_flutter: ^3.1.0
   share_plus: ^7.2.1
   path_provider: ^2.1.2

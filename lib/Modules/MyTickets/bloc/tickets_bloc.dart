@@ -7,6 +7,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Core/utils/rand.dart';
 import '../../../Data/Provider/mikrotik/mk_provider.dart';
+import '../../../Data/Services/navigator_service.dart';
+import '../../../Widgets/starlink/dialog.dart';
 import '../../Alerts/alert_cubit.dart';
 import 'tickets_events.dart';
 import 'tickets_state.dart';
@@ -75,23 +77,52 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
     });
 
     on<DeletedTicket>((event,emit)async{
-      var r = await provider.removeTicket(event.id);
-      if(r.statusCode <= 205 ){
-        add(FetchData(load: false));
-        alertCubit.showDialog(ShowDialogEvent(
-          title: "ÉXITO",
-          message: "Se ha eliminado el ticket",
-          type: AlertType.success,
-        ));
-      } else{
-        add(FetchData(load: false));
-        alertCubit.showDialog(ShowDialogEvent(
-          title: "ERROR",
-          message: "Ha ocurrido un error inesperado eliminando el ticket",
-          type: AlertType.error,
-        ));
-      }
 
+      var confirm = await StarlinkDialog.show(
+          context: NavigatorService.navigatorKey.currentState!.context,
+          title: "Eliminar Ticket",
+          message: "¿Estas seguro que quieres eliminar el ticket?",
+          type: AlertType.warning,
+          onTap: () {
+            NavigatorService.navigatorKey.currentState?.pop(false);
+          },
+          actions: [
+            StarlinkDialogAction(
+              text: "Si",
+              onPressed: () {
+                NavigatorService.navigatorKey.currentState?.pop(true);
+              },
+              type: ActionType.info,
+            ),
+            StarlinkDialogAction(
+              text: "No",
+              onPressed: () {
+                NavigatorService.navigatorKey.currentState?.pop(false);
+              },
+              type: ActionType.info,
+            ),
+          ],
+          error: null,
+          metadata: {}
+      );
+      if(confirm){
+        var r = await provider.removeTicket(event.id);
+        if(r.statusCode <= 205 ){
+          add(FetchData(load: false));
+          alertCubit.showDialog(ShowDialogEvent(
+            title: "ÉXITO",
+            message: "Se ha eliminado el ticket",
+            type: AlertType.success,
+          ));
+        } else{
+          add(FetchData(load: false));
+          alertCubit.showDialog(ShowDialogEvent(
+            title: "ERROR",
+            message: "Ha ocurrido un error inesperado eliminando el ticket",
+            type: AlertType.error,
+          ));
+        }
+      }
     });
   }
 

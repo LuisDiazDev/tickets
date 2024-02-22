@@ -161,8 +161,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
     } else if(state.firebaseID != ""){
       try{
         ProgressDialogUtils.showProgressDialog();
-        var ip = await getIp(this);
-        if (ip["connect"] && state.sessionStatus == SessionStatus.mikrotik) {
+        // var ip = await getIp(this);
+        if (true && state.sessionStatus == SessionStatus.mikrotik) {
           MkProvider provider = MkProvider(this);
           var profilesH = await provider.allProfilesHotspot();
           if (profilesH.isNotEmpty) {
@@ -172,11 +172,11 @@ class SessionCubit extends HydratedCubit<SessionState> {
                 )));
           }
 
-          FtpService.initService(address: ip["ip"], user: "admin", pass: "1234");
+          FtpService.initService(address: '192.168.20.5', user: "admin", pass: "1234");
 
           emit(state.copyWith(
               configModel: state.cfg!
-                  .copyWith(host: ip["ip"], user: "admin", password: "1234"),
+                  .copyWith(host: '192.168.20.5', user: "admin", password: "1234"),
               isAuthenticated: true,
               sessionStatus: SessionStatus.started));
 

@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Data/Provider/mikrotik/mk_provider.dart';
+import '../../../Data/Services/navigator_service.dart';
+import '../../../Widgets/starlink/dialog.dart';
 import '../../Alerts/alert_cubit.dart';
 import 'profile_events.dart';
 import 'profile_state.dart';
@@ -78,28 +80,59 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     on<DeletedProfile>(
       (event, emit) async {
-        emit(state.copyWith(load: true));
 
-        var r = await provider.removeProfile(event.id);
-        if (r.statusCode <= 205) {
-          add(FetchData());
-          alertCubit.showDialog(
-            ShowDialogEvent(
-              title: "PLAN ELIMINADO",
-              message: "Se ha eliminado un plan",
-              type: AlertType.success,
-            ),
-          );
-        } else {
-          alertCubit.showDialog(
-            ShowDialogEvent(
-              title: "ERROR ELIMINANDO PLAN",
-              message:
-                  "Ha ocurrido un error inesperado eliminando el plan: ${r.body}",
-              type: AlertType.error,
-            ),
-          );
-        }
+       var confirm = await StarlinkDialog.show(
+            context: NavigatorService.navigatorKey.currentState!.context,
+            title: "Eliminar Plan",
+            message: "¿Estas seguro que quieres eliminar el plan?",
+            type: AlertType.warning,
+            onTap: () {
+              NavigatorService.navigatorKey.currentState?.pop(false);
+            },
+            actions: [
+              StarlinkDialogAction(
+                text: "Si",
+                onPressed: () {
+                  NavigatorService.navigatorKey.currentState?.pop(true);
+                },
+                type: ActionType.info,
+              ),
+              StarlinkDialogAction(
+                text: "No",
+                onPressed: () {
+                  NavigatorService.navigatorKey.currentState?.pop(false);
+                },
+                type: ActionType.info,
+              ),
+            ],
+            error: null,
+            metadata: {}
+        );
+
+       if(confirm){
+         emit(state.copyWith(load: true));
+
+         var r = await provider.removeProfile(event.id);
+         if (r.statusCode <= 205) {
+           add(FetchData());
+           alertCubit.showDialog(
+             ShowDialogEvent(
+               title: "PLAN ELIMINADO",
+               message: "Se ha eliminado un plan",
+               type: AlertType.success,
+             ),
+           );
+         } else {
+           alertCubit.showDialog(
+             ShowDialogEvent(
+               title: "ERROR ELIMINANDO PLAN",
+               message:
+               "Ha ocurrido un error inesperado eliminando el plan: ${r.body}",
+               type: AlertType.error,
+             ),
+           );
+         }
+       }
       },
     );
   }
