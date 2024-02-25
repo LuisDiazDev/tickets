@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../Data/Services/navigator_service.dart';
+import '../models/scheduler_model.dart';
 
 class TicketDialogUtils {
   ///common method for showing progress dialog
@@ -13,6 +14,7 @@ class TicketDialogUtils {
       {BuildContext? context,
       isCancellable = true,
       String user = "",
+      SchedulerModel? used,
       required ConfigModel configModel,
       Function()? printF,
       Function()? shareF,
@@ -177,6 +179,45 @@ class TicketDialogUtils {
                                 ],
                               ),
                             ),
+                            Visibility(
+                              visible: used != null,
+                              child: Column(
+                                children: [
+                                  const Gap(8),
+                                  SizedBox(
+                                    width: 170,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Center(
+                                          child: Column(
+                                            children: [
+                                              const Text(
+                                                "Vencimiento",
+                                                style: TextStyle(
+                                                  fontFamily: 'DDIN',
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                              Text(
+                                                used?.nextRun?.toString().substring(0,16)??"",
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  fontFamily: 'DDIN',
+                                                  fontSize: 20,
+                                                  color: StarlinkColors.black,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         const Gap(10),

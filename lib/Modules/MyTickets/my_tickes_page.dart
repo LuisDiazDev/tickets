@@ -105,7 +105,7 @@ class _BuildTicketsPageState extends State<_BuildTicketsPage>
                     children: [
                       ...tickets.map((e) => Builder(builder: (context) {
                             var profile = state.profiles.firstWhere(
-                                (p) => p.name == e.profile,
+                                (p) => p.fullName == e.profile,
                                 orElse: () =>
                                     ProfileModel(name: "", onLogin: ""));
                             return CustomTicketWidget(

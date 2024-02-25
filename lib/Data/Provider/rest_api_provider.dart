@@ -74,6 +74,9 @@ class RestApiProvider {
           );
         }
       }
+      if(e.toString().contains("Connection reset by peer")){
+        return http.Response(e.toString(), 205);
+      }
       return http.Response(e.toString(), 500);
     }
 

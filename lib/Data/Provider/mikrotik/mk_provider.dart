@@ -208,17 +208,13 @@ class MkProvider {
   }
 
   Future<Response> _delete(String endpoint) async {
-    try{
-      return await restApi.sendRequest(
-        "delete",
-        endpoint: endpoint,
-        user: sessionCubit.state.cfg!.user,
-        pass: sessionCubit.state.cfg!.password,
-        host: sessionCubit.state.cfg!.host,
-      );
-    }catch(e){
-      return Response(e.toString(), 201);
-    }
+    return await restApi.sendRequest(
+      "delete",
+      endpoint: endpoint,
+      user: sessionCubit.state.cfg!.user,
+      pass: sessionCubit.state.cfg!.password,
+      host: sessionCubit.state.cfg!.host,
+    );
   }
 
   Future<Response> exportData({String file = "default"}) async {
@@ -294,7 +290,11 @@ class MkProvider {
   }
 
   Future<Response> removeTicket(String id) async {
-    return await _delete("/ip/hotspot/user/$id");
+    try{
+      return await _delete("/ip/hotspot/user/$id");
+    }catch (e){
+      return Response(e.toString(), 202);
+    }
   }
 
   Future<Response> disconnectTicket(String id) async {
@@ -305,7 +305,7 @@ class MkProvider {
     try {
       return await _delete("/ip/hotspot/user/profile/$id");
     } catch (e) {
-      return Response(e.toString(), 205);
+      return Response(e.toString(), 202);
     }
   }
 
